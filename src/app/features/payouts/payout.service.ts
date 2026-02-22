@@ -11,18 +11,18 @@ export interface PayoutRequest {
 @Injectable({ providedIn: 'root' })
 export class PayoutService extends ApiService {
   create(req: PayoutRequest): Observable<{ payoutId: string }> {
-    return this.http.post<{ payoutId: string }>(this.url('/payouts'), req, this.defaultOptions);
+    return this.http.post<{ payoutId: string }>(this.url('/api/payouts'), req, this.defaultOptions);
   }
 
   requestOtp(payoutId: string): Observable<{ expiresAt: string }> {
-    return this.http.post<{ expiresAt: string }>(this.url(`/payouts/${payoutId}/otp`), {}, this.defaultOptions);
+    return this.http.post<{ expiresAt: string }>(this.url(`/api/payouts/${payoutId}/otp`), {}, this.defaultOptions);
   }
 
   submit(payoutId: string, otp: string): Observable<{ status: string }> {
-    return this.http.post<{ status: string }>(this.url(`/payouts/${payoutId}/submit`), { otp }, this.defaultOptions);
+    return this.http.post<{ status: string }>(this.url(`/api/payouts/${payoutId}/submit`), { otp }, this.defaultOptions);
   }
 
   getBalance(): Observable<{ balance: number; frozenAmount: number }> {
-    return this.http.get<{ balance: number; frozenAmount: number }>(this.url('/wallet'), this.defaultOptions);
+    return this.http.get<{ balance: number; frozenAmount: number }>(this.url('/api/wallet'), this.defaultOptions);
   }
 }

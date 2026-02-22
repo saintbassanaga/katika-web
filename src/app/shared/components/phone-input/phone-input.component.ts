@@ -6,19 +6,38 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
   standalone: true,
   imports: [FormsModule],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => PhoneInputComponent),
-      multi: true,
-    },
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PhoneInputComponent), multi: true },
   ],
+  styles: [`
+    .wrap {
+      display: flex; align-items: center;
+      border: 2px solid #E2E8F0; border-radius: 12px;
+      background: #F8FAFC;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .wrap:focus-within {
+      border-color: #1B4F8A;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(27,79,138,.08);
+    }
+    .wrap.disabled { opacity: .5; }
+    .prefix {
+      padding: .8125rem .875rem .8125rem 1rem;
+      font-size: .9375rem; font-weight: 600; color: #334155;
+      border-right: 2px solid #E2E8F0;
+      white-space: nowrap; flex-shrink: 0;
+      user-select: none;
+    }
+    .input {
+      flex: 1; padding: .8125rem .875rem;
+      background: transparent; border: none; outline: none;
+      font-size: .9375rem; color: #0F172A; font-family: inherit;
+    }
+    .input::placeholder { color: #CBD5E1; }
+  `],
   template: `
-    <div class="flex items-center border-2 border-gray-200 rounded-xl
-                bg-white focus-within:border-blue-600 transition-colors"
-         [class.opacity-50]="isDisabled()">
-      <span class="pl-4 pr-2 py-3 text-gray-600 font-medium text-sm border-r border-gray-200 shrink-0">
-        🇨🇲 +237
-      </span>
+    <div class="wrap" [class.disabled]="isDisabled()">
+      <span class="prefix">🇨🇲 +237</span>
       <input
         type="tel"
         inputmode="tel"
@@ -27,9 +46,8 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
         [ngModel]="localValue()"
         (ngModelChange)="onInput($event)"
         (blur)="onTouched()"
-        class="flex-1 px-3 py-3 text-sm bg-transparent outline-none text-gray-900
-               placeholder-gray-400"
-        maxlength="9"
+        class="input"
+        maxlength="15"
       />
     </div>
   `,
@@ -44,9 +62,9 @@ export class PhoneInputComponent implements ControlValueAccessor {
   protected onTouched: () => void = () => {};
 
   protected onInput(value: string): void {
-    const digits = value.replace(/\D/g, '').slice(0, 9);
+    const digits = value.replace(/\D/g, '');
     this.localValue.set(digits);
-    this.onChange(`+237${digits}`);
+    this.onChange(digits);
   }
 
   writeValue(value: string): void {
@@ -54,15 +72,7 @@ export class PhoneInputComponent implements ControlValueAccessor {
     this.localValue.set(digits);
   }
 
-  registerOnChange(fn: (val: string) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.isDisabled.set(isDisabled);
-  }
+  registerOnChange(fn: (val: string) => void): void { this.onChange = fn; }
+  registerOnTouched(fn: () => void): void { this.onTouched = fn; }
+  setDisabledState(isDisabled: boolean): void { this.isDisabled.set(isDisabled); }
 }

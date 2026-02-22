@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../core/http/api.service';
+import { ApiService } from '@core/http/api.service';
 
 export interface TransactionSummary {
   id: string;
@@ -40,24 +40,24 @@ export class EscrowService extends ApiService {
     if (params.size !== undefined) query.set('size', String(params.size));
     query.set('sort', 'createdAt,desc');
     return this.http.get<Page<TransactionSummary>>(
-      this.url(`/escrow?${query}`),
+      this.url(`/api/escrow?${query}`),
       this.defaultOptions,
     );
   }
 
   getTransaction(id: string): Observable<TransactionDetail> {
-    return this.http.get<TransactionDetail>(this.url(`/escrow/${id}`), this.defaultOptions);
+    return this.http.get<TransactionDetail>(this.url(`/api/escrow/${id}`), this.defaultOptions);
   }
 
   generateVerificationCode(id: string): Observable<{ code: string; qrUri: string; expiresAt: string }> {
     return this.http.post<{ code: string; qrUri: string; expiresAt: string }>(
-      this.url(`/escrow/${id}/verification-code`), {}, this.defaultOptions,
+      this.url(`/api/escrow/${id}/verification-code`), {}, this.defaultOptions,
     );
   }
 
   release(id: string, verificationCode: string): Observable<TransactionDetail> {
     return this.http.post<TransactionDetail>(
-      this.url(`/escrow/${id}/release`), { verificationCode }, this.defaultOptions,
+      this.url(`/api/escrow/${id}/release`), { verificationCode }, this.defaultOptions,
     );
   }
 }

@@ -160,7 +160,7 @@ export class WalletComponent implements OnInit {
   }
 
   private loadWallet(): void {
-    this.http.get<WalletBalance>(`${environment.apiUrl}/wallet`, { withCredentials: true })
+    this.http.get<WalletBalance>(`${environment.apiUrl}/api/wallet`, { withCredentials: true })
       .subscribe({ next: (w) => this.wallet.set(w) });
   }
 
@@ -184,7 +184,7 @@ export class WalletComponent implements OnInit {
 
   private fetchMovements(): void {
     this.http.get<{ content: WalletMovement[]; totalPages: number }>(
-      `${environment.apiUrl}/wallet/movements?page=${this.page}&size=20`,
+      `${environment.apiUrl}/api/wallet/movements?page=${this.page}&size=20`,
       { withCredentials: true },
     ).subscribe({
       next: (data) => {

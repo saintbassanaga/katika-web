@@ -98,9 +98,15 @@ export class MfaVerifyComponent {
   }
 
   protected submit(code?: string): void {
-    const finalCode = code ?? (this.useBackupCode() ? this.backupValue : this.otpValue);
-    if (!finalCode) return;
-    this.error.set('');
-    this.auth.verifyMfa({ code: finalCode });
+    if (this.useBackupCode()) {
+      if (!this.backupValue) return;
+      this.error.set('');
+      this.auth.verifyMfa({ code: '', backupCode: this.backupValue });
+    } else {
+      const finalCode = code ?? this.otpValue;
+      if (!finalCode) return;
+      this.error.set('');
+      this.auth.verifyMfa({ code: finalCode });
+    }
   }
 }

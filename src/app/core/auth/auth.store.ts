@@ -2,13 +2,14 @@ import { computed, inject } from '@angular/core';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, catchError, EMPTY, firstValueFrom } from 'rxjs';
-import { AuthService, LoginResponse, UserProfile } from './auth.service';
+import { AuthService, UpdateProfileRequest, UserProfile } from './auth.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../notification/toast.service';
 
 interface AuthState {
   user: UserProfile | null;
   mfaRequired: boolean;
-  challengeToken: string | null;
+  challengeId: string | null;
   loading: boolean;
   initialized: boolean;
 }
@@ -19,7 +20,7 @@ export const AuthStore = signalStore(
   withState<AuthState>({
     user: null,
     mfaRequired: false,
-    challengeToken: null,
+    challengeId: null,
     loading: false,
     initialized: false,
   }),
@@ -31,16 +32,19 @@ export const AuthStore = signalStore(
     isSeller: computed(() => user()?.role === 'SELLER'),
     isSupport: computed(() => ['ADMIN', 'SUPPORT', 'SUPERVISOR'].includes(user()?.role ?? '')),
     isAdmin: computed(() => user()?.role === 'ADMIN'),
-    hasMfa: computed(() => user()?.mfaEnabled ?? false),
-    fullName: computed(() => user() ? `${user()!.firstName} ${user()!.lastName}` : ''),
+    hasMfa:      computed(() => user()?.mfaEnabled ?? false),
+    isVerified:  computed(() => user()?.verified   ?? false),
+    fullName: computed(() => user()?.fullName ?? ''),
     initials: computed(() => {
-      const u = user();
-      if (!u) return '';
-      return `${u.firstName[0]}${u.lastName[0]}`.toUpperCase();
+      const parts = (user()?.fullName ?? '').trim().split(/\s+/);
+      if (parts.length === 0 || !parts[0]) return '';
+      const first = parts[0][0] ?? '';
+      const last = parts.length > 1 ? (parts[parts.length - 1][0] ?? '') : '';
+      return `${first}${last}`.toUpperCase();
     }),
   })),
 
-  withMethods((store, svc = inject(AuthService), router = inject(Router)) => ({
+  withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService)) => ({
 
     async init(): Promise<void> {
       try {
@@ -51,46 +55,61 @@ export const AuthStore = signalStore(
       }
     },
 
-    login: rxMethod<{ username: string; password: string }>(pipe(
+    login: rxMethod<{ phoneNumber: string; password: string }>(pipe(
       tap(() => patchState(store, { loading: true })),
       switchMap(creds => svc.login(creds).pipe(
-        tap((res: LoginResponse) => {
-          if (res.mfaRequired) {
+        switchMap(res => {
+          if (res.requiresMfa) {
             patchState(store, {
               mfaRequired: true,
-              challengeToken: res.challengeToken ?? null,
+              challengeId: res.challengeId,
               loading: false,
             });
             router.navigate(['/auth/mfa-verify']);
-          } else {
-            patchState(store, { user: res.user!, loading: false });
-            router.navigate(['/dashboard']);
+            return EMPTY;
           }
+          // No MFA — session cookie is set, fetch user profile
+          return svc.getMe().pipe(
+            tap(user => {
+              patchState(store, { user, loading: false });
+              router.navigate(['/dashboard']);
+            }),
+          );
         }),
-        catchError(() => {
+        catchError((err) => {
           patchState(store, { loading: false });
+          if (err?.status === 401) {
+            toast.error('Numéro de téléphone ou mot de passe incorrect.');
+          }
           return EMPTY;
         }),
       )),
     )),
 
-    verifyMfa: rxMethod<{ code: string }>(pipe(
+    verifyMfa: rxMethod<{ code: string; backupCode?: string }>(pipe(
       tap(() => patchState(store, { loading: true })),
-      switchMap(({ code }) => svc.verifyMfa({
+      switchMap(({ code, backupCode }) => svc.verifyMfa({
+        challengeId: store.challengeId()!,
         code,
-        challengeToken: store.challengeToken()!,
+        ...(backupCode ? { backupCode } : {}),
       }).pipe(
-        tap(user => {
-          patchState(store, {
-            user,
-            mfaRequired: false,
-            challengeToken: null,
-            loading: false,
-          });
-          router.navigate(['/dashboard']);
-        }),
+        switchMap(() =>
+          // Session cookie set server-side — now fetch the user profile
+          svc.getMe().pipe(
+            tap(user => {
+              patchState(store, {
+                user,
+                mfaRequired: false,
+                challengeId: null,
+                loading: false,
+              });
+              router.navigate(['/dashboard']);
+            }),
+          )
+        ),
         catchError(() => {
           patchState(store, { loading: false });
+          toast.error('Code MFA invalide. Réessayez.');
           return EMPTY;
         }),
       )),
@@ -102,7 +121,7 @@ export const AuthStore = signalStore(
           patchState(store, {
             user: null,
             mfaRequired: false,
-            challengeToken: null,
+            challengeId: null,
           });
           router.navigate(['/auth/login']);
         }),
@@ -113,5 +132,22 @@ export const AuthStore = signalStore(
     updateUser(user: UserProfile): void {
       patchState(store, { user });
     },
+
+    updateProfile: rxMethod<UpdateProfileRequest>(pipe(
+      tap(() => patchState(store, { loading: true })),
+      switchMap(req => svc.updateProfile(req).pipe(
+        switchMap(() => svc.getMe().pipe(
+          tap(user => {
+            patchState(store, { user, loading: false });
+            toast.success('Profil mis à jour avec succès.');
+            router.navigate(['/profile']);
+          }),
+        )),
+        catchError(() => {
+          patchState(store, { loading: false });
+          return EMPTY;
+        }),
+      )),
+    )),
   })),
 );

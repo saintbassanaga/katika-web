@@ -1,10 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DisputeService, DisputeSummary } from '../dispute.service';
-import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
-import { LoadingSkeletonComponent } from '../../../shared/components/loading-skeleton/loading-skeleton.component';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
+import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
+import { LoadingSkeletonComponent } from '@shared/components/loading-skeleton/loading-skeleton.component';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-dispute-list',

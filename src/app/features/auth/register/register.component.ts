@@ -1,4 +1,3 @@
-
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,261 +5,247 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../core/notification/toast.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 
-function passwordStrength(password: string): number {
-  let score = 0;
-  if (password.length >= 8) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
-  return score;
+function passwordStrength(p: string): number {
+  let s = 0;
+  if (p.length >= 8) s++;
+  if (/[A-Z]/.test(p)) s++;
+  if (/[0-9]/.test(p)) s++;
+  if (/[^A-Za-z0-9]/.test(p)) s++;
+  return s;
 }
 
-function passwordsMatch(control: AbstractControl): ValidationErrors | null {
-  const pass = control.get('password')?.value;
-  const confirm = control.get('confirmPassword')?.value;
-  return pass === confirm ? null : { passwordMismatch: true };
+function passwordsMatch(c: AbstractControl): ValidationErrors | null {
+  return c.get('password')?.value === c.get('confirmPassword')?.value ? null : { passwordMismatch: true };
 }
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent],
+  styles: [`
+    .page { min-height: 100svh; background: #0F2240; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; pointer-events: none; }
+    .orb-a { width:300px;height:300px;top:-10%;left:-15%; background:radial-gradient(circle,rgba(27,79,138,.3) 0%,transparent 70%); }
+    .orb-b { width:200px;height:200px;top:5%;right:-12%; background:radial-gradient(circle,rgba(245,158,11,.12) 0%,transparent 70%); }
+
+    .brand { position:relative;z-index:10; display:flex;align-items:center;gap:.75rem; padding:2rem 1.5rem 1.5rem; }
+    .k-mark { width:44px;height:44px;border-radius:14px; background:linear-gradient(135deg,#1B4F8A,#0D3D6E); display:flex;align-items:center;justify-content:center; box-shadow:0 6px 20px rgba(27,79,138,.4); flex-shrink:0; }
+    .brand-name { color:#fff;font-size:1.5rem;font-weight:800;letter-spacing:-.03em; }
+
+    .card { position:relative;z-index:10;background:#fff;border-radius:2rem 2rem 0 0;padding:1.75rem 1.5rem 3rem;flex:1; }
+
+    @media (min-width: 768px) {
+      .page { flex-direction: row; align-items: stretch; }
+      .brand { flex-direction: column; align-items: flex-start; justify-content: center; flex: 0 0 420px; padding: 3rem; gap: 1rem; }
+      .k-mark { width: 56px; height: 56px; border-radius: 16px; }
+      .brand-name { font-size: 2.25rem; }
+      .brand-tagline { color: rgba(210,190,140,.7); font-size: .9375rem; margin: 0; }
+      .card { border-radius: 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; min-height: 100svh; box-shadow: -32px 0 80px rgba(0,0,0,.15); overflow-y: auto; }
+      .card-inner { width: 100%; max-width: 440px; }
+    }
+    @media (max-width: 767px) {
+      .brand-tagline { display: none; }
+      .card-inner { width: 100%; }
+    }
+    .card-title { font-size:1.25rem;font-weight:700;color:#0F2240;margin:0 0 .2rem; }
+    .card-sub   { font-size:.875rem;color:#64748B;margin:0 0 1.5rem; }
+
+    .label { display:block;font-size:.8125rem;font-weight:600;color:#334155;margin-bottom:.4rem;letter-spacing:.01em; }
+    .label-opt { color:#94A3B8;font-weight:400; }
+    .input {
+      width:100%;padding:.8125rem 1rem;border:2px solid #E2E8F0;border-radius:12px;
+      background:#F8FAFC;font-size:.9375rem;color:#0F172A;outline:none;font-family:inherit;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .input:focus { border-color:#1B4F8A;background:#fff;box-shadow:0 0 0 4px rgba(27,79,138,.08); }
+    .input.error { border-color:#DC2626; }
+    .grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:.75rem; }
+
+    .role-grid { display:grid;grid-template-columns:1fr 1fr;gap:.625rem; }
+    .role-opt { display:flex;align-items:center;gap:.625rem;padding:.875rem;border:2px solid #E2E8F0;border-radius:14px;cursor:pointer;transition:all .2s; }
+    .role-opt.selected { border-color:#1B4F8A;background:#E5EEF8; }
+    .role-icon { font-size:1.25rem; }
+    .role-label { font-size:.875rem;font-weight:600;color:#0F172A; }
+
+    .pwd-wrap { position:relative; }
+    .pwd-toggle { position:absolute;right:.875rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#94A3B8;padding:.25rem; }
+
+    .strength-bar { display:flex;gap:4px;margin-top:.5rem; }
+    .strength-seg { flex:1;height:4px;border-radius:99px;background:#E2E8F0;transition:background .3s; }
+    .strength-label { font-size:.75rem;margin-top:.25rem; }
+
+    .btn {
+      width:100%;padding:.9375rem;background:linear-gradient(135deg,#1B4F8A,#0D3D6E);
+      color:#fff;font-size:.9375rem;font-weight:700;border:none;border-radius:14px;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;
+      min-height:52px;box-shadow:0 4px 20px rgba(27,79,138,.38);
+      transition:opacity .2s,transform .15s;font-family:inherit;
+    }
+    .btn:hover:not(:disabled) { opacity:.92;transform:translateY(-1px); }
+    .btn:disabled { opacity:.55;cursor:not-allowed; }
+    .spinner { width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .err { font-size:.75rem;color:#DC2626;margin:.3rem 0 0; }
+    .login-link { text-align:center;font-size:.875rem;color:#64748B;margin-top:1.25rem; }
+    .login-link a { color:#1B4F8A;font-weight:700;text-decoration:none; }
+    .login-link a:hover { text-decoration:underline; }
+    .fields { display:flex;flex-direction:column;gap:1rem; }
+  `],
   template: `
-    <div class="min-h-screen bg-gray-50 flex flex-col justify-center px-4 py-12">
-      <div class="max-w-sm w-full mx-auto">
+    <div class="page">
+      <div class="orb orb-a orb-1"></div>
+      <div class="orb orb-b orb-2"></div>
 
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold" style="color:#1A56DB">Katika</h1>
-          <p class="text-gray-500 text-sm mt-1">Créez votre compte</p>
+      <div class="brand animate-fade">
+        <div class="k-mark">
+          <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+            <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <span class="brand-name">Katika</span>
+        <p class="brand-tagline">Paiements sécurisés au Cameroun</p>
+      </div>
 
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-          <h2 class="text-xl font-bold text-gray-900 mb-6">Inscription</h2>
+      <div class="card animate-card">
+        <div class="card-inner">
+        <p class="card-title">Créer un compte</p>
+        <p class="card-sub">Rejoignez Katika en quelques secondes.</p>
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="fields">
 
-            <!-- First name + Last name -->
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1.5">Prénom</label>
-                <input
-                  type="text"
-                  formControlName="firstName"
-                  placeholder="Jean"
-                  class="w-full px-3 py-3 border-2 border-gray-200 rounded-xl text-sm
-                         focus:border-blue-600 focus:outline-none transition-colors"
-                  [class.border-red-400]="isInvalid('firstName')"
-                />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1.5">Nom</label>
-                <input
-                  type="text"
-                  formControlName="lastName"
-                  placeholder="Fotso"
-                  class="w-full px-3 py-3 border-2 border-gray-200 rounded-xl text-sm
-                         focus:border-blue-600 focus:outline-none transition-colors"
-                  [class.border-red-400]="isInvalid('lastName')"
-                />
-              </div>
-            </div>
-
-            <!-- Phone -->
+          <!-- Names -->
+          <div class="grid-2">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Téléphone</label>
-              <app-phone-input formControlName="phone" />
+              <label class="label">Prénom</label>
+              <input type="text" formControlName="firstName" placeholder="Jean"
+                     class="input" [class.error]="isInvalid('firstName')" />
             </div>
-
-            <!-- Email -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                Email <span class="text-gray-400">(optionnel)</span>
-              </label>
-              <input
-                type="email"
-                formControlName="email"
-                placeholder="jean@exemple.cm"
-                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
-                       focus:border-blue-600 focus:outline-none transition-colors"
-                [class.border-red-400]="isInvalid('email')"
-              />
+              <label class="label">Nom</label>
+              <input type="text" formControlName="lastName" placeholder="Fotso"
+                     class="input" [class.error]="isInvalid('lastName')" />
             </div>
+          </div>
 
-            <!-- Role -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Je suis</label>
-              <div class="grid grid-cols-2 gap-2">
-                @for (role of roles; track role.value) {
-                  <label
-                    class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer transition-colors"
-                    [class.border-blue-600]="form.get('role')?.value === role.value"
-                    [class.bg-blue-50]="form.get('role')?.value === role.value"
-                    [class.border-gray-200]="form.get('role')?.value !== role.value"
-                  >
-                    <input type="radio" formControlName="role" [value]="role.value" class="sr-only" />
-                    <span class="text-lg">{{ role.icon }}</span>
-                    <span class="text-sm font-medium">{{ role.label }}</span>
-                  </label>
+          <!-- Phone -->
+          <div>
+            <label class="label">Téléphone</label>
+            <app-phone-input formControlName="phone" />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="label">Email <span class="label-opt">(optionnel)</span></label>
+            <input type="email" formControlName="email" placeholder="jean@exemple.cm"
+                   class="input" [class.error]="isInvalid('email')" />
+          </div>
+
+          <!-- Role -->
+          <div>
+            <label class="label">Je suis</label>
+            <div class="role-grid">
+              @for (role of roles; track role.value) {
+                <label class="role-opt" [class.selected]="form.get('role')?.value === role.value">
+                  <input type="radio" formControlName="role" [value]="role.value" style="display:none" />
+                  <span class="role-icon">{{ role.icon }}</span>
+                  <span class="role-label">{{ role.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label class="label">Mot de passe</label>
+            <div class="pwd-wrap">
+              <input [type]="showPwd() ? 'text' : 'password'" formControlName="password"
+                     placeholder="••••••••" class="input" style="padding-right:3rem"
+                     [class.error]="isInvalid('password')" />
+              <button type="button" (click)="showPwd.set(!showPwd())" class="pwd-toggle">
+                {{ showPwd() ? '🙈' : '👁' }}
+              </button>
+            </div>
+            @if (form.get('password')?.value) {
+              <div class="strength-bar">
+                @for (i of [1,2,3,4]; track i) {
+                  <div class="strength-seg" [style.background]="i <= strengthScore() ? strengthColor() : '#E2E8F0'"></div>
                 }
               </div>
-            </div>
+              <p class="strength-label" [style.color]="strengthColor()">{{ strengthLabel() }}</p>
+            }
+          </div>
 
-            <!-- Password -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe</label>
-              <div class="relative">
-                <input
-                  [type]="showPwd() ? 'text' : 'password'"
-                  formControlName="password"
-                  placeholder="••••••••"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
-                         focus:border-blue-600 focus:outline-none transition-colors pr-10"
-                  [class.border-red-400]="isInvalid('password')"
-                />
-                <button type="button" (click)="showPwd.set(!showPwd())"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  {{ showPwd() ? '🙈' : '👁' }}
-                </button>
-              </div>
-              <!-- Strength meter -->
-              @if (form.get('password')?.value) {
-                <div class="flex gap-1 mt-2">
-                  @for (i of [1,2,3,4]; track i) {
-                    <div
-                      class="h-1.5 flex-1 rounded-full transition-colors"
-                      [class]="i <= passwordStrengthScore() ? strengthColor() : 'bg-gray-200'"
-                    ></div>
-                  }
-                </div>
-                <p class="text-xs mt-1" [class]="strengthTextColor()">{{ strengthLabel() }}</p>
-              }
-            </div>
+          <!-- Confirm password -->
+          <div>
+            <label class="label">Confirmer le mot de passe</label>
+            <input [type]="showPwd() ? 'text' : 'password'" formControlName="confirmPassword"
+                   placeholder="••••••••" class="input"
+                   [class.error]="form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched" />
+            @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
+              <p class="err">Les mots de passe ne correspondent pas</p>
+            }
+          </div>
 
-            <!-- Confirm password -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirmer le mot de passe</label>
-              <input
-                [type]="showPwd() ? 'text' : 'password'"
-                formControlName="confirmPassword"
-                placeholder="••••••••"
-                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
-                       focus:border-blue-600 focus:outline-none transition-colors"
-                [class.border-red-400]="form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched"
-              />
-              @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
-                <p class="text-xs text-red-600 mt-1">Les mots de passe ne correspondent pas</p>
-              }
-            </div>
+          <!-- Submit -->
+          <button type="submit" class="btn" [disabled]="form.invalid || loading()">
+            @if (loading()) {
+              <span class="spinner"></span>
+              Inscription en cours…
+            } @else {
+              Créer mon compte
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            }
+          </button>
+        </form>
 
-            <!-- Submit -->
-            <button
-              type="submit"
-              [disabled]="form.invalid || loading()"
-              class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold
-                     text-sm hover:bg-blue-700 transition-colors min-h-[44px]
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     flex items-center justify-center gap-2 mt-2"
-            >
-              @if (loading()) {
-                <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Inscription en cours...
-              } @else {
-                Créer mon compte
-              }
-            </button>
-          </form>
-        </div>
-
-        <p class="text-center text-sm text-gray-500 mt-6">
-          Déjà un compte ?
-          <a routerLink="/auth/login" class="text-blue-600 font-medium hover:underline">Se connecter</a>
+        <p class="login-link">
+          Déjà un compte ? <a routerLink="/auth/login">Se connecter</a>
         </p>
+        </div>
       </div>
     </div>
   `,
 })
 export class RegisterComponent {
-  private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
-  private readonly toast = inject(ToastService);
-  private readonly router = inject(Router);
+  private readonly fb      = inject(FormBuilder);
+  private readonly svc     = inject(AuthService);
+  private readonly toast   = inject(ToastService);
+  private readonly router  = inject(Router);
 
-  protected readonly showPwd = signal(false);
-  protected readonly loading = signal(false);
-
-  protected readonly roles = [
+  protected readonly showPwd  = signal(false);
+  protected readonly loading  = signal(false);
+  protected readonly roles    = [
     { value: 'BUYER',  icon: '🛒', label: 'Acheteur' },
     { value: 'SELLER', icon: '🏪', label: 'Vendeur'  },
   ];
 
   protected readonly form = this.fb.group({
-    firstName: ['', [Validators.required, Validators.minLength(2)]],
-    lastName:  ['', [Validators.required, Validators.minLength(2)]],
-    phone:     ['', Validators.required],
-    email:     ['', Validators.email],
-    role:      ['BUYER', Validators.required],
-    password:  ['', [
-      Validators.required,
-      Validators.minLength(8),
-      Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/),
-    ]],
+    firstName:       ['', [Validators.required, Validators.minLength(2)]],
+    lastName:        ['', [Validators.required, Validators.minLength(2)]],
+    phone:           ['', Validators.required],
+    email:           ['', Validators.email],
+    role:            ['BUYER', Validators.required],
+    password:        ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/)]],
     confirmPassword: ['', Validators.required],
   }, { validators: passwordsMatch });
 
-  protected isInvalid(field: string) {
-    const c = this.form.get(field);
-    return c?.invalid && c?.touched;
-  }
+  protected isInvalid(f: string) { const c = this.form.get(f); return c?.invalid && c?.touched; }
 
-  protected passwordStrengthScore = computed(() =>
-    passwordStrength(this.form.get('password')?.value ?? '')
-  );
-
-  protected strengthColor = computed(() => {
-    const s = this.passwordStrengthScore();
-    if (s <= 1) return 'bg-red-500';
-    if (s === 2) return 'bg-yellow-500';
-    if (s === 3) return 'bg-blue-500';
-    return 'bg-green-500';
-  });
-
-  protected strengthTextColor = computed(() => {
-    const s = this.passwordStrengthScore();
-    if (s <= 1) return 'text-red-600';
-    if (s === 2) return 'text-yellow-600';
-    if (s === 3) return 'text-blue-600';
-    return 'text-green-600';
-  });
-
-  protected strengthLabel = computed(() => {
-    const s = this.passwordStrengthScore();
-    if (s <= 1) return 'Très faible';
-    if (s === 2) return 'Faible';
-    if (s === 3) return 'Bon';
-    return 'Excellent';
-  });
+  protected strengthScore  = computed(() => passwordStrength(this.form.get('password')?.value ?? ''));
+  protected strengthColor  = computed(() => ['#EF4444','#EF4444','#F59E0B','#3A7BC8','#10B981'][this.strengthScore()]);
+  protected strengthLabel  = computed(() => ['','Très faible','Faible','Bon','Excellent'][this.strengthScore()]);
 
   protected onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading.set(true);
     const v = this.form.value;
-
-    this.authService.register({
-      firstName: v.firstName!,
-      lastName:  v.lastName!,
-      phone:     v.phone!,
-      email:     v.email || undefined,
-      password:  v.password!,
-      role:      v.role as 'BUYER' | 'SELLER',
+    this.svc.register({
+      firstName: v.firstName!, lastName: v.lastName!,
+      phone: v.phone!, email: v.email || undefined,
+      password: v.password!, role: v.role as 'BUYER' | 'SELLER',
     }).subscribe({
-      next: () => {
-        this.toast.success('Compte créé avec succès ! Connectez-vous.');
-        this.router.navigate(['/auth/login']);
-      },
+      next: () => { this.toast.success('Compte créé ! Connectez-vous.'); this.router.navigate(['/auth/login']); },
       error: () => this.loading.set(false),
       complete: () => this.loading.set(false),
     });

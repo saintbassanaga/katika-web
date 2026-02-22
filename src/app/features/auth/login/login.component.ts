@@ -8,96 +8,303 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent],
+  styles: [`
+    /* ─── Root ───────────────────────────────────── */
+    .login-root {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      background: #0F2240;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── Orbs (shared) ─────────────────────────── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .orb-a {
+      width: 420px; height: 420px; top: -18%; left: -18%;
+      background: radial-gradient(circle, rgba(27,79,138,.38) 0%, transparent 70%);
+    }
+    .orb-b {
+      width: 280px; height: 280px; bottom: 10%; right: -12%;
+      background: radial-gradient(circle, rgba(245,158,11,.13) 0%, transparent 70%);
+    }
+    .orb-c {
+      width: 200px; height: 200px; bottom: 40%; left: 5%;
+      background: radial-gradient(circle, rgba(27,79,138,.15) 0%, transparent 70%);
+    }
+
+    /* ─── MOBILE layout ─────────────────────────── */
+    .brand-area {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      flex: 1;
+      padding: 3.5rem 1.5rem 2rem;
+      text-align: center;
+    }
+    .k-mark {
+      width: 68px; height: 68px;
+      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 10px 40px rgba(27,79,138,.5);
+    }
+    .brand-name {
+      color: #fff; font-size: 2.5rem; font-weight: 800;
+      letter-spacing: -0.04em; margin: 0 0 .4rem;
+    }
+    .brand-sub {
+      color: rgba(210,190,140,.7); font-size: .9rem;
+      font-weight: 400; margin: 0;
+    }
+    .form-card {
+      position: relative; z-index: 10;
+      background: #fff;
+      border-radius: 2rem 2rem 0 0;
+      padding: 2.25rem 1.5rem 3rem;
+    }
+
+    /* ─── DESKTOP layout ────────────────────────── */
+    @media (min-width: 768px) {
+      .login-root {
+        flex-direction: row;
+      }
+
+      /* Left brand panel */
+      .brand-area {
+        flex: 1;
+        padding: 3rem 4rem;
+        align-items: flex-start;
+        text-align: left;
+        justify-content: center;
+      }
+      .brand-name { font-size: 3rem; }
+      .brand-sub  { font-size: .9375rem; }
+
+      /* Feature list — only visible on desktop */
+      .feature-list { display: flex; flex-direction: column; gap: .875rem; margin-top: 2.5rem; }
+      .feature-item {
+        display: flex; align-items: center; gap: .75rem;
+        color: rgba(226,232,240,.75); font-size: .875rem; font-weight: 500;
+      }
+      .feature-dot {
+        width: 32px; height: 32px; flex-shrink: 0;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+      }
+
+      /* Right form panel */
+      .form-card {
+        flex: 1;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 4rem;
+        min-height: 100svh;
+        margin-left: auto;
+        box-shadow: -32px 0 80px rgba(0,0,0,.15);
+      }
+      .form-inner {
+        width: 100%;
+        max-width: 380px;
+      }
+    }
+
+    /* ─── Form elements ─────────────────────────── */
+    .form-title {
+      font-size: 1.5rem; font-weight: 700;
+      color: #0F2240; margin: 0 0 .3rem;
+      letter-spacing: -.02em;
+    }
+    .form-sub { font-size: .875rem; color: #64748B; margin: 0 0 1.75rem; }
+
+    .field-label {
+      display: block; font-size: .8125rem; font-weight: 600;
+      color: #334155; margin-bottom: .45rem; letter-spacing: .01em;
+    }
+    .field-input {
+      width: 100%; padding: .8125rem 1rem;
+      border: 2px solid #E2E8F0; border-radius: 12px;
+      background: #F8FAFC; font-size: .9375rem; color: #0F172A;
+      outline: none; font-family: inherit;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+      box-sizing: border-box;
+    }
+    .field-input:focus {
+      border-color: #1B4F8A; background: #fff;
+      box-shadow: 0 0 0 4px rgba(27,79,138,.08);
+    }
+    .field-input.error { border-color: #DC2626; }
+    .field-input-wrap { position: relative; }
+    .pwd-toggle {
+      position: absolute; right: .875rem; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      font-size: 1rem; color: #94A3B8; padding: .25rem;
+    }
+    .err-msg { font-size: .75rem; color: #DC2626; margin: .35rem 0 0; }
+
+    .forgot {
+      font-size: .8125rem; font-weight: 600;
+      color: #1B4F8A; text-decoration: none;
+    }
+    .forgot:hover { text-decoration: underline; }
+
+    .submit-btn {
+      width: 100%; padding: .9375rem;
+      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
+      color: #fff; font-size: .9375rem; font-weight: 700;
+      border: none; border-radius: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      min-height: 52px; font-family: inherit;
+      box-shadow: 0 4px 20px rgba(27,79,138,.38);
+      transition: opacity .2s, transform .15s;
+    }
+    .submit-btn:hover:not(:disabled) { opacity: .91; transform: translateY(-1px); }
+    .submit-btn:active:not(:disabled) { transform: translateY(0); }
+    .submit-btn:disabled { opacity: .52; cursor: not-allowed; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .form-fields { display: flex; flex-direction: column; gap: 1.125rem; }
+    .register-link { text-align: center; font-size: .875rem; color: #64748B; margin-top: 1.5rem; }
+    .register-link a { color: #1B4F8A; font-weight: 700; text-decoration: none; }
+    .register-link a:hover { text-decoration: underline; }
+
+    /* Hide feature list on mobile */
+    .feature-list { display: none; }
+  `],
   template: `
-    <div class="min-h-screen bg-gray-50 flex flex-col justify-center px-4 py-12">
-      <div class="max-w-sm w-full mx-auto">
+    <div class="login-root">
+      <div class="orb orb-a orb-1"></div>
+      <div class="orb orb-b orb-2"></div>
+      <div class="orb orb-c"></div>
 
-        <!-- Logo -->
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold" style="color:#1A56DB">Katika</h1>
-          <p class="text-gray-500 text-sm mt-1">Paiements sécurisés au Cameroun</p>
+      <!-- LEFT: Brand panel -->
+      <div class="brand-area animate-entry">
+        <div class="k-mark">
+          <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
+            <path d="M7 5v18M7 14l10-9M7 14l10 9"
+                  stroke="#fff" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <h1 class="brand-name">Katika</h1>
+        <p class="brand-sub">Paiements sécurisés au Cameroun</p>
 
-        <!-- Card -->
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-          <h2 class="text-xl font-bold text-gray-900 mb-1">Connexion</h2>
-          <p class="text-sm text-gray-500 mb-6">Bienvenue ! Entrez vos identifiants.</p>
+        <!-- Desktop-only feature list -->
+        <ul class="feature-list">
+          <li class="feature-item">
+            <div class="feature-dot" style="background:rgba(27,79,138,.25)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#74B3F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            Paiements séquestrés & sécurisés
+          </li>
+          <li class="feature-item">
+            <div class="feature-dot" style="background:rgba(16,185,129,.2)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            Protection acheteur & vendeur
+          </li>
+          <li class="feature-item">
+            <div class="feature-dot" style="background:rgba(245,158,11,.18)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            Règlement rapide des litiges
+          </li>
+          <li class="feature-item">
+            <div class="feature-dot" style="background:rgba(139,92,246,.18)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            Retraits Mobile Money instantanés
+          </li>
+        </ul>
+      </div>
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- RIGHT: Form panel -->
+      <div class="form-card animate-card">
+        <div class="form-inner">
+          <p class="form-title">Connexion</p>
+          <p class="form-sub">Bienvenue ! Entrez vos identifiants.</p>
 
-            <!-- Phone -->
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-fields">
+
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                Numéro de téléphone
-              </label>
-              <app-phone-input formControlName="username" />
-              @if (form.get('username')?.invalid && form.get('username')?.touched) {
-                <p class="text-xs text-red-600 mt-1">Numéro de téléphone requis</p>
+              <label class="field-label">Numéro de téléphone</label>
+              <app-phone-input formControlName="phoneNumber" />
+              @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
+                <p class="err-msg">Numéro de téléphone requis</p>
               }
             </div>
 
-            <!-- Password -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                Mot de passe
-              </label>
-              <div class="relative">
+              <label class="field-label">Mot de passe</label>
+              <div class="field-input-wrap">
                 <input
                   [type]="showPassword() ? 'text' : 'password'"
                   formControlName="password"
                   placeholder="••••••••"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
-                         focus:border-blue-600 focus:outline-none transition-colors pr-10"
-                  [class.border-red-400]="form.get('password')?.invalid && form.get('password')?.touched"
+                  class="field-input"
+                  [class.error]="form.get('password')?.invalid && form.get('password')?.touched"
+                  style="padding-right:3rem"
                 />
-                <button
-                  type="button"
-                  (click)="showPassword.set(!showPassword())"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400
-                         hover:text-gray-600 transition-colors"
-                  [attr.aria-label]="showPassword() ? 'Masquer' : 'Afficher'"
-                >
+                <button type="button" (click)="showPassword.set(!showPassword())"
+                        class="pwd-toggle"
+                        [attr.aria-label]="showPassword() ? 'Masquer' : 'Afficher'">
                   {{ showPassword() ? '🙈' : '👁' }}
                 </button>
               </div>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="text-xs text-red-600 mt-1">Mot de passe requis</p>
+                <p class="err-msg">Mot de passe requis</p>
               }
             </div>
 
-            <!-- Forgot password -->
-            <div class="text-right">
-              <a href="#" class="text-sm text-blue-600 hover:underline">
-                Mot de passe oublié ?
-              </a>
+            <div style="text-align:right">
+              <a href="#" class="forgot">Mot de passe oublié ?</a>
             </div>
 
-            <!-- Submit -->
-            <button
-              type="submit"
-              [disabled]="form.invalid || auth.loading()"
-              class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold
-                     text-sm hover:bg-blue-700 transition-colors min-h-[44px]
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     flex items-center justify-center gap-2"
-            >
+            <button type="submit" class="submit-btn"
+                    [disabled]="form.invalid || auth.loading()">
               @if (auth.loading()) {
-                <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Connexion en cours...
+                <span class="spinner"></span>
+                Connexion en cours…
               } @else {
                 Se connecter
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
               }
             </button>
           </form>
-        </div>
 
-        <!-- Register link -->
-        <p class="text-center text-sm text-gray-500 mt-6">
-          Pas encore de compte ?
-          <a routerLink="/auth/register" class="text-blue-600 font-medium hover:underline">
-            Créer un compte
-          </a>
-        </p>
+          <p class="register-link">
+            Pas encore de compte ?
+            <a routerLink="/auth/register">Créer un compte</a>
+          </p>
+        </div>
       </div>
     </div>
   `,
@@ -105,22 +312,18 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
 export class LoginComponent {
   protected readonly auth = inject(AuthStore);
   protected readonly showPassword = signal(false);
-
   private readonly fb = inject(FormBuilder);
 
   protected readonly form = this.fb.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
+    phoneNumber: ['', Validators.required],
+    password:    ['', Validators.required],
   });
 
   protected onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.auth.login({
-      username: this.form.value.username!,
-      password: this.form.value.password!,
+      phoneNumber: this.form.value.phoneNumber!,
+      password:    this.form.value.password!,
     });
   }
 }

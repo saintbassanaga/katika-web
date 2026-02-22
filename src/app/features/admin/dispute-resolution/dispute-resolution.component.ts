@@ -95,7 +95,7 @@ export class DisputeResolutionComponent implements OnInit {
     if (this.form.invalid) return;
     this.loading.set(true);
     this.http.post(
-      `${environment.apiUrl}/disputes/${this.id()}/resolve`,
+      `${environment.apiUrl}/api/disputes/${this.id()}/resolve`,
       this.form.value,
       { withCredentials: true },
     ).subscribe({

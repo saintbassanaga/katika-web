@@ -15,7 +15,7 @@ import { Component, input, computed } from '@angular/core';
       <div
         [class]="sizeClass()"
         class="rounded-full flex items-center justify-center text-white font-bold"
-        style="background:#1A56DB"
+        style="background:#1B4F8A"
         [attr.aria-label]="alt()"
       >
         {{ initials() }}

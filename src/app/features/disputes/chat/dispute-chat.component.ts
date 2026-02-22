@@ -4,10 +4,10 @@ import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { StompSubscription } from '@stomp/stompjs';
 import { DisputeService, DisputeMessage } from '../dispute.service';
-import { StompService } from '../../../core/websocket/stomp.service';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
-import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
+import { StompService } from '@core/websocket/stomp.service';
+import { AuthStore } from '@core/auth/auth.store';
+import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-dispute-chat',
@@ -111,7 +111,7 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     this.stomp.on<{ userId: string; typing: boolean; userName: string }>(
       `/topic/dispute.${this.disputeId()}.typing`
     ).subscribe(({ userId, typing, userName }) => {
-      if (userId === this.auth['user']?.()?.id) return;
+      if (userId === this.auth['user']?.()?.userId) return;
       this.typingUsers.update(users =>
         typing ? [...new Set([...users, userName])] : users.filter(u => u !== userName)
       );

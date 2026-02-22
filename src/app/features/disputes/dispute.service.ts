@@ -34,28 +34,28 @@ export class DisputeService extends ApiService {
     if (params?.status) query.set('status', params.status);
     query.set('page', String(params?.page ?? 0));
     query.set('size', String(params?.size ?? 20));
-    return this.http.get<Page<DisputeSummary>>(this.url(`/disputes?${query}`), this.defaultOptions);
+    return this.http.get<Page<DisputeSummary>>(this.url(`/api/disputes?${query}`), this.defaultOptions);
   }
 
   getDispute(id: string): Observable<any> {
-    return this.http.get(this.url(`/disputes/${id}`), this.defaultOptions);
+    return this.http.get(this.url(`/api/disputes/${id}`), this.defaultOptions);
   }
 
   createDispute(req: CreateDisputeRequest): Observable<any> {
-    return this.http.post(this.url('/disputes'), req, this.defaultOptions);
+    return this.http.post(this.url('/api/disputes'), req, this.defaultOptions);
   }
 
   getMessages(disputeId: string): Observable<DisputeMessage[]> {
-    return this.http.get<DisputeMessage[]>(this.url(`/disputes/${disputeId}/messages`), this.defaultOptions);
+    return this.http.get<DisputeMessage[]>(this.url(`/api/disputes/${disputeId}/messages`), this.defaultOptions);
   }
 
   sendMessage(disputeId: string, content: string): Observable<DisputeMessage> {
-    return this.http.post<DisputeMessage>(this.url(`/disputes/${disputeId}/messages`), { content }, this.defaultOptions);
+    return this.http.post<DisputeMessage>(this.url(`/api/disputes/${disputeId}/messages`), { content }, this.defaultOptions);
   }
 
   uploadEvidence(disputeId: string, files: File[]): Observable<any> {
     const form = new FormData();
     files.forEach(f => form.append('files', f, f.name));
-    return this.http.post(this.url(`/disputes/${disputeId}/evidence`), form, this.defaultOptions);
+    return this.http.post(this.url(`/api/disputes/${disputeId}/evidence`), form, this.defaultOptions);
   }
 }

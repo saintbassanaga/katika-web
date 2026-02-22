@@ -1,8 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../../core/auth/auth.service';
-import { ToastService } from '../../../core/notification/toast.service';
-import { OtpInputComponent } from '../../../shared/components/otp-input/otp-input.component';
+import { AuthService } from '@core/auth/auth.service';
+import { ToastService } from '@core/notification/toast.service';
+import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -21,10 +21,17 @@ import { Router } from '@angular/router';
               <p class="text-sm text-gray-600 mb-4">
                 1. Scannez ce QR code avec votre application d'authentification
               </p>
-              @if (qrUri()) {
-                <img [src]="qrUri()" alt="QR Code MFA" class="mx-auto w-52 h-52 rounded-xl" />
+              @if (qrDataUrl()) {
+                <img [src]="qrDataUrl()" alt="QR Code MFA" class="mx-auto w-52 h-52 rounded-xl" />
+                @if (secretKey()) {
+                  <p class="text-xs text-gray-400 mt-3">
+                    Saisie manuelle&nbsp;:
+                    <code class="font-mono text-gray-600 select-all">{{ secretKey() }}</code>
+                  </p>
+                }
               } @else {
                 <div class="w-52 h-52 bg-gray-100 rounded-xl animate-pulse mx-auto"></div>
+                <p class="text-xs text-gray-400 mt-3">Génération du QR code…</p>
               }
             </div>
 
@@ -94,7 +101,8 @@ export class MfaSetupComponent implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly step = signal(1);
-  protected readonly qrUri = signal('');
+  protected readonly qrDataUrl = signal('');
+  protected readonly secretKey = signal('');
   protected readonly backupCodes = signal<string[]>([]);
   protected readonly loading = signal(false);
   protected otpValue = '';
@@ -102,7 +110,8 @@ export class MfaSetupComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       const setup = await firstValueFrom(this.authService.getMfaSetup());
-      this.qrUri.set(setup.qrCodeUri);
+      this.qrDataUrl.set(setup.qrCodeDataUrl);
+      this.secretKey.set(setup.secretKey);
       this.backupCodes.set(setup.backupCodes);
     } catch {
       this.toast.error('Impossible de charger la configuration 2FA.');

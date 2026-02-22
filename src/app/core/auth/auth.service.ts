@@ -3,25 +3,30 @@ import { Observable } from 'rxjs';
 import { ApiService } from '../http/api.service';
 
 export interface UserProfile {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email?: string;
+  userId: string;
+  fullName: string;
   role: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  email?: string;
   mfaEnabled: boolean;
   verified: boolean;
+  issuedAt: string;
+  expiresAt: string;
 }
 
 export interface LoginRequest {
-  username: string;
+  phoneNumber: string;
   password: string;
 }
 
 export interface LoginResponse {
-  mfaRequired: boolean;
-  challengeToken?: string;
-  user?: UserProfile;
+  success:      boolean;
+  requiresMfa:  boolean;
+  challengeId:  string | null;
+  mfaExpiresIn: number | null;
+  mfaType:      string | null;
+  userId:       string | null;
+  role:         string | null;
+  message:      string;
 }
 
 export interface RegisterRequest {
@@ -34,13 +39,28 @@ export interface RegisterRequest {
 }
 
 export interface MfaVerifyRequest {
+  challengeId: string;
   code: string;
-  challengeToken: string;
+  backupCode?: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword:string;
+}
+
+export interface UpdateProfileRequest {
+  fullName: string;
+  email?: string;
+  cniNumber?: string;
 }
 
 export interface MfaSetupResponse {
-  qrCodeUri: string;
+  secretKey: string;
+  qrCodeDataUrl: string;
   backupCodes: string[];
+  message: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -76,8 +96,8 @@ export class AuthService extends ApiService {
     );
   }
 
-  verifyMfa(req: MfaVerifyRequest): Observable<UserProfile> {
-    return this.http.post<UserProfile>(
+  verifyMfa(req: MfaVerifyRequest): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
       this.url('/bff/auth/mfa/verify'),
       req,
       this.defaultOptions,
@@ -86,7 +106,7 @@ export class AuthService extends ApiService {
 
   register(req: RegisterRequest): Observable<{ userId: string }> {
     return this.http.post<{ userId: string }>(
-      this.url('/auth/register'),
+      this.url('/api/auth/register'),
       req,
       this.defaultOptions,
     );
@@ -94,14 +114,14 @@ export class AuthService extends ApiService {
 
   getMfaSetup(): Observable<MfaSetupResponse> {
     return this.http.get<MfaSetupResponse>(
-      this.url('/mfa/setup'),
+      this.url('/api/mfa/setup'),
       this.defaultOptions,
     );
   }
 
   confirmMfa(code: string): Observable<{ enabled: boolean }> {
     return this.http.post<{ enabled: boolean }>(
-      this.url('/mfa/confirm'),
+      this.url('/api/mfa/confirm'),
       { code },
       this.defaultOptions,
     );
@@ -109,8 +129,32 @@ export class AuthService extends ApiService {
 
   disableMfa(code: string): Observable<{ enabled: boolean }> {
     return this.http.post<{ enabled: boolean }>(
-      this.url('/mfa/disable'),
+      this.url('/api/mfa/disable'),
       { code },
+      this.defaultOptions,
+    );
+  }
+
+  updateProfile(req: UpdateProfileRequest): Observable<void> {
+    return this.http.patch<void>(
+      this.url('/api/users/me'),
+      req,
+      this.defaultOptions,
+    );
+  }
+
+  changePassword(req: ChangePasswordRequest): Observable<void> {
+    return this.http.patch<void>(
+      this.url('/api/users/me/password'),
+      req,
+      this.defaultOptions,
+    );
+  }
+
+  requestVerification(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      this.url('/api/users/me/verification'),
+      {},
       this.defaultOptions,
     );
   }

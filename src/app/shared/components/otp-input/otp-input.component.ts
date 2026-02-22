@@ -7,6 +7,7 @@ import {
   QueryList,
   ViewChildren,
   AfterViewInit,
+  OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -38,11 +39,11 @@ import { FormsModule } from '@angular/forms';
     </div>
   `,
   styles: [`
-    .border-primary { border-color: #1A56DB; }
-    .focus\\:border-primary:focus { border-color: #1A56DB; }
+    .border-primary { border-color: #1B4F8A; }
+    .focus\\:border-primary:focus { border-color: #1B4F8A; }
   `],
 })
-export class OtpInputComponent implements AfterViewInit {
+export class OtpInputComponent implements OnInit, AfterViewInit {
   readonly length = input<number>(6);
   readonly disabled = input<boolean>(false);
   readonly value = model<string>('');
@@ -53,10 +54,14 @@ export class OtpInputComponent implements AfterViewInit {
   protected values: string[] = [];
   protected cells: number[] = [];
 
-  ngAfterViewInit(): void {
+  // Initialize arrays BEFORE first template check (ngOnInit runs before CD)
+  ngOnInit(): void {
     this.cells = Array.from({ length: this.length() }, (_, i) => i);
     this.values = Array(this.length()).fill('');
-    // Focus first cell
+  }
+
+  // Only DOM interaction here — after view is ready
+  ngAfterViewInit(): void {
     setTimeout(() => this.cellInputs.first?.nativeElement.focus(), 100);
   }
 
