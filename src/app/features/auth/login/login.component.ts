@@ -31,7 +31,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
     }
     .orb-b {
       width: 280px; height: 280px; bottom: 10%; right: -12%;
-      background: radial-gradient(circle, rgba(245,158,11,.13) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(201,146,13,.28) 0%, transparent 70%);
     }
     .orb-c {
       width: 200px; height: 200px; bottom: 40%; left: 5%;
@@ -49,19 +49,19 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
     }
     .k-mark {
       width: 68px; height: 68px;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
+      background: linear-gradient(135deg, #C9920D, #96650A);
       border-radius: 20px;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 1.25rem;
-      box-shadow: 0 10px 40px rgba(27,79,138,.5);
+      box-shadow: 0 10px 40px rgba(201,146,13,.45);
     }
     .brand-name {
       color: #fff; font-size: 2.5rem; font-weight: 800;
-      letter-spacing: -0.04em; margin: 0 0 .4rem;
+      letter-spacing: -0.04em; margin: 0 0 .5rem;
     }
     .brand-sub {
-      color: rgba(210,190,140,.7); font-size: .9rem;
-      font-weight: 400; margin: 0;
+      color: #F5D48A; font-size: .9rem;
+      font-weight: 500; margin: 0; letter-spacing: .01em;
     }
     .form-card {
       position: relative; z-index: 10;
@@ -85,7 +85,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
         justify-content: center;
       }
       .brand-name { font-size: 3rem; }
-      .brand-sub  { font-size: .9375rem; }
+      .brand-sub  { font-size: .9375rem; font-weight: 500; }
 
       /* Feature list — only visible on desktop */
       .feature-list { display: flex; flex-direction: column; gap: .875rem; margin-top: 2.5rem; }
@@ -282,7 +282,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
             </div>
 
             <div style="text-align:right">
-              <a href="#" class="forgot">Mot de passe oublié ?</a>
+              <a routerLink="/auth/forgot-password" class="forgot">Mot de passe oublié ?</a>
             </div>
 
             <button type="submit" class="submit-btn"

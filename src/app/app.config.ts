@@ -15,11 +15,11 @@ import {
 import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { csrfInterceptor } from './core/http/csrf.interceptor';
-import { authInterceptor } from './core/http/auth.interceptor';
-import { offlineInterceptor } from './core/http/offline.interceptor';
-import { errorInterceptor } from './core/http/error.interceptor';
-import { AuthStore } from './core/auth/auth.store';
+import { csrfInterceptor } from '@core/http/csrf.interceptor';
+import { authInterceptor } from '@core/http/auth.interceptor';
+import { offlineInterceptor } from '@core/http/offline.interceptor';
+import { errorInterceptor } from '@core/http/error.interceptor';
+import { AuthStore } from '@core/auth/auth.store';
 
 export const appConfig: ApplicationConfig = {
   providers: [

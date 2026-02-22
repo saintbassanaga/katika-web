@@ -22,4 +22,9 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () =>
       import('./mfa-setup/mfa-setup.component').then(m => m.MfaSetupComponent),
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+  },
 ];

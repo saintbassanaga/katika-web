@@ -158,4 +158,20 @@ export class AuthService extends ApiService {
       this.defaultOptions,
     );
   }
+
+  forgotPassword(phoneNumber: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      this.url('/api/auth/password/reset-request'),
+      { phoneNumber },
+      this.defaultOptions,
+    );
+  }
+
+  resetPassword(req: { phoneNumber: string; code: string; newPassword: string }): Observable<void> {
+    return this.http.post<void>(
+      this.url('/api/auth/password/reset-confirm'),
+      req,
+      this.defaultOptions,
+    );
+  }
 }
