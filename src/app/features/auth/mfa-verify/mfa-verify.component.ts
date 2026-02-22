@@ -3,20 +3,21 @@ import { AuthStore } from '../../../core/auth/auth.store';
 import { OtpInputComponent } from '../../../shared/components/otp-input/otp-input.component';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-mfa-verify',
   standalone: true,
-  imports: [OtpInputComponent, RouterLink, FormsModule],
+  imports: [OtpInputComponent, RouterLink, FormsModule, TranslatePipe],
   template: `
     <div class="min-h-screen bg-gray-50 flex flex-col justify-center px-4 py-12">
       <div class="max-w-sm w-full mx-auto">
 
         <div class="text-center mb-8">
           <div class="text-5xl mb-4">🔐</div>
-          <h1 class="text-2xl font-bold text-gray-900">Vérification à deux facteurs</h1>
+          <h1 class="text-2xl font-bold text-gray-900">{{ 'auth.mfa.title' | translate }}</h1>
           <p class="text-sm text-gray-500 mt-2">
-            Entrez le code à 6 chiffres de votre application d'authentification
+            {{ 'auth.mfa.subtitle' | translate }}
           </p>
         </div>
 
@@ -51,7 +52,7 @@ import { FormsModule } from '@angular/forms';
               (click)="useBackupCode.set(true)"
               class="w-full text-center text-sm text-blue-600 mt-4 hover:underline"
             >
-              Utiliser un code de secours
+              {{ 'auth.mfa.useBackup' | translate }}
             </button>
           } @else {
             <button
@@ -64,21 +65,23 @@ import { FormsModule } from '@angular/forms';
             >
               @if (auth.loading()) {
                 <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                {{ 'auth.mfa.submitting' | translate }}
+              } @else {
+                {{ 'auth.mfa.submit' | translate }}
               }
-              Vérifier
             </button>
             <button
               type="button"
               (click)="useBackupCode.set(false)"
               class="w-full text-center text-sm text-blue-600 mt-3 hover:underline"
             >
-              Utiliser un code TOTP
+              {{ 'auth.mfa.cancelBackup' | translate }}
             </button>
           }
         </div>
 
         <a routerLink="/auth/login" class="block text-center text-sm text-gray-500 mt-6 hover:underline">
-          ← Retour à la connexion
+          {{ 'common.back' | translate }}
         </a>
       </div>
     </div>

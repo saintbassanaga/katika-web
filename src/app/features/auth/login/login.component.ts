@@ -1,13 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth.store';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent],
+  imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent, TranslatePipe],
   styles: [`
     /* ─── Root ───────────────────────────────────── */
     .login-root {
@@ -80,15 +81,19 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
       .brand-area {
         flex: 1;
         padding: 3rem 4rem;
-        align-items: flex-start;
-        text-align: left;
+        align-items: center;
+        text-align: center;
         justify-content: center;
       }
       .brand-name { font-size: 3rem; }
       .brand-sub  { font-size: .9375rem; font-weight: 500; }
 
       /* Feature list — only visible on desktop */
-      .feature-list { display: flex; flex-direction: column; gap: .875rem; margin-top: 2.5rem; }
+      .feature-list {
+        display: flex; flex-direction: column; gap: .875rem; margin-top: 2.5rem;
+        list-style: none; padding: 0;
+        align-self: flex-start; text-align: left;
+      }
       .feature-item {
         display: flex; align-items: center; gap: .75rem;
         color: rgba(226,232,240,.75); font-size: .875rem; font-weight: 500;
@@ -148,8 +153,10 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
       position: absolute; right: .875rem; top: 50%;
       transform: translateY(-50%);
       background: none; border: none; cursor: pointer;
-      font-size: 1rem; color: #94A3B8; padding: .25rem;
+      color: #94A3B8; padding: .25rem;
+      display: flex; align-items: center; transition: color .15s;
     }
+    .pwd-toggle:hover { color: #475569; }
     .err-msg { font-size: .75rem; color: #DC2626; margin: .35rem 0 0; }
 
     .forgot {
@@ -204,7 +211,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
           </svg>
         </div>
         <h1 class="brand-name">Katika</h1>
-        <p class="brand-sub">Paiements sécurisés au Cameroun</p>
+        <p class="brand-sub">{{ 'auth.login.tagline' | translate }}</p>
 
         <!-- Desktop-only feature list -->
         <ul class="feature-list">
@@ -214,7 +221,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
-            Paiements séquestrés & sécurisés
+            {{ 'auth.login.features.escrow' | translate }}
           </li>
           <li class="feature-item">
             <div class="feature-dot" style="background:rgba(16,185,129,.2)">
@@ -222,7 +229,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            Protection acheteur & vendeur
+            {{ 'auth.login.features.protection' | translate }}
           </li>
           <li class="feature-item">
             <div class="feature-dot" style="background:rgba(245,158,11,.18)">
@@ -230,7 +237,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
             </div>
-            Règlement rapide des litiges
+            {{ 'auth.login.features.disputes' | translate }}
           </li>
           <li class="feature-item">
             <div class="feature-dot" style="background:rgba(139,92,246,.18)">
@@ -238,7 +245,7 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
                 <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
               </svg>
             </div>
-            Retraits Mobile Money instantanés
+            {{ 'auth.login.features.payout' | translate }}
           </li>
         </ul>
       </div>
@@ -246,21 +253,21 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
       <!-- RIGHT: Form panel -->
       <div class="form-card animate-card">
         <div class="form-inner">
-          <p class="form-title">Connexion</p>
-          <p class="form-sub">Bienvenue ! Entrez vos identifiants.</p>
+          <p class="form-title">{{ 'auth.login.title' | translate }}</p>
+          <p class="form-sub">{{ 'auth.login.subtitle' | translate }}</p>
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-fields">
 
             <div>
-              <label class="field-label">Numéro de téléphone</label>
+              <label class="field-label">{{ 'auth.login.phone' | translate }}</label>
               <app-phone-input formControlName="phoneNumber" />
               @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
-                <p class="err-msg">Numéro de téléphone requis</p>
+                <p class="err-msg">{{ 'auth.login.phoneError' | translate }}</p>
               }
             </div>
 
             <div>
-              <label class="field-label">Mot de passe</label>
+              <label class="field-label">{{ 'auth.login.password' | translate }}</label>
               <div class="field-input-wrap">
                 <input
                   [type]="showPassword() ? 'text' : 'password'"
@@ -273,25 +280,25 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
                 <button type="button" (click)="showPassword.set(!showPassword())"
                         class="pwd-toggle"
                         [attr.aria-label]="showPassword() ? 'Masquer' : 'Afficher'">
-                  {{ showPassword() ? '🙈' : '👁' }}
+                  @if (showPassword()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
                 </button>
               </div>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="err-msg">Mot de passe requis</p>
+                <p class="err-msg">{{ 'auth.login.passwordError' | translate }}</p>
               }
             </div>
 
             <div style="text-align:right">
-              <a routerLink="/auth/forgot-password" class="forgot">Mot de passe oublié ?</a>
+              <a routerLink="/auth/forgot-password" class="forgot">{{ 'auth.login.forgotPassword' | translate }}</a>
             </div>
 
             <button type="submit" class="submit-btn"
                     [disabled]="form.invalid || auth.loading()">
               @if (auth.loading()) {
                 <span class="spinner"></span>
-                Connexion en cours…
+                {{ 'auth.login.submitting' | translate }}
               } @else {
-                Se connecter
+                {{ 'auth.login.submit' | translate }}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -301,8 +308,8 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
           </form>
 
           <p class="register-link">
-            Pas encore de compte ?
-            <a routerLink="/auth/register">Créer un compte</a>
+            {{ 'auth.login.noAccount' | translate }}
+            <a routerLink="/auth/register">{{ 'auth.login.signUp' | translate }}</a>
           </p>
         </div>
       </div>

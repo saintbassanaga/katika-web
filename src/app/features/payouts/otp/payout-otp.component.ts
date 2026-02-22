@@ -1,8 +1,9 @@
 import { Component, inject, input, OnInit, OnDestroy, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PayoutService } from '../payout.service';
-import { OtpInputComponent } from '../../../shared/components/otp-input/otp-input.component';
-import { ToastService } from '../../../core/notification/toast.service';
+import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
+import { ToastService } from '@core/notification/toast.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-payout-otp',

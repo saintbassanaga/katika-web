@@ -7,6 +7,7 @@ import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { LoadingSkeletonComponent } from '../../shared/components/loading-skeleton/loading-skeleton.component';
 import { BottomSheetComponent } from '../../shared/components/bottom-sheet/bottom-sheet.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface WalletBalance {
   balance: number;

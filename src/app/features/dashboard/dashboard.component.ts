@@ -6,6 +6,7 @@ import { AuthStore } from '../../core/auth/auth.store';
 import { AmountPipe } from '../../shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface TransactionSummary {
   id: string;

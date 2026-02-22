@@ -23,6 +23,14 @@ export interface TransactionDetail extends TransactionSummary {
   netAmount: number;
 }
 
+export interface EscrowCreateRequest {
+  buyerPhone: string;
+  grossAmount: number;
+  description?: string;
+  deliveryDeadline?: string; // ISO 8601
+  idempotencyKey?: string;
+}
+
 export interface Page<T> {
   content: T[];
   totalPages: number;
@@ -33,6 +41,14 @@ export interface Page<T> {
 
 @Injectable({ providedIn: 'root' })
 export class EscrowService extends ApiService {
+  createTransaction(req: EscrowCreateRequest): Observable<TransactionSummary> {
+    return this.http.post<TransactionSummary>(
+      this.url('/api/escrow'),
+      req,
+      this.defaultOptions,
+    );
+  }
+
   getTransactions(params: { status?: string; page?: number; size?: number }): Observable<Page<TransactionSummary>> {
     const query = new URLSearchParams();
     if (params.status) query.set('status', params.status);

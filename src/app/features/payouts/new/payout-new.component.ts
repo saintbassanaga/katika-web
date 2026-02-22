@@ -3,9 +3,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { PayoutService } from '../payout.service';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { AmountPipe } from '../../../shared/pipes/amount.pipe';
-import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
+import { AuthStore } from '@core/auth/auth.store';
+import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
 const PROVIDERS = [

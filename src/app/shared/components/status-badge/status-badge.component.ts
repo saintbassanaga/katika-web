@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface StatusConfig { label: string; bg: string; color: string; dot: string; }
 
@@ -22,6 +23,7 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
 @Component({
   selector: 'app-status-badge',
   standalone: true,
+  imports: [TranslatePipe],
   styles: [`
     .badge {
       display: inline-flex; align-items: center; gap: 5px;
@@ -37,7 +39,7 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
           [style.background]="cfg().bg"
           [style.color]="cfg().color">
       <span class="dot" [style.background]="cfg().dot"></span>
-      {{ cfg().label }}
+      {{ 'status.' + status() | translate }}
     </span>
   `,
 })

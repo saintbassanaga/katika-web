@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth.store';
 
 interface NavItem { key: string; label: string; route: string; }
@@ -15,7 +16,7 @@ const NAV_ITEMS: NavItem[] = [
 @Component({
   selector: 'app-bottom-nav',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe],
   styles: [`
     nav {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
@@ -84,7 +85,7 @@ const NAV_ITEMS: NavItem[] = [
                 }
               }
             </div>
-            <span class="nav-label">{{ item.label }}</span>
+            <span class="nav-label">{{ 'nav.' + item.key | translate }}</span>
           </a>
         }
       </div>

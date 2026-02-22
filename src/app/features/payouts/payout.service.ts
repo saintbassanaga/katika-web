@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../core/http/api.service';
+import { ApiService } from '@core/http/api.service';
 
 export interface PayoutRequest {
   amount: number;

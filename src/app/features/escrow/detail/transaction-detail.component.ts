@@ -2,10 +2,11 @@ import { Component, inject, signal, OnInit, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { EscrowService, TransactionDetail } from '../escrow.service';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { AmountPipe } from '../../../shared/pipes/amount.pipe';
-import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
-import { PhoneMaskPipe } from '../../../shared/pipes/phone-mask.pipe';
+import { AuthStore } from '@core/auth/auth.store';
+import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
+import { PhoneMaskPipe } from '@shared/pipes/phone-mask.pipe';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED'];
 

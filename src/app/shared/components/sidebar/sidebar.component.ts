@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth.store';
+import { LangSwitcherComponent } from '../lang-switcher/lang-switcher.component';
 
 interface SidebarItem { key: string; label: string; route: string; roles?: string[]; }
 
@@ -17,7 +19,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, LangSwitcherComponent],
   styles: [`
     aside {
       position: fixed; left: 0; top: 0; bottom: 0; width: 256px;
@@ -96,13 +98,13 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         </div>
         <div>
           <div class="logo-text">Katika</div>
-          <div class="logo-sub">Paiements sécurisés</div>
+          <div class="logo-sub">{{ 'nav.subtitle' | translate }}</div>
         </div>
       </div>
 
 
       <!-- Nav -->
-      <nav aria-label="Navigation principale">
+      <nav [attr.aria-label]="'nav.dashboard' | translate">
         @for (item of visibleItems(); track item.route) {
           <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
             <span class="nav-icon">
@@ -144,7 +146,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
                 }
               }
             </span>
-            {{ item.label }}
+            {{ 'nav.' + item.key | translate }}
           </a>
         }
       </nav>
@@ -158,13 +160,18 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         </div>
       </div>
 
+      <!-- Lang switcher -->
+      <div style="padding:.5rem .75rem 0">
+        <app-lang-switcher />
+      </div>
+
       <!-- Logout -->
       <div class="logout-area">
         <button (click)="auth.logout()" class="logout-btn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
-          Déconnexion
+          {{ 'nav.logout' | translate }}
         </button>
       </div>
     </aside>

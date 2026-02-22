@@ -30,12 +30,10 @@ export interface LoginResponse {
 }
 
 export interface RegisterRequest {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email?: string;
+  phoneNumber: string;
+  fullName: string;
   password: string;
-  role: 'BUYER' | 'SELLER';
+  email?: string;
 }
 
 export interface MfaVerifyRequest {

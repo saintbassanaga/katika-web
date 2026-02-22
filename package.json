@@ -30,6 +30,8 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@ngrx/signals": "^21.0.1",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
     "@stomp/stompjs": "^7.3.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",

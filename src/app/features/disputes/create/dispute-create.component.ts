@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DisputeService } from '../dispute.service';
 import { ToastService } from '../../../core/notification/toast.service';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 const REASONS = [
   { value: 'ITEM_NOT_RECEIVED',    label: 'Article non reçu',       icon: '📦' },

@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../core/notification/toast.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   return c.get('newPassword')?.value === c.get('confirmPassword')?.value
@@ -14,7 +15,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent],
+  imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent, TranslatePipe],
   styles: [`
     .root {
       min-height: 100svh;
@@ -98,7 +99,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
     .eye-btn {
       position: absolute; right: .875rem; top: 50%; transform: translateY(-50%);
       background: none; border: none; cursor: pointer; color: #94A3B8; padding: .25rem;
+      display: flex; align-items: center; transition: color .15s;
     }
+    .eye-btn:hover { color: #475569; }
 
     /* OTP row */
     .otp-row { display: flex; gap: .5rem; }
@@ -185,12 +188,12 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 
         <!-- ── STEP 1 : Phone ─────────────────────── -->
         @if (step() === 1) {
-          <p class="heading">Mot de passe oublié</p>
+          <p class="heading">{{ 'auth.forgotPassword.title' | translate }}</p>
           <p class="sub">Entrez votre numéro de téléphone. Nous vous enverrons un code de réinitialisation par SMS.</p>
 
           <form [formGroup]="phoneForm" (ngSubmit)="sendCode()">
             <div class="field">
-              <label class="label">Numéro de téléphone</label>
+              <label class="label">{{ 'auth.forgotPassword.phoneLabel' | translate }}</label>
               <app-phone-input formControlName="phoneNumber" />
               @if (phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched) {
                 <p class="err">Numéro requis</p>
@@ -199,9 +202,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 
             <button type="submit" class="btn-primary" [disabled]="phoneForm.invalid || loading()">
               @if (loading()) {
-                <span class="spinner"></span> Envoi en cours…
+                <span class="spinner"></span> {{ 'auth.forgotPassword.sending' | translate }}
               } @else {
-                Envoyer le code
+                {{ 'auth.forgotPassword.sendCode' | translate }}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -231,9 +234,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
           <button class="btn-primary" [disabled]="otpCode().length < 6 || loading()"
                   (click)="verifyCode()">
             @if (loading()) {
-              <span class="spinner"></span> Vérification…
+              <span class="spinner"></span> {{ 'auth.forgotPassword.verifying' | translate }}
             } @else {
-              Vérifier le code
+              {{ 'auth.forgotPassword.verify' | translate }}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -243,13 +246,13 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 
           <div class="back-row" style="margin-top:.875rem">
             <span>Pas reçu ?</span>
-            <a href="#" (click)="resendCode($event)">Renvoyer le code</a>
+            <a href="#" (click)="resendCode($event)">{{ 'auth.forgotPassword.sendCode' | translate }}</a>
           </div>
         }
 
         <!-- ── STEP 3 : New password ─────────────── -->
         @if (step() === 3) {
-          <p class="heading">Nouveau mot de passe</p>
+          <p class="heading">{{ 'auth.forgotPassword.newPassword' | translate }}</p>
           <p class="sub">Choisissez un mot de passe fort pour sécuriser votre compte.</p>
 
           <form [formGroup]="resetForm" (ngSubmit)="submitReset()">
@@ -263,7 +266,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                        class="input" style="padding-right:3rem"
                        [class.error]="resetForm.get('newPassword')?.invalid && resetForm.get('newPassword')?.touched" />
                 <button type="button" class="eye-btn" (click)="showPwd.set(!showPwd())">
-                  {{ showPwd() ? '🙈' : '👁' }}
+                  @if (showPwd()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
                 </button>
               </div>
               @if (resetForm.get('newPassword')?.errors?.['minlength'] && resetForm.get('newPassword')?.touched) {
@@ -288,9 +291,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
             <button type="submit" class="btn-primary"
                     [disabled]="resetForm.invalid || loading()">
               @if (loading()) {
-                <span class="spinner"></span> Enregistrement…
+                <span class="spinner"></span> {{ 'auth.forgotPassword.changing' | translate }}
               } @else {
-                Réinitialiser le mot de passe
+                {{ 'auth.forgotPassword.changePassword' | translate }}
               }
             </button>
           </form>

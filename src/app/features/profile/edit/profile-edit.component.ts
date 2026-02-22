@@ -2,11 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../core/auth/auth.store';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   styles: [`
     .page { min-height: 100svh; background: #EDF1F7; }
 

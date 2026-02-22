@@ -5,6 +5,7 @@ import { AuthStore } from '@core/auth/auth.store';
 import { AuthService } from '@core/auth/auth.service';
 import { ToastService } from '@core/notification/toast.service';
 import { firstValueFrom } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 
 function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   return c.get('newPassword')?.value === c.get('confirmPassword')?.value
@@ -14,7 +15,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-security-settings',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, TranslatePipe],
   styles: [`
     .page { min-height: 100svh; background: #EDF1F7; }
 
@@ -136,7 +137,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
     .eye-btn {
       position: absolute; right: .875rem; top: 50%; transform: translateY(-50%);
       background: none; border: none; cursor: pointer; color: #94A3B8; padding: .25rem;
+      display: flex; align-items: center; transition: color .15s;
     }
+    .eye-btn:hover { color: #475569; }
     .err { font-size: .75rem; color: #DC2626; margin: .3rem 0 0; }
 
     .form-actions { display: flex; gap: .625rem; margin-top: 1.125rem; }
@@ -256,7 +259,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                            style="padding-right:3rem"
                            [class.error]="isInvalidPwd('currentPassword')" />
                     <button type="button" class="eye-btn" (click)="showCurrent.set(!showCurrent())">
-                      {{ showCurrent() ? '🙈' : '👁' }}
+                      @if (showCurrent()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
                     </button>
                   </div>
                   @if (isInvalidPwd('currentPassword')) {
@@ -273,7 +276,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                            class="input" style="padding-right:3rem"
                            [class.error]="isInvalidPwd('newPassword')" />
                     <button type="button" class="eye-btn" (click)="showNew.set(!showNew())">
-                      {{ showNew() ? '🙈' : '👁' }}
+                      @if (showNew()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
                     </button>
                   </div>
                   @if (pwdForm.get('newPassword')?.errors?.['minlength'] && pwdForm.get('newPassword')?.touched) {

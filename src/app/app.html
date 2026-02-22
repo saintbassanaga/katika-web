@@ -1,5 +1,5 @@
-<div class="min-h-screen" style="background:#F1F5F9">
-  @if (auth.isAuthenticated()) {
+<div class="min-h-screen" style="background:#EDF1F7">
+  @if (showNav()) {
     @if (isMobile()) {
       <app-bottom-nav />
     } @else {
@@ -16,5 +16,6 @@
     <router-outlet />
   </main>
 
+  <app-fab />
   <app-toast-container />
 </div>

@@ -1,0 +1,360 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "disputes": "Disputes",
+    "wallet": "Wallet",
+    "payouts": "Withdrawals",
+    "admin": "Administration",
+    "profile": "Profile",
+    "home": "Home",
+    "subtitle": "Secure payments",
+    "logout": "Sign out"
+  },
+  "common": {
+    "loading": "Loading…",
+    "cancel": "Cancel",
+    "save": "Save",
+    "back": "Back",
+    "loadMore": "Load more",
+    "close": "Close",
+    "optional": "(optional)"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Welcome! Enter your credentials.",
+      "tagline": "Secure payments in Cameroon",
+      "phone": "Phone number",
+      "phoneError": "Phone number is required",
+      "password": "Password",
+      "passwordError": "Password is required",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "No account yet?",
+      "signUp": "Sign up",
+      "features": {
+        "escrow": "Funds held until confirmed",
+        "payout": "Fast Mobile Money withdrawals",
+        "protection": "Buyer & seller protection",
+        "disputes": "Dispute resolution within 48h"
+      }
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Join Katika in seconds.",
+      "firstName": "First name",
+      "firstNamePh": "John",
+      "firstNameError": "First name required (min. 2 chars)",
+      "lastName": "Last name",
+      "lastNamePh": "Fotso",
+      "lastNameError": "Last name required (min. 2 chars)",
+      "phone": "Phone",
+      "email": "Email",
+      "emailPh": "john@example.com",
+      "emailError": "Invalid email address",
+      "role": "I am a",
+      "buyer": "Buyer",
+      "seller": "Seller",
+      "password": "Password",
+      "passwordPh": "Min. 8 chars, 1 uppercase, 1 number, 1 special",
+      "confirmPassword": "Confirm password",
+      "confirmPh": "••••••••",
+      "mismatchError": "Passwords do not match",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "strength": {
+        "veryWeak": "Very weak",
+        "weak": "Weak",
+        "good": "Good",
+        "excellent": "Excellent"
+      }
+    },
+    "mfa": {
+      "title": "Two-factor authentication",
+      "subtitle": "Enter the code from your authenticator app",
+      "code": "6-digit code",
+      "submit": "Verify",
+      "submitting": "Verifying…",
+      "useBackup": "Use a backup code",
+      "backupCode": "Backup code",
+      "backupPh": "XXXX-XXXX",
+      "cancelBackup": "Back to TOTP code"
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Recover access to your account",
+      "phoneLabel": "Phone number",
+      "phoneSub": "Enter the number linked to your account",
+      "sendCode": "Send code",
+      "sending": "Sending…",
+      "codeLabel": "Verification code",
+      "codeSub": "Enter the code received by SMS",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm",
+      "changePassword": "Change password",
+      "changing": "Changing…",
+      "successTitle": "Password changed!",
+      "successSub": "You can now sign in with your new password.",
+      "backToLogin": "Back to sign in"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hello",
+    "subtitle": "Here is a summary of your activity",
+    "balance": "Available balance",
+    "recentTransactions": "Recent transactions",
+    "viewAll": "View all",
+    "noTransactions": "No recent transactions",
+    "newTransaction": "New transaction",
+    "newDispute": "Report a dispute",
+    "disputeAlert": "{{count}} dispute(s) in progress",
+    "viewDisputes": "View disputes",
+    "quickActions": {
+      "transactions": "Transactions",
+      "withdrawal": "Withdrawal",
+      "wallet": "Wallet",
+      "disputes": "Disputes"
+    }
+  },
+  "escrow": {
+    "title": "Transactions",
+    "filters": {
+      "all": "All",
+      "locked": "Pending",
+      "shipped": "Shipped",
+      "disputed": "Disputed"
+    },
+    "empty": {
+      "title": "No transactions",
+      "message": "Your transactions will appear here"
+    },
+    "loadMore": "Load more",
+    "loading": "Loading…",
+    "detail": {
+      "title": "Transaction detail",
+      "back": "Back",
+      "progress": "Progress",
+      "steps": {
+        "INITIATED": "Initiated",
+        "LOCKED": "Held",
+        "SHIPPED": "Shipped",
+        "DELIVERED": "Delivered",
+        "RELEASED": "Released"
+      },
+      "amount": "Amount",
+      "fee": "Platform fee (3%)",
+      "net": "Net amount for seller",
+      "grossAmount": "Gross amount",
+      "parties": "Parties",
+      "buyer": "Buyer",
+      "seller": "Seller",
+      "reference": "Reference",
+      "createdAt": "Created",
+      "description": "Description",
+      "actions": {
+        "release": "Release funds",
+        "scanQr": "Scan QR code",
+        "generateQr": "Generate my QR code",
+        "dispute": "Open a dispute"
+      }
+    }
+  },
+  "disputes": {
+    "title": "Disputes",
+    "empty": {
+      "title": "No disputes",
+      "message": "Your disputes will appear here"
+    },
+    "create": {
+      "pageTitle": "Open a dispute",
+      "reasonTitle": "Dispute reason",
+      "reasons": {
+        "notReceived": "Item not received",
+        "notConform": "Item not as described",
+        "unreactive": "Unresponsive seller",
+        "other": "Other reason"
+      },
+      "continue": "Continue",
+      "back": "Back",
+      "descTitle": "Problem description",
+      "descPh": "Describe the problem in detail (minimum 20 characters)...",
+      "summaryTitle": "Summary",
+      "transactionLabel": "Transaction",
+      "motifLabel": "Reason",
+      "modify": "Edit",
+      "submit": "Submit dispute",
+      "submitting": "Submitting…"
+    }
+  },
+  "wallet": {
+    "title": "Wallet",
+    "balance": "Available balance",
+    "hide": "Hide",
+    "show": "Show",
+    "movements": "Movements",
+    "withdraw": "Withdraw",
+    "empty": {
+      "title": "No movements",
+      "message": "Your movements will appear here"
+    },
+    "frozen": "Held",
+    "withdrawBtn": "Withdraw",
+    "refreshBtn": "Refresh",
+    "history": "Movement history",
+    "detail": {
+      "title": "Movement detail",
+      "reference": "Reference",
+      "amount": "Amount",
+      "balanceBefore": "Balance before",
+      "balanceAfter": "Balance after",
+      "description": "Description"
+    }
+  },
+  "payouts": {
+    "title": "Withdrawal",
+    "amount": "Amount",
+    "provider": "Provider",
+    "fee": "Fee",
+    "net": "You will receive",
+    "submit": "Confirm withdrawal",
+    "balance": "Available balance",
+    "allAmount": "All",
+    "amountPh": "Other amount...",
+    "operator": "Provider",
+    "receiptNumber": "Receipt number",
+    "estimatedFee": "Estimated fee",
+    "continue": "Continue",
+    "otp": {
+      "title": "Confirmation",
+      "subtitle": "Enter the code received by SMS",
+      "confirm": "Confirm",
+      "resend": "Resend code",
+      "resendIn": "Resend in {{count}}s"
+    }
+  },
+  "profile": {
+    "title": "My account",
+    "edit": "Edit",
+    "account": "Account",
+    "wallet": "Wallet",
+    "walletSub": "Balance, movements and withdrawals",
+    "transactions": "My transactions",
+    "transactionsSub": "Exchange history",
+    "security": "Security",
+    "securityTitle": "Account security",
+    "securitySub": "Password, 2FA authentication",
+    "logout": "Sign out",
+    "editTitle": "Edit profile",
+    "fullName": "Full name",
+    "email": "Email",
+    "saveChanges": "Save changes",
+    "saving": "Saving…",
+    "editForm": {
+      "topbarTitle": "Edit profile",
+      "nonEditable": "Not editable",
+      "phone": "Phone",
+      "role": "Role",
+      "editableSection": "Editable information",
+      "fullNamePh": "John Fotso",
+      "fullNameRequired": "Full name is required",
+      "fullNameMin": "At least 2 characters",
+      "emailInvalid": "Invalid email address",
+      "emailHint": "Used for notifications and account recovery.",
+      "cni": "ID Number",
+      "cniHint": "National ID — required for certain operations.",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "save": "Save"
+    },
+    "securityForm": {
+      "topbarTitle": "Security",
+      "verificationSection": "Verification",
+      "verified": "Verified account",
+      "verifiedSub": "Your identity has been confirmed",
+      "notVerified": "Verify your account",
+      "notVerifiedSub": "Access all features",
+      "sending": "Sending…",
+      "verifyBtn": "Verify",
+      "passwordSection": "Password",
+      "passwordLabel": "Password",
+      "lastChanged": "Last change unknown",
+      "cancel": "Cancel",
+      "modify": "Edit",
+      "currentPassword": "Current password",
+      "currentPasswordRequired": "Current password is required",
+      "newPassword": "New password",
+      "passwordPh": "Min. 8 chars, 1 uppercase, 1 number, 1 special",
+      "passwordMin": "At least 8 characters",
+      "passwordStrong": "Must contain uppercase, a number and a special character",
+      "confirmPassword": "Confirm new password",
+      "passwordMismatch": "Passwords do not match",
+      "changing": "Changing…",
+      "changePassword": "Change password",
+      "mfaSection": "Two-factor authentication",
+      "mfaLabel": "2FA Authentication",
+      "mfaEnabled": "Enabled — TOTP app",
+      "mfaDisabled": "Not enabled",
+      "disable": "Disable",
+      "enable": "Enable",
+      "disablePrompt": "Enter your TOTP code to confirm deactivation:",
+      "disabling": "Disabling…",
+      "confirmDisable": "Confirm deactivation"
+    }
+  },
+  "status": {
+    "INITIATED": "Initiated",
+    "LOCKED": "Held",
+    "SHIPPED": "Shipped",
+    "DELIVERED": "Delivered",
+    "RELEASED": "Released",
+    "DISPUTED": "Disputed",
+    "REFUNDED": "Refunded",
+    "CANCELLED": "Cancelled",
+    "OPEN": "Open",
+    "IN_PROGRESS": "In progress",
+    "RESOLVED": "Resolved",
+    "PROCESSING": "Processing",
+    "COMPLETED": "Completed",
+    "FAILED": "Failed"
+  },
+  "fab": {
+    "newTransaction": "New transaction",
+    "newDispute": "New dispute",
+    "form": {
+      "title": "New transaction",
+      "buyerPhone": "Buyer phone",
+      "amount": "Amount",
+      "description": "Description",
+      "descriptionPh": "Transaction purpose…",
+      "deadline": "Delivery deadline",
+      "grossAmount": "Gross amount",
+      "fee": "Platform fee (3%)",
+      "youReceive": "You will receive",
+      "submit": "Create transaction",
+      "submitting": "Creating…",
+      "phoneError": "Phone required",
+      "amountMin": "Minimum 100 XAF",
+      "amountMax": "Maximum 10,000,000 XAF",
+      "maxChars": "Max. 500 characters",
+      "deadlineHint": "The buyer must confirm receipt before this date."
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page not found",
+      "message": "The page you are looking for does not exist or has been moved.",
+      "back": "Back to home"
+    },
+    "forbidden": {
+      "title": "Access denied",
+      "message": "You do not have the required permissions to access this page.",
+      "back": "Back to home"
+    }
+  }
+}

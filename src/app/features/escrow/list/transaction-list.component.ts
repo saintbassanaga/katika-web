@@ -1,5 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EscrowService, TransactionSummary } from '../escrow.service';
 import { AmountPipe } from '../../../shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
@@ -8,23 +9,23 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 
 const FILTERS = [
-  { label: 'Tous',       status: '' },
-  { label: 'En attente', status: 'LOCKED' },
-  { label: 'Livraison',  status: 'SHIPPED' },
-  { label: 'Litiges',    status: 'DISPUTED' },
+  { key: 'escrow.filters.all',      status: '' },
+  { key: 'escrow.filters.locked',   status: 'LOCKED' },
+  { key: 'escrow.filters.shipped',  status: 'SHIPPED' },
+  { key: 'escrow.filters.disputed', status: 'DISPUTED' },
 ];
 
 @Component({
   selector: 'app-transaction-list',
   standalone: true,
-  imports: [RouterLink, AmountPipe, StatusBadgeComponent, LoadingSkeletonComponent, EmptyStateComponent, TimeAgoPipe],
+  imports: [RouterLink, AmountPipe, StatusBadgeComponent, LoadingSkeletonComponent, EmptyStateComponent, TimeAgoPipe, TranslatePipe],
   template: `
     <div class="px-4 py-6 max-w-lg mx-auto">
-      <h1 class="text-xl font-bold text-gray-900 mb-4">Transactions</h1>
+      <h1 class="text-xl font-bold text-gray-900 mb-4">{{ 'escrow.title' | translate }}</h1>
 
       <!-- Filter chips -->
       <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
-        @for (filter of filters; track filter.status) {
+        @for (filter of filters; track filter.key) {
           <button
             (click)="setFilter(filter.status)"
             class="shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border"
@@ -35,7 +36,7 @@ const FILTERS = [
             [class.text-gray-600]="activeFilter() !== filter.status"
             [class.border-gray-200]="activeFilter() !== filter.status"
           >
-            {{ filter.label }}
+            {{ filter.key | translate }}
           </button>
         }
       </div>
@@ -45,8 +46,8 @@ const FILTERS = [
       } @else if (transactions().length === 0) {
         <app-empty-state
           icon="📋"
-          title="Aucune transaction"
-          message="Vos transactions apparaîtront ici"
+          [title]="'escrow.empty.title' | translate"
+          [message]="'escrow.empty.message' | translate"
         />
       } @else {
         <div class="space-y-2">
@@ -58,7 +59,7 @@ const FILTERS = [
             >
               <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center
                           text-blue-600 font-bold text-sm shrink-0">
-                {{ tx.counterpartName[0] }}
+                {{ (tx.counterpartName ?? '?')[0] }}
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-gray-900">{{ tx.reference }}</p>
@@ -80,7 +81,7 @@ const FILTERS = [
             class="w-full py-3 mt-4 border border-gray-200 rounded-xl text-sm
                    text-gray-600 hover:bg-gray-50 transition-colors"
           >
-            @if (loadingMore()) { Chargement... } @else { Charger plus }
+            @if (loadingMore()) { {{ 'common.loading' | translate }} } @else { {{ 'escrow.loadMore' | translate }} }
           </button>
         }
       }

@@ -1,23 +1,36 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth.store';
+import { LangSwitcherComponent } from '../../../shared/components/lang-switcher/lang-switcher.component';
 
 interface MenuItem { icon: string; label: string; sub?: string; route: string; danger?: boolean; }
 
 @Component({
   selector: 'app-profile-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe, LangSwitcherComponent],
   styles: [`
     .page { min-height: 100svh; background: #EDF1F7; }
 
     /* Header */
-    .header { background: #0F2240; padding: 2rem 1.25rem 4.5rem; position: relative; overflow: hidden; }
+    .header { background: #0F2240; padding: 0 1.25rem 4.5rem; position: relative; overflow: hidden; }
     .header-orb {
       position: absolute; border-radius: 50%; pointer-events: none;
       width: 300px; height: 300px; top: -45%; right: -12%;
       background: radial-gradient(circle, rgba(201,146,13,.2) 0%, transparent 70%);
     }
+    .header-nav {
+      display: flex; align-items: center; gap: .75rem;
+      padding: 1rem 0 1.5rem; position: relative; z-index: 1;
+    }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(255,255,255,.1); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; text-decoration: none; transition: background .2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,.18); }
     .header-title { color: rgba(210,190,140,.7); font-size: .8125rem; font-weight: 400; position: relative; z-index: 1; }
     .header-name  { color: #fff; font-size: 1.375rem; font-weight: 700; letter-spacing: -.01em; margin: .15rem 0 0; position: relative; z-index: 1; }
 
@@ -98,7 +111,16 @@ interface MenuItem { icon: string; label: string; sub?: string; route: string; d
       <!-- Header -->
       <div class="header">
         <div class="header-orb"></div>
-        <p class="header-title">Mon compte</p>
+        <div class="header-nav" style="justify-content:space-between">
+          <a routerLink="/dashboard" class="back-btn" aria-label="Retour accueil">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+          </a>
+          <app-lang-switcher />
+        </div>
+        <p class="header-title">{{ 'profile.title' | translate }}</p>
         <h1 class="header-name">{{ auth.fullName() }}</h1>
       </div>
 
@@ -109,18 +131,18 @@ interface MenuItem { icon: string; label: string; sub?: string; route: string; d
           <p class="identity-name">{{ auth.fullName() }}</p>
           <span class="identity-role">{{ auth.role() }}</span>
         </div>
-        <a routerLink="/profile/edit" class="edit-btn">
+        <a routerLink="/profile/edit" class="edit-btn" [attr.aria-label]="'profile.edit' | translate">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
           </svg>
-          Modifier
+          {{ 'profile.edit' | translate }}
         </a>
       </div>
 
       <div class="content">
 
         <!-- Account section -->
-        <p class="menu-group-title">Compte</p>
+        <p class="menu-group-title">{{ 'profile.account' | translate }}</p>
         <div class="menu-card">
           <a routerLink="/wallet" class="menu-item">
             <div class="item-icon" style="background:#E5EEF8">
@@ -129,8 +151,8 @@ interface MenuItem { icon: string; label: string; sub?: string; route: string; d
               </svg>
             </div>
             <div class="item-text">
-              <p class="item-label">Portefeuille</p>
-              <p class="item-sub">Solde, mouvements et retraits</p>
+              <p class="item-label">{{ 'profile.wallet' | translate }}</p>
+              <p class="item-sub">{{ 'profile.walletSub' | translate }}</p>
             </div>
             <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </a>
@@ -141,15 +163,15 @@ interface MenuItem { icon: string; label: string; sub?: string; route: string; d
               </svg>
             </div>
             <div class="item-text">
-              <p class="item-label">Mes transactions</p>
-              <p class="item-sub">Historique des échanges</p>
+              <p class="item-label">{{ 'profile.transactions' | translate }}</p>
+              <p class="item-sub">{{ 'profile.transactionsSub' | translate }}</p>
             </div>
             <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </a>
         </div>
 
         <!-- Security section -->
-        <p class="menu-group-title">Sécurité</p>
+        <p class="menu-group-title">{{ 'profile.security' | translate }}</p>
         <div class="menu-card">
           <a routerLink="/profile/security" class="menu-item">
             <div class="item-icon" style="background:#FFF7ED">
@@ -158,8 +180,8 @@ interface MenuItem { icon: string; label: string; sub?: string; route: string; d
               </svg>
             </div>
             <div class="item-text">
-              <p class="item-label">Sécurité du compte</p>
-              <p class="item-sub">Mot de passe, authentification 2FA</p>
+              <p class="item-label">{{ 'profile.securityTitle' | translate }}</p>
+              <p class="item-sub">{{ 'profile.securitySub' | translate }}</p>
             </div>
             <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </a>
@@ -170,7 +192,7 @@ interface MenuItem { icon: string; label: string; sub?: string; route: string; d
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
-          Se déconnecter
+          {{ 'profile.logout' | translate }}
         </button>
 
       </div>
