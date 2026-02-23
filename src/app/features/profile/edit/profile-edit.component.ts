@@ -138,7 +138,7 @@ import { TranslatePipe } from '@ngx-translate/core';
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
         </a>
-        <span class="topbar-title">Modifier le profil</span>
+        <span class="topbar-title">{{ 'profile.editForm.topbarTitle' | translate }}</span>
       </div>
 
       <div class="content">
@@ -153,66 +153,66 @@ import { TranslatePipe } from '@ngx-translate/core';
         <!-- Read-only info (phone + role cannot be changed here) -->
         <div class="info-card animate-entry">
           <div class="info-row">
-            <span class="info-label">Téléphone</span>
+            <span class="info-label">{{ 'profile.editForm.phone' | translate }}</span>
             <span class="info-locked">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
               </svg>
-              Non modifiable
+              {{ 'profile.editForm.nonEditable' | translate }}
             </span>
           </div>
           <div class="info-row">
-            <span class="info-label">Rôle</span>
+            <span class="info-label">{{ 'profile.editForm.role' | translate }}</span>
             <span class="info-value">{{ auth.role() }}</span>
           </div>
         </div>
 
         <!-- Editable form -->
         <div class="form-card animate-entry">
-          <p class="card-title">Informations modifiables</p>
+          <p class="card-title">{{ 'profile.editForm.editableSection' | translate }}</p>
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
             <!-- Full name -->
             <div class="field">
-              <label class="label">Nom complet</label>
+              <label class="label">{{ 'profile.fullName' | translate }}</label>
               <input
                 type="text"
                 formControlName="fullName"
-                placeholder="Jean Fotso"
+                [placeholder]="'profile.editForm.fullNamePh' | translate"
                 class="input"
                 [class.error]="isInvalid('fullName')"
               />
               @if (form.get('fullName')?.errors?.['required'] && form.get('fullName')?.touched) {
-                <p class="err">Le nom complet est requis</p>
+                <p class="err">{{ 'profile.editForm.fullNameRequired' | translate }}</p>
               }
               @if (form.get('fullName')?.errors?.['minlength'] && form.get('fullName')?.touched) {
-                <p class="err">Au moins 2 caractères</p>
+                <p class="err">{{ 'profile.editForm.fullNameMin' | translate }}</p>
               }
             </div>
 
             <!-- Email -->
             <div class="field">
               <label class="label">
-                Email <span class="label-opt">(optionnel)</span>
+                {{ 'profile.email' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span>
               </label>
               <input
                 type="email"
                 formControlName="email"
-                placeholder="jean@exemple.cm"
+                [placeholder]="'auth.register.emailPh' | translate"
                 class="input"
                 [class.error]="isInvalid('email')"
               />
               @if (isInvalid('email')) {
-                <p class="err">Adresse email invalide</p>
+                <p class="err">{{ 'profile.editForm.emailInvalid' | translate }}</p>
               }
-              <p class="hint">Utilisé pour les notifications et la récupération de compte.</p>
+              <p class="hint">{{ 'profile.editForm.emailHint' | translate }}</p>
             </div>
 
             <!-- CNI number -->
             <div class="field">
               <label class="label">
-                Numéro CNI <span class="label-opt">(optionnel)</span>
+                {{ 'profile.editForm.cni' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span>
               </label>
               <input
                 type="text"
@@ -220,12 +220,12 @@ import { TranslatePipe } from '@ngx-translate/core';
                 placeholder="123456789"
                 class="input"
               />
-              <p class="hint">Carte Nationale d'Identité — requis pour certaines opérations.</p>
+              <p class="hint">{{ 'profile.editForm.cniHint' | translate }}</p>
             </div>
 
             <!-- Actions -->
             <div class="actions">
-              <a routerLink="/profile" class="btn-cancel">Annuler</a>
+              <a routerLink="/profile" class="btn-cancel">{{ 'profile.editForm.cancel' | translate }}</a>
               <button
                 type="submit"
                 class="btn-primary"
@@ -233,9 +233,9 @@ import { TranslatePipe } from '@ngx-translate/core';
               >
                 @if (auth.loading()) {
                   <span class="spinner"></span>
-                  Enregistrement…
+                  {{ 'profile.editForm.saving' | translate }}
                 } @else {
-                  Enregistrer
+                  {{ 'profile.editForm.save' | translate }}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"/>

@@ -5,22 +5,43 @@ import { ApiService } from '@core/http/api.service';
 export interface TransactionSummary {
   id: string;
   reference: string;
-  counterpartName: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-}
-
-export interface TransactionDetail extends TransactionSummary {
   buyerId: string;
   buyerName: string;
-  buyerPhone: string;
   sellerId: string;
   sellerName: string;
-  sellerPhone: string;
-  description?: string;
+  grossAmount: number;
   platformFee: number;
   netAmount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+  lockedAt:    string | null;
+  shippedAt:   string | null;
+  deliveredAt: string | null;
+  releasedAt:  string | null;
+  disputedAt:  string | null;
+  refundedAt:  string | null;
+}
+
+export interface TransactionDetail {
+  id: string;
+  reference: string;
+  buyerId: string;
+  buyerName: string;
+  sellerId: string;
+  sellerName: string;
+  grossAmount: number;
+  platformFee: number;
+  netAmount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+  lockedAt:    string | null;
+  shippedAt:   string | null;
+  deliveredAt: string | null;
+  releasedAt:  string | null;
+  disputedAt:  string | null;
+  refundedAt:  string | null;
 }
 
 export interface EscrowCreateRequest {

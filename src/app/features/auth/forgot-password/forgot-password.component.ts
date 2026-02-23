@@ -189,14 +189,14 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         <!-- ── STEP 1 : Phone ─────────────────────── -->
         @if (step() === 1) {
           <p class="heading">{{ 'auth.forgotPassword.title' | translate }}</p>
-          <p class="sub">Entrez votre numéro de téléphone. Nous vous enverrons un code de réinitialisation par SMS.</p>
+          <p class="sub">{{ 'auth.forgotPassword.phoneSub' | translate }}</p>
 
           <form [formGroup]="phoneForm" (ngSubmit)="sendCode()">
             <div class="field">
               <label class="label">{{ 'auth.forgotPassword.phoneLabel' | translate }}</label>
               <app-phone-input formControlName="phoneNumber" />
               @if (phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched) {
-                <p class="err">Numéro requis</p>
+                <p class="err">{{ 'auth.login.phoneError' | translate }}</p>
               }
             </div>
 
@@ -216,10 +216,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 
         <!-- ── STEP 2 : OTP ───────────────────────── -->
         @if (step() === 2) {
-          <p class="heading">Vérification</p>
+          <p class="heading">{{ 'auth.forgotPassword.codeLabel' | translate }}</p>
           <p class="sub">
-            Code envoyé au <span class="phone-pill">+237 {{ phoneForm.value.phoneNumber }}</span><br>
-            Entrez les 6 chiffres reçus par SMS.
+            {{ 'auth.forgotPassword.codeSub' | translate }} <span class="phone-pill">+237 {{ phoneForm.value.phoneNumber }}</span>
           </p>
 
           <div class="otp-row">
@@ -245,7 +244,6 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
           </button>
 
           <div class="back-row" style="margin-top:.875rem">
-            <span>Pas reçu ?</span>
             <a href="#" (click)="resendCode($event)">{{ 'auth.forgotPassword.sendCode' | translate }}</a>
           </div>
         }
@@ -253,16 +251,16 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         <!-- ── STEP 3 : New password ─────────────── -->
         @if (step() === 3) {
           <p class="heading">{{ 'auth.forgotPassword.newPassword' | translate }}</p>
-          <p class="sub">Choisissez un mot de passe fort pour sécuriser votre compte.</p>
+          <p class="sub">{{ 'auth.register.passwordPh' | translate }}</p>
 
           <form [formGroup]="resetForm" (ngSubmit)="submitReset()">
 
             <div class="field">
-              <label class="label">Nouveau mot de passe</label>
+              <label class="label">{{ 'auth.forgotPassword.newPassword' | translate }}</label>
               <div class="input-wrap">
                 <input [type]="showPwd() ? 'text' : 'password'"
                        formControlName="newPassword"
-                       placeholder="Min. 8 car., 1 maj., 1 chiffre, 1 spécial"
+                       [placeholder]="'auth.register.passwordPh' | translate"
                        class="input" style="padding-right:3rem"
                        [class.error]="resetForm.get('newPassword')?.invalid && resetForm.get('newPassword')?.touched" />
                 <button type="button" class="eye-btn" (click)="showPwd.set(!showPwd())">
@@ -270,21 +268,21 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                 </button>
               </div>
               @if (resetForm.get('newPassword')?.errors?.['minlength'] && resetForm.get('newPassword')?.touched) {
-                <p class="err">Au moins 8 caractères</p>
+                <p class="err">{{ 'profile.securityForm.passwordMin' | translate }}</p>
               }
               @if (resetForm.get('newPassword')?.errors?.['pattern'] && resetForm.get('newPassword')?.touched) {
-                <p class="err">Doit contenir une majuscule, un chiffre et un caractère spécial</p>
+                <p class="err">{{ 'profile.securityForm.passwordStrong' | translate }}</p>
               }
             </div>
 
             <div class="field">
-              <label class="label">Confirmer le mot de passe</label>
+              <label class="label">{{ 'auth.forgotPassword.confirmPassword' | translate }}</label>
               <input [type]="showPwd() ? 'text' : 'password'"
                      formControlName="confirmPassword"
                      placeholder="••••••••" class="input"
                      [class.error]="resetForm.errors?.['mismatch'] && resetForm.get('confirmPassword')?.touched" />
               @if (resetForm.errors?.['mismatch'] && resetForm.get('confirmPassword')?.touched) {
-                <p class="err">Les mots de passe ne correspondent pas</p>
+                <p class="err">{{ 'auth.register.mismatchError' | translate }}</p>
               }
             </div>
 
@@ -308,20 +306,17 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <p class="success-heading">Mot de passe réinitialisé !</p>
-            <p class="success-sub">
-              Votre mot de passe a été mis à jour avec succès.<br>
-              Vous pouvez maintenant vous connecter.
-            </p>
+            <p class="success-heading">{{ 'auth.forgotPassword.successTitle' | translate }}</p>
+            <p class="success-sub">{{ 'auth.forgotPassword.successSub' | translate }}</p>
             <a routerLink="/auth/login" class="btn-primary" style="text-decoration:none;display:flex">
-              Aller à la connexion
+              {{ 'auth.login.submit' | translate }}
             </a>
           </div>
         }
 
         @if (step() < 4) {
           <div class="back-row">
-            <a routerLink="/auth/login">← Retour à la connexion</a>
+            <a routerLink="/auth/login">← {{ 'auth.forgotPassword.backToLogin' | translate }}</a>
           </div>
         }
       </div>

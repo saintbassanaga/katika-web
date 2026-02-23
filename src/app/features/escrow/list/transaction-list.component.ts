@@ -59,15 +59,15 @@ const FILTERS = [
             >
               <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center
                           text-blue-600 font-bold text-sm shrink-0">
-                {{ (tx.counterpartName ?? '?')[0] }}
+                {{ (tx.buyerName ?? '?')[0] }}
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-gray-900">{{ tx.reference }}</p>
-                <p class="text-xs text-gray-500 truncate">{{ tx.counterpartName }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ tx.buyerName }}</p>
                 <p class="text-xs text-gray-400">{{ tx.createdAt | timeAgo }}</p>
               </div>
               <div class="text-right shrink-0">
-                <p class="text-sm font-bold text-gray-900">{{ tx.amount | amount }}</p>
+                <p class="text-sm font-bold text-gray-900">{{ tx.grossAmount | amount }}</p>
                 <app-status-badge [status]="tx.status" />
               </div>
             </a>

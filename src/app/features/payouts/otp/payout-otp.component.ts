@@ -8,13 +8,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-payout-otp',
   standalone: true,
-  imports: [OtpInputComponent],
+  imports: [OtpInputComponent, TranslatePipe],
   template: `
     <div class="px-4 py-12 max-w-sm mx-auto text-center">
       <div class="text-5xl mb-4">📱</div>
-      <h1 class="text-xl font-bold text-gray-900 mb-2">Code de vérification</h1>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.otp.title' | translate }}</h1>
       <p class="text-sm text-gray-500 mb-8">
-        Entrez le code reçu par SMS pour confirmer votre retrait
+        {{ 'payouts.otp.subtitle' | translate }}
       </p>
 
       <app-otp-input (completed)="onCode($event)" [(value)]="otpValue" />
@@ -33,14 +33,14 @@ import { TranslatePipe } from '@ngx-translate/core';
       <div class="mt-8">
         @if (resendCountdown() > 0) {
           <p class="text-sm text-gray-400">
-            Renvoyer dans <span class="font-medium">{{ resendCountdown() }}s</span>
+            {{ 'payouts.otp.resendIn' | translate:{ count: resendCountdown() } }}
           </p>
         } @else {
           <button
             (click)="resendOtp()"
             class="text-sm text-blue-600 hover:underline font-medium"
           >
-            Renvoyer le code
+            {{ 'payouts.otp.resend' | translate }}
           </button>
         }
       </div>

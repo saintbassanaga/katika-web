@@ -191,13 +191,13 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
         </a>
-        <span class="topbar-title">Sécurité</span>
+        <span class="topbar-title">{{ 'profile.securityForm.topbarTitle' | translate }}</span>
       </div>
 
       <div class="content animate-entry">
 
         <!-- ── Verification ─────────────────────── -->
-        <p class="section-label">Vérification</p>
+        <p class="section-label">{{ 'profile.securityForm.verificationSection' | translate }}</p>
 
         @if (auth.isVerified()) {
           <div class="verified-banner">
@@ -207,8 +207,8 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
               </svg>
             </div>
             <div>
-              <p class="verified-text">Compte vérifié</p>
-              <p class="verified-sub">Votre identité a été confirmée</p>
+              <p class="verified-text">{{ 'profile.securityForm.verified' | translate }}</p>
+              <p class="verified-sub">{{ 'profile.securityForm.verifiedSub' | translate }}</p>
             </div>
           </div>
         } @else {
@@ -219,17 +219,17 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
               </svg>
             </div>
             <div style="flex:1">
-              <p class="verify-title">Vérifiez votre compte</p>
-              <p class="verify-sub">Accédez à toutes les fonctionnalités</p>
+              <p class="verify-title">{{ 'profile.securityForm.notVerified' | translate }}</p>
+              <p class="verify-sub">{{ 'profile.securityForm.notVerifiedSub' | translate }}</p>
             </div>
             <button class="verify-cta" (click)="requestVerification()" [disabled]="verifyLoading()">
-              @if (verifyLoading()) { Envoi… } @else { Vérifier }
+              @if (verifyLoading()) { {{ 'profile.securityForm.sending' | translate }} } @else { {{ 'profile.securityForm.verifyBtn' | translate }} }
             </button>
           </div>
         }
 
         <!-- ── Password ─────────────────────────── -->
-        <p class="section-label">Mot de passe</p>
+        <p class="section-label">{{ 'profile.securityForm.passwordSection' | translate }}</p>
         <div class="card">
           <div class="card-row">
             <div class="row-icon" style="background:#FFF7ED">
@@ -238,11 +238,11 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
               </svg>
             </div>
             <div>
-              <p class="row-label">Mot de passe</p>
-              <p class="row-sub">Dernière modification inconnue</p>
+              <p class="row-label">{{ 'profile.securityForm.passwordLabel' | translate }}</p>
+              <p class="row-sub">{{ 'profile.securityForm.lastChanged' | translate }}</p>
             </div>
             <button class="row-action action-primary" (click)="togglePwdForm()">
-              {{ showPwdForm() ? 'Annuler' : 'Modifier' }}
+              {{ showPwdForm() ? ('profile.securityForm.cancel' | translate) : ('profile.securityForm.modify' | translate) }}
             </button>
           </div>
 
@@ -251,7 +251,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
               <form [formGroup]="pwdForm" (ngSubmit)="changePassword()">
 
                 <div class="field">
-                  <label class="label">Mot de passe actuel</label>
+                  <label class="label">{{ 'profile.securityForm.currentPassword' | translate }}</label>
                   <div class="input-wrap">
                     <input [type]="showCurrent() ? 'text' : 'password'"
                            formControlName="currentPassword"
@@ -263,16 +263,16 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                     </button>
                   </div>
                   @if (isInvalidPwd('currentPassword')) {
-                    <p class="err">Mot de passe actuel requis</p>
+                    <p class="err">{{ 'profile.securityForm.currentPasswordRequired' | translate }}</p>
                   }
                 </div>
 
                 <div class="field">
-                  <label class="label">Nouveau mot de passe</label>
+                  <label class="label">{{ 'profile.securityForm.newPassword' | translate }}</label>
                   <div class="input-wrap">
                     <input [type]="showNew() ? 'text' : 'password'"
                            formControlName="newPassword"
-                           placeholder="Min. 8 caractères, 1 maj, 1 chiffre, 1 spécial"
+                           [placeholder]="'profile.securityForm.passwordPh' | translate"
                            class="input" style="padding-right:3rem"
                            [class.error]="isInvalidPwd('newPassword')" />
                     <button type="button" class="eye-btn" (click)="showNew.set(!showNew())">
@@ -280,31 +280,31 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                     </button>
                   </div>
                   @if (pwdForm.get('newPassword')?.errors?.['minlength'] && pwdForm.get('newPassword')?.touched) {
-                    <p class="err">Au moins 8 caractères</p>
+                    <p class="err">{{ 'profile.securityForm.passwordMin' | translate }}</p>
                   }
                   @if (pwdForm.get('newPassword')?.errors?.['pattern'] && pwdForm.get('newPassword')?.touched) {
-                    <p class="err">Doit contenir une majuscule, un chiffre et un caractère spécial</p>
+                    <p class="err">{{ 'profile.securityForm.passwordStrong' | translate }}</p>
                   }
                 </div>
 
                 <div class="field">
-                  <label class="label">Confirmer le nouveau mot de passe</label>
+                  <label class="label">{{ 'profile.securityForm.confirmPassword' | translate }}</label>
                   <input [type]="showNew() ? 'text' : 'password'"
                          formControlName="confirmPassword"
                          placeholder="••••••••" class="input"
                          [class.error]="pwdForm.errors?.['mismatch'] && pwdForm.get('confirmPassword')?.touched" />
                   @if (pwdForm.errors?.['mismatch'] && pwdForm.get('confirmPassword')?.touched) {
-                    <p class="err">Les mots de passe ne correspondent pas</p>
+                    <p class="err">{{ 'profile.securityForm.passwordMismatch' | translate }}</p>
                   }
                 </div>
 
                 <div class="form-actions">
-                  <button type="button" class="btn-cancel-sm" (click)="togglePwdForm()">Annuler</button>
+                  <button type="button" class="btn-cancel-sm" (click)="togglePwdForm()">{{ 'profile.securityForm.cancel' | translate }}</button>
                   <button type="submit" class="btn-save" [disabled]="pwdForm.invalid || pwdLoading()">
                     @if (pwdLoading()) {
-                      <span class="spinner"></span> Modification…
+                      <span class="spinner"></span> {{ 'profile.securityForm.changing' | translate }}
                     } @else {
-                      Changer le mot de passe
+                      {{ 'profile.securityForm.changePassword' | translate }}
                     }
                   </button>
                 </div>
@@ -314,7 +314,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         </div>
 
         <!-- ── 2FA ──────────────────────────────── -->
-        <p class="section-label">Double authentification</p>
+        <p class="section-label">{{ 'profile.securityForm.mfaSection' | translate }}</p>
         <div class="card">
           <div class="card-row">
             <div class="row-icon" style="background:#F0FDF4">
@@ -323,24 +323,24 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
               </svg>
             </div>
             <div>
-              <p class="row-label">Authentification 2FA</p>
+              <p class="row-label">{{ 'profile.securityForm.mfaLabel' | translate }}</p>
               <p class="row-sub" [style.color]="auth.hasMfa() ? '#16A34A' : '#94A3B8'">
-                {{ auth.hasMfa() ? 'Activée — application TOTP' : 'Non activée' }}
+                {{ auth.hasMfa() ? ('profile.securityForm.mfaEnabled' | translate) : ('profile.securityForm.mfaDisabled' | translate) }}
               </p>
             </div>
             @if (auth.hasMfa()) {
               <button class="row-action action-danger" (click)="toggleMfaDisable()">
-                {{ showMfaDisable() ? 'Annuler' : 'Désactiver' }}
+                {{ showMfaDisable() ? ('profile.securityForm.cancel' | translate) : ('profile.securityForm.disable' | translate) }}
               </button>
             } @else {
-              <a routerLink="/profile/security/mfa" class="row-action action-primary">Activer</a>
+              <a routerLink="/profile/security/mfa" class="row-action action-primary">{{ 'profile.securityForm.enable' | translate }}</a>
             }
           </div>
 
           @if (showMfaDisable()) {
             <div class="expand-form">
               <p style="font-size:.8125rem;color:#64748B;margin:0 0 .875rem">
-                Entrez votre code TOTP pour confirmer la désactivation :
+                {{ 'profile.securityForm.disablePrompt' | translate }}
               </p>
               <div class="otp-row">
                 @for (i of [0,1,2,3,4,5]; track i) {
@@ -351,15 +351,15 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                 }
               </div>
               <div class="form-actions" style="margin-top:.875rem">
-                <button type="button" class="btn-cancel-sm" (click)="toggleMfaDisable()">Annuler</button>
+                <button type="button" class="btn-cancel-sm" (click)="toggleMfaDisable()">{{ 'profile.securityForm.cancel' | translate }}</button>
                 <button type="button" class="btn-save"
                         style="background:linear-gradient(135deg,#DC2626,#B91C1C);box-shadow:0 3px 12px rgba(220,38,38,.3)"
                         [disabled]="mfaCode().length < 6 || mfaLoading()"
                         (click)="disableMfa()">
                   @if (mfaLoading()) {
-                    <span class="spinner"></span> Désactivation…
+                    <span class="spinner"></span> {{ 'profile.securityForm.disabling' | translate }}
                   } @else {
-                    Confirmer la désactivation
+                    {{ 'profile.securityForm.confirmDisable' | translate }}
                   }
                 </button>
               </div>

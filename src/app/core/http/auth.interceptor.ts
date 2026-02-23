@@ -4,7 +4,11 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
-const refreshing$ = new BehaviorSubject<boolean>(false);
+// null  = refresh in progress
+// true  = refresh succeeded
+// false = refresh failed
+let isRefreshing = false;
+const refreshDone$ = new BehaviorSubject<boolean | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -16,15 +20,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError(err => {
       if (err.status !== HttpStatusCode.Unauthorized) return throwError(() => err);
 
-      if (!refreshing$.getValue()) {
-        refreshing$.next(true);
+      if (!isRefreshing) {
+        isRefreshing = true;
+        refreshDone$.next(null); // signal: refresh in progress
+
         return auth.refreshToken().pipe(
           switchMap(() => {
-            refreshing$.next(false);
+            isRefreshing = false;
+            refreshDone$.next(true); // signal: refresh succeeded
             return next(req.clone({ withCredentials: true }));
           }),
           catchError(refreshErr => {
-            refreshing$.next(false);
+            isRefreshing = false;
+            refreshDone$.next(false); // signal: refresh failed
             router.navigate(['/auth/login'], {
               queryParams: { returnUrl: router.url },
             });
@@ -33,10 +41,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         );
       }
 
-      return refreshing$.pipe(
-        filter(isRefreshing => !isRefreshing),
+      // Another refresh is already in flight — wait for its result
+      return refreshDone$.pipe(
+        filter(done => done !== null), // null = still in progress, skip
         take(1),
-        switchMap(() => next(req.clone({ withCredentials: true }))),
+        switchMap(succeeded => {
+          if (succeeded) return next(req.clone({ withCredentials: true }));
+          return throwError(() => err); // refresh failed, propagate original 401
+        }),
       );
     }),
   );

@@ -26,7 +26,7 @@ interface DisputeSummary {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, AmountPipe, StatusBadgeComponent],
+  imports: [RouterLink, AmountPipe, StatusBadgeComponent, TranslatePipe],
   styles: [`
     .page { min-height: 100svh; background: #EDF1F7; }
 
@@ -152,7 +152,7 @@ interface DisputeSummary {
         <!-- Greeting row -->
         <div class="greeting-row">
           <div>
-            <div class="greeting-label">Bonjour,</div>
+            <div class="greeting-label">{{ 'dashboard.greeting' | translate }},</div>
             <div class="greeting-name">{{ auth.fullName() }}</div>
           </div>
           <a routerLink="/profile" class="avatar-btn">{{ auth.initials() }}</a>
@@ -166,7 +166,7 @@ interface DisputeSummary {
                 <path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/>
               </svg>
             </div>
-            <span class="qa-label">Transactions</span>
+            <span class="qa-label">{{ 'dashboard.quickActions.transactions' | translate }}</span>
           </a>
           <a routerLink="/payouts/new" class="qa-btn">
             <div class="qa-icon" style="background:rgba(16,185,129,.2)">
@@ -174,7 +174,7 @@ interface DisputeSummary {
                 <circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V8"/>
               </svg>
             </div>
-            <span class="qa-label">Retrait</span>
+            <span class="qa-label">{{ 'dashboard.quickActions.withdrawal' | translate }}</span>
           </a>
           <a routerLink="/wallet" class="qa-btn">
             <div class="qa-icon" style="background:rgba(245,158,11,.2)">
@@ -182,7 +182,7 @@ interface DisputeSummary {
                 <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
               </svg>
             </div>
-            <span class="qa-label">Portefeuille</span>
+            <span class="qa-label">{{ 'dashboard.quickActions.wallet' | translate }}</span>
           </a>
           <a routerLink="/disputes" class="qa-btn">
             <div class="qa-icon" style="background:rgba(239,68,68,.18)">
@@ -190,7 +190,7 @@ interface DisputeSummary {
                 <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
               </svg>
             </div>
-            <span class="qa-label">Litiges</span>
+            <span class="qa-label">{{ 'dashboard.quickActions.disputes' | translate }}</span>
           </a>
         </div>
       </div>
@@ -208,16 +208,16 @@ interface DisputeSummary {
               </svg>
             </div>
             <div>
-              <div class="alert-title">{{ disputes().length }} litige(s) en cours</div>
-              <a routerLink="/disputes" class="alert-link">Voir les litiges →</a>
+              <div class="alert-title">{{ 'dashboard.disputeAlert' | translate:{ count: disputes().length } }}</div>
+              <a routerLink="/disputes" class="alert-link">{{ 'dashboard.viewDisputes' | translate }}</a>
             </div>
           </div>
         }
 
         <!-- Transactions -->
         <div class="section-header">
-          <span class="section-title">Transactions récentes</span>
-          <a routerLink="/escrow" class="see-all">Voir tout</a>
+          <span class="section-title">{{ 'dashboard.recentTransactions' | translate }}</span>
+          <a routerLink="/escrow" class="see-all">{{ 'dashboard.viewAll' | translate }}</a>
         </div>
 
         @if (loading()) {
@@ -234,8 +234,8 @@ interface DisputeSummary {
         } @else if (transactions().length === 0) {
           <div class="empty-box">
             <div class="empty-icon">📋</div>
-            <p class="empty-title">Aucune transaction</p>
-            <p class="empty-sub">Vos transactions apparaîtront ici</p>
+            <p class="empty-title">{{ 'dashboard.noTransactions' | translate }}</p>
+            <p class="empty-sub">{{ 'escrow.empty.message' | translate }}</p>
           </div>
         } @else {
           <div class="tx-list">

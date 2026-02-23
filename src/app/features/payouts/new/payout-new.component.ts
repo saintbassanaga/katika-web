@@ -17,14 +17,14 @@ const PROVIDERS = [
 @Component({
   selector: 'app-payout-new',
   standalone: true,
-  imports: [ReactiveFormsModule, AmountPipe, PhoneInputComponent],
+  imports: [ReactiveFormsModule, AmountPipe, PhoneInputComponent, TranslatePipe],
   template: `
     <div class="px-4 py-6 max-w-sm mx-auto">
-      <h1 class="text-xl font-bold text-gray-900 mb-2">Retrait</h1>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.title' | translate }}</h1>
 
       @if (balance() !== null) {
         <div class="bg-blue-50 rounded-2xl p-4 mb-6">
-          <p class="text-xs text-blue-600 font-medium mb-1">Solde disponible</p>
+          <p class="text-xs text-blue-600 font-medium mb-1">{{ 'payouts.balance' | translate }}</p>
           <p class="text-2xl font-bold text-blue-700">{{ balance() | amount }}</p>
         </div>
       }
@@ -33,7 +33,7 @@ const PROVIDERS = [
 
         <!-- Amount -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Montant</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'payouts.amount' | translate }}</label>
           <div class="flex gap-2 mb-3 flex-wrap">
             @for (amount of quickAmounts; track amount) {
               <button
@@ -54,13 +54,13 @@ const PROVIDERS = [
               (click)="setAmount(balance()!)"
               class="px-3 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600"
             >
-              Tout
+              {{ 'payouts.allAmount' | translate }}
             </button>
           </div>
           <input
             type="number"
             formControlName="amount"
-            placeholder="Autre montant..."
+            [placeholder]="'payouts.amountPh' | translate"
             min="500"
             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
                    focus:border-blue-600 focus:outline-none transition-colors"
@@ -69,7 +69,7 @@ const PROVIDERS = [
 
         <!-- Provider -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Opérateur</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'payouts.operator' | translate }}</label>
           <div class="grid grid-cols-2 gap-2">
             @for (p of providers; track p.value) {
               <label
@@ -87,7 +87,7 @@ const PROVIDERS = [
 
         <!-- Phone -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Numéro de réception</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'payouts.receiptNumber' | translate }}</label>
           <app-phone-input formControlName="phone" />
         </div>
 
@@ -95,11 +95,11 @@ const PROVIDERS = [
         @if (form.get('amount')?.value! > 0) {
           <div class="bg-gray-50 rounded-xl p-4 text-sm">
             <div class="flex justify-between text-gray-500 mb-1">
-              <span>Frais estimés</span>
+              <span>{{ 'payouts.estimatedFee' | translate }}</span>
               <span>{{ estimatedFee() | amount }}</span>
             </div>
             <div class="flex justify-between font-semibold text-gray-900">
-              <span>Vous recevrez</span>
+              <span>{{ 'payouts.net' | translate }}</span>
               <span class="text-green-600">{{ netAmount() | amount }}</span>
             </div>
           </div>
@@ -115,7 +115,7 @@ const PROVIDERS = [
           @if (loading()) {
             <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           }
-          Continuer
+          {{ 'payouts.continue' | translate }}
         </button>
       </form>
     </div>

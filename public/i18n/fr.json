@@ -1,7 +1,7 @@
 {
   "nav": {
     "dashboard": "Tableau de bord",
-    "transactions": "Transactions",
+    "escrow": "Transactions",
     "disputes": "Litiges",
     "wallet": "Portefeuille",
     "payouts": "Retraits",
@@ -171,6 +171,12 @@
       "title": "Aucun litige",
       "message": "Vos litiges apparaîtront ici"
     },
+    "reasons": {
+      "ITEM_NOT_RECEIVED": "Article non reçu",
+      "ITEM_NOT_AS_DESCRIBED": "Article non conforme",
+      "SELLER_NOT_RESPONDING": "Vendeur non réactif",
+      "OTHER": "Autre"
+    },
     "create": {
       "pageTitle": "Ouvrir un litige",
       "reasonTitle": "Motif du litige",
@@ -207,12 +213,19 @@
     "withdrawBtn": "Retirer",
     "refreshBtn": "Actualiser",
     "history": "Historique des mouvements",
+    "filter": {
+      "all": "Tous",
+      "escrow": "Escrow",
+      "payouts": "Retraits"
+    },
     "detail": {
       "title": "Détail du mouvement",
       "reference": "Référence",
       "amount": "Montant",
       "balanceBefore": "Solde avant",
       "balanceAfter": "Solde après",
+      "frozenBefore": "Bloqué avant",
+      "frozenAfter": "Bloqué après",
       "description": "Description"
     }
   },

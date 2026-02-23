@@ -43,7 +43,7 @@ export const appConfig: ApplicationConfig = {
         errorInterceptor,
       ]),
     ),
-    provideTranslateService({ defaultLanguage: 'fr' }),
+    provideTranslateService({ fallbackLang : 'en' }),
     ...provideTranslateHttpLoader({ prefix: '/i18n/' }),
     provideAppInitializer(() => {
       const translate = inject(TranslateService);

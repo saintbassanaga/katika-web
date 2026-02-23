@@ -3,23 +3,23 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DisputeService } from '../dispute.service';
 import { ToastService } from '../../../core/notification/toast.service';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 const REASONS = [
-  { value: 'ITEM_NOT_RECEIVED',    label: 'Article non reçu',       icon: '📦' },
-  { value: 'ITEM_NOT_AS_DESCRIBED',label: 'Article non conforme',   icon: '🔍' },
-  { value: 'SELLER_NOT_RESPONDING',label: 'Vendeur non réactif',    icon: '📵' },
-  { value: 'OTHER',                label: 'Autre motif',            icon: '💬' },
+  { value: 'ITEM_NOT_RECEIVED',    labelKey: 'disputes.reasons.ITEM_NOT_RECEIVED',    icon: '📦' },
+  { value: 'ITEM_NOT_AS_DESCRIBED',labelKey: 'disputes.reasons.ITEM_NOT_AS_DESCRIBED', icon: '🔍' },
+  { value: 'SELLER_NOT_RESPONDING',labelKey: 'disputes.reasons.SELLER_NOT_RESPONDING', icon: '📵' },
+  { value: 'OTHER',                labelKey: 'disputes.reasons.OTHER',                 icon: '💬' },
 ];
 
 @Component({
   selector: 'app-dispute-create',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="px-4 py-6 max-w-lg mx-auto">
-      <a routerLink="/disputes" class="flex items-center gap-2 text-sm text-gray-500 mb-4">← Retour</a>
-      <h1 class="text-xl font-bold text-gray-900 mb-6">Ouvrir un litige</h1>
+      <a routerLink="/disputes" class="flex items-center gap-2 text-sm text-gray-500 mb-4">← {{ 'common.back' | translate }}</a>
+      <h1 class="text-xl font-bold text-gray-900 mb-6">{{ 'disputes.create.pageTitle' | translate }}</h1>
 
       <!-- Step indicator -->
       <div class="flex gap-2 mb-6">
@@ -34,7 +34,7 @@ const REASONS = [
 
         @if (step() === 1) {
           <div class="space-y-4">
-            <h2 class="text-base font-semibold">Motif du litige</h2>
+            <h2 class="text-base font-semibold">{{ 'disputes.create.reasonTitle' | translate }}</h2>
             <div class="space-y-2">
               @for (reason of reasons; track reason.value) {
                 <label
@@ -45,26 +45,26 @@ const REASONS = [
                 >
                   <input type="radio" formControlName="reason" [value]="reason.value" class="sr-only" />
                   <span class="text-2xl">{{ reason.icon }}</span>
-                  <span class="font-medium text-sm">{{ reason.label }}</span>
+                  <span class="font-medium text-sm">{{ reason.labelKey | translate }}</span>
                 </label>
               }
             </div>
             <button type="button" (click)="step.set(2)" [disabled]="!form.get('reason')?.value"
                     class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold text-sm
                            hover:bg-blue-700 transition-colors disabled:opacity-50 min-h-[44px]">
-              Continuer →
+              {{ 'disputes.create.continue' | translate }}
             </button>
           </div>
         }
 
         @if (step() === 2) {
           <div class="space-y-4">
-            <h2 class="text-base font-semibold">Description du problème</h2>
+            <h2 class="text-base font-semibold">{{ 'disputes.create.descTitle' | translate }}</h2>
             <div>
               <textarea
                 formControlName="description"
                 rows="5"
-                placeholder="Décrivez le problème en détail (minimum 20 caractères)..."
+                [placeholder]="'disputes.create.descPh' | translate"
                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
                        focus:border-blue-600 focus:outline-none resize-none transition-colors"
                 [class.border-red-400]="form.get('description')?.invalid && form.get('description')?.touched"
@@ -76,13 +76,13 @@ const REASONS = [
             <div class="flex gap-2">
               <button type="button" (click)="step.set(1)"
                       class="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-600">
-                ← Retour
+                ← {{ 'disputes.create.back' | translate }}
               </button>
               <button type="button" (click)="step.set(3)"
                       [disabled]="form.get('description')?.invalid"
                       class="flex-1 py-3 bg-blue-600 text-white rounded-xl text-sm font-semibold
                              hover:bg-blue-700 disabled:opacity-50">
-                Continuer →
+                {{ 'disputes.create.continue' | translate }}
               </button>
             </div>
           </div>
@@ -90,25 +90,25 @@ const REASONS = [
 
         @if (step() === 3) {
           <div class="space-y-4">
-            <h2 class="text-base font-semibold">Récapitulatif</h2>
+            <h2 class="text-base font-semibold">{{ 'disputes.create.summaryTitle' | translate }}</h2>
             <div class="bg-gray-50 rounded-xl p-4 space-y-3">
               <div>
-                <p class="text-xs text-gray-500">Transaction</p>
+                <p class="text-xs text-gray-500">{{ 'disputes.create.transactionLabel' | translate }}</p>
                 <p class="text-sm font-medium">{{ transactionId() }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">Motif</p>
-                <p class="text-sm font-medium">{{ selectedReasonLabel() }}</p>
+                <p class="text-xs text-gray-500">{{ 'disputes.create.motifLabel' | translate }}</p>
+                <p class="text-sm font-medium">{{ selectedReasonLabel() | translate }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">Description</p>
+                <p class="text-xs text-gray-500">{{ 'disputes.create.descTitle' | translate }}</p>
                 <p class="text-sm text-gray-700">{{ form.get('description')?.value }}</p>
               </div>
             </div>
             <div class="flex gap-2">
               <button type="button" (click)="step.set(2)"
                       class="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-600">
-                ← Modifier
+                ← {{ 'disputes.create.modify' | translate }}
               </button>
               <button type="submit" [disabled]="loading() || form.invalid"
                       class="flex-1 py-3 bg-red-600 text-white rounded-xl text-sm font-semibold
@@ -116,7 +116,7 @@ const REASONS = [
                 @if (loading()) {
                   <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 }
-                Soumettre le litige
+                {{ loading() ? ('disputes.create.submitting' | translate) : ('disputes.create.submit' | translate) }}
               </button>
             </div>
           </div>
@@ -149,7 +149,7 @@ export class DisputeCreateComponent implements OnInit {
 
   protected selectedReasonLabel(): string {
     const val = this.form.get('reason')?.value;
-    return REASONS.find(r => r.value === val)?.label ?? '';
+    return REASONS.find(r => r.value === val)?.labelKey ?? '';
   }
 
   protected onSubmit(): void {

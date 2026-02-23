@@ -1,7 +1,7 @@
 {
   "nav": {
     "dashboard": "Dashboard",
-    "transactions": "Transactions",
+    "escrow": "Transactions",
     "disputes": "Disputes",
     "wallet": "Wallet",
     "payouts": "Withdrawals",
@@ -171,6 +171,12 @@
       "title": "No disputes",
       "message": "Your disputes will appear here"
     },
+    "reasons": {
+      "ITEM_NOT_RECEIVED": "Item not received",
+      "ITEM_NOT_AS_DESCRIBED": "Item not as described",
+      "SELLER_NOT_RESPONDING": "Seller not responding",
+      "OTHER": "Other"
+    },
     "create": {
       "pageTitle": "Open a dispute",
       "reasonTitle": "Dispute reason",
@@ -207,12 +213,19 @@
     "withdrawBtn": "Withdraw",
     "refreshBtn": "Refresh",
     "history": "Movement history",
+    "filter": {
+      "all": "All",
+      "escrow": "Escrow",
+      "payouts": "Withdrawals"
+    },
     "detail": {
       "title": "Movement detail",
       "reference": "Reference",
       "amount": "Amount",
       "balanceBefore": "Balance before",
       "balanceAfter": "Balance after",
+      "frozenBefore": "Frozen before",
+      "frozenAfter": "Frozen after",
       "description": "Description"
     }
   },

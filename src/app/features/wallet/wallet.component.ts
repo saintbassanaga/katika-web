@@ -9,6 +9,15 @@ import { LoadingSkeletonComponent } from '../../shared/components/loading-skelet
 import { BottomSheetComponent } from '../../shared/components/bottom-sheet/bottom-sheet.component';
 import { TranslatePipe } from '@ngx-translate/core';
 
+type MovementType =
+  | 'ESCROW_FREEZE'
+  | 'ESCROW_RELEASE'
+  | 'ESCROW_CREDIT'
+  | 'PAYOUT_DEBIT'
+  | 'PAYOUT_REFUND'
+  | 'ADMIN_CREDIT'
+  | 'ADMIN_DEBIT';
+
 interface WalletBalance {
   balance: number;
   frozenAmount: number;
@@ -17,25 +26,33 @@ interface WalletBalance {
 
 interface WalletMovement {
   id: string;
-  type: 'FREEZE' | 'RELEASE' | 'CREDIT' | 'DEBIT' | 'REFUND';
+  type: MovementType;
   amount: number;
   balanceBefore: number;
   balanceAfter: number;
+  frozenBefore: number;
+  frozenAfter: number;
   reference: string;
   description: string;
   createdAt: string;
 }
 
+const TYPE_FILTERS: { labelKey: string; types: string } [] = [
+  { labelKey: 'wallet.filter.all',     types: '' },
+  { labelKey: 'wallet.filter.escrow',  types: 'ESCROW_FREEZE,ESCROW_RELEASE,ESCROW_CREDIT' },
+  { labelKey: 'wallet.filter.payouts', types: 'PAYOUT_DEBIT,PAYOUT_REFUND' },
+];
+
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [RouterLink, AmountPipe, TimeAgoPipe, EmptyStateComponent, LoadingSkeletonComponent, BottomSheetComponent],
+  imports: [RouterLink, AmountPipe, TimeAgoPipe, EmptyStateComponent, LoadingSkeletonComponent, BottomSheetComponent, TranslatePipe],
   template: `
     <div class="px-4 py-6 max-w-lg mx-auto">
 
       <!-- Balance card -->
       <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-5 text-white mb-6">
-        <p class="text-blue-100 text-sm mb-1">Solde disponible</p>
+        <p class="text-blue-100 text-sm mb-1">{{ 'wallet.balance' | translate }}</p>
         <div class="flex items-center gap-2 mb-1">
           @if (balanceVisible()) {
             <span class="text-3xl font-bold">{{ wallet()?.balance | amount }}</span>
@@ -47,29 +64,49 @@ interface WalletMovement {
           </button>
         </div>
         @if ((wallet()?.frozenAmount ?? 0) > 0) {
-          <p class="text-blue-200 text-xs">Bloqué: {{ wallet()?.frozenAmount | amount }}</p>
+          <p class="text-blue-200 text-xs">{{ 'wallet.frozen' | translate }}: {{ wallet()?.frozenAmount | amount }}</p>
         }
         <div class="flex gap-2 mt-4">
           <a routerLink="/payouts/new"
              class="flex-1 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium text-center transition-colors">
-            ↑ Retirer
+            {{ 'wallet.withdrawBtn' | translate }}
           </a>
           <button
             (click)="refresh()"
             class="flex-1 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium text-center transition-colors"
           >
-            🔄 Actualiser
+            {{ 'wallet.refreshBtn' | translate }}
           </button>
         </div>
       </div>
 
       <!-- Movements -->
-      <h2 class="text-base font-semibold text-gray-900 mb-3">Historique des mouvements</h2>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-base font-semibold text-gray-900">{{ 'wallet.history' | translate }}</h2>
+      </div>
+
+      <!-- Type filter chips -->
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+        @for (f of typeFilters; track f.types) {
+          <button
+            (click)="setTypeFilter(f.types)"
+            class="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-colors border"
+            [class.bg-blue-600]="activeTypeFilter() === f.types"
+            [class.text-white]="activeTypeFilter() === f.types"
+            [class.border-blue-600]="activeTypeFilter() === f.types"
+            [class.bg-white]="activeTypeFilter() !== f.types"
+            [class.text-gray-600]="activeTypeFilter() !== f.types"
+            [class.border-gray-200]="activeTypeFilter() !== f.types"
+          >
+            {{ f.labelKey | translate }}
+          </button>
+        }
+      </div>
 
       @if (loading()) {
         <app-loading-skeleton [count]="5" />
       } @else if (movements().length === 0) {
-        <app-empty-state icon="📊" title="Aucun mouvement" message="Vos mouvements de fonds apparaîtront ici" />
+        <app-empty-state icon="📊" [title]="'wallet.empty.title' | translate" [message]="'wallet.empty.message' | translate" />
       } @else {
         <div class="space-y-2">
           @for (mov of movements(); track mov.id) {
@@ -103,7 +140,7 @@ interface WalletMovement {
           @if (hasMore()) {
             <button (click)="loadMore()" [disabled]="loadingMore()"
                     class="w-full py-3 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50">
-              {{ loadingMore() ? 'Chargement...' : 'Charger plus' }}
+              {{ loadingMore() ? ('common.loading' | translate) : ('common.loadMore' | translate) }}
             </button>
           }
         </div>
@@ -111,30 +148,42 @@ interface WalletMovement {
     </div>
 
     <!-- Movement detail bottom sheet -->
-    <app-bottom-sheet [open]="sheetOpen()" title="Détail du mouvement" (close)="sheetOpen.set(false)">
+    <app-bottom-sheet [open]="sheetOpen()" [title]="'wallet.detail.title' | translate" (close)="sheetOpen.set(false)">
       @if (selectedMovement()) {
         <div class="space-y-3">
           <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Référence</span>
+            <span class="text-gray-500">{{ 'wallet.detail.reference' | translate }}</span>
             <span class="font-medium">{{ selectedMovement()!.reference }}</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Montant</span>
+            <span class="text-gray-500">{{ 'wallet.detail.amount' | translate }}</span>
             <span class="font-semibold" [class.text-green-600]="isCredit(selectedMovement()!)"
                                         [class.text-red-600]="!isCredit(selectedMovement()!)">
               {{ isCredit(selectedMovement()!) ? '+' : '-' }}{{ selectedMovement()!.amount | amount }}
             </span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Solde avant</span>
+            <span class="text-gray-500">{{ 'wallet.detail.balanceBefore' | translate }}</span>
             <span>{{ selectedMovement()!.balanceBefore | amount }}</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Solde après</span>
+            <span class="text-gray-500">{{ 'wallet.detail.balanceAfter' | translate }}</span>
             <span>{{ selectedMovement()!.balanceAfter | amount }}</span>
           </div>
+          @if (selectedMovement()!.frozenBefore !== selectedMovement()!.frozenAfter) {
+            <div class="border-t border-gray-100 pt-2 space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">{{ 'wallet.detail.frozenBefore' | translate }}</span>
+                <span>{{ selectedMovement()!.frozenBefore | amount }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">{{ 'wallet.detail.frozenAfter' | translate }}</span>
+                <span>{{ selectedMovement()!.frozenAfter | amount }}</span>
+              </div>
+            </div>
+          }
           <div class="text-sm">
-            <span class="text-gray-500">Description</span>
+            <span class="text-gray-500">{{ 'wallet.detail.description' | translate }}</span>
             <p class="mt-1 text-gray-700">{{ selectedMovement()!.description }}</p>
           </div>
         </div>
@@ -145,6 +194,7 @@ interface WalletMovement {
 export class WalletComponent implements OnInit {
   private readonly http = inject(HttpClient);
 
+  protected readonly typeFilters = TYPE_FILTERS;
   protected readonly wallet = signal<WalletBalance | null>(null);
   protected readonly movements = signal<WalletMovement[]>([]);
   protected readonly loading = signal(true);
@@ -153,10 +203,18 @@ export class WalletComponent implements OnInit {
   protected readonly balanceVisible = signal(false);
   protected readonly sheetOpen = signal(false);
   protected readonly selectedMovement = signal<WalletMovement | null>(null);
+  protected readonly activeTypeFilter = signal('');
   private page = 0;
 
   ngOnInit(): void {
     this.loadWallet();
+    this.loadMovements();
+  }
+
+  protected setTypeFilter(types: string): void {
+    this.activeTypeFilter.set(types);
+    this.page = 0;
+    this.movements.set([]);
     this.loadMovements();
   }
 
@@ -184,8 +242,9 @@ export class WalletComponent implements OnInit {
   }
 
   private fetchMovements(): void {
+    const typeParam = this.activeTypeFilter() ? `&type=${this.activeTypeFilter()}` : '';
     this.http.get<{ content: WalletMovement[]; totalPages: number }>(
-      `${environment.apiUrl}/api/wallet/movements?page=${this.page}&size=20`,
+      `${environment.apiUrl}/api/wallet/movements?page=${this.page}&size=20${typeParam}`,
       { withCredentials: true },
     ).subscribe({
       next: (data) => {
@@ -202,6 +261,6 @@ export class WalletComponent implements OnInit {
   }
 
   protected isCredit(mov: WalletMovement): boolean {
-    return ['CREDIT', 'RELEASE', 'REFUND'].includes(mov.type);
+    return mov.balanceAfter >= mov.balanceBefore;
   }
 }
