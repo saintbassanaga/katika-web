@@ -21,6 +21,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "outputPath": "dist/katika",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -30,11 +31,34 @@
               }
             ],
             "styles": [
+              "node_modules/@fontsource-variable/outfit/index.css",
+              "src/tailwind.css",
               "src/styles.scss"
+            ],
+            "allowedCommonJsDependencies": [
+              "qrcode",
+              "dijkstrajs",
+              "isarray",
+              "dayjs",
+              "dayjs/plugin/relativeTime",
+              "dayjs/locale/fr",
+              "dayjs/locale/en",
+              "@stomp/stompjs",
+              "sockjs-client"
             ]
           },
           "configurations": {
             "production": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": {
+                  "inline": false
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -43,8 +67,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"
@@ -84,6 +108,8 @@
               }
             ],
             "styles": [
+              "node_modules/@fontsource-variable/outfit/index.css",
+              "src/tailwind.css",
               "src/styles.scss"
             ]
           }
