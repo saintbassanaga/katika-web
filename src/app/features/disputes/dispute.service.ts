@@ -21,9 +21,27 @@ export interface DisputeMessage {
   readBy: string[];
 }
 
+export type DisputeReason =
+  // Livraison
+  | 'NOT_RECEIVED' | 'LATE_DELIVERY' | 'WRONG_ADDRESS' | 'PARTIAL_DELIVERY'
+  // Qualité
+  | 'NOT_AS_DESCRIBED' | 'DEFECTIVE' | 'COUNTERFEIT' | 'WRONG_ITEM' | 'QUALITY_ISSUE'
+  // Service
+  | 'SERVICE_NOT_RENDERED' | 'SERVICE_INCOMPLETE' | 'SERVICE_UNSATISFACTORY'
+  // Communication
+  | 'SELLER_UNRESPONSIVE' | 'BUYER_UNRESPONSIVE'
+  // Financier
+  | 'OVERCHARGED' | 'HIDDEN_FEES'
+  // Fraude
+  | 'SUSPECTED_FRAUD' | 'UNAUTHORIZED_TRANSACTION'
+  // Autre
+  | 'OTHER';
+
 export interface CreateDisputeRequest {
   transactionId: string;
-  reason: 'ITEM_NOT_RECEIVED' | 'ITEM_NOT_AS_DESCRIBED' | 'SELLER_NOT_RESPONDING' | 'OTHER';
+  initiatorId: string;
+  initiatorRole: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  reason: DisputeReason;
   description: string;
 }
 

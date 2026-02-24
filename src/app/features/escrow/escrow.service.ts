@@ -47,6 +47,7 @@ export interface TransactionDetail {
 export interface EscrowCreateRequest {
   buyerPhone: string;
   grossAmount: number;
+  provider: 'CAMPAY' | 'MONETBIL';
   description?: string;
   deliveryDeadline?: string; // ISO 8601
   idempotencyKey?: string;
@@ -86,15 +87,35 @@ export class EscrowService extends ApiService {
     return this.http.get<TransactionDetail>(this.url(`/api/escrow/${id}`), this.defaultOptions);
   }
 
-  generateVerificationCode(id: string): Observable<{ code: string; qrUri: string; expiresAt: string }> {
-    return this.http.post<{ code: string; qrUri: string; expiresAt: string }>(
-      this.url(`/api/escrow/${id}/verification-code`), {}, this.defaultOptions,
+  generateVerificationCode(id: string, expirationMinutes = 15): Observable<{ verificationCode: string }> {
+    return this.http.post<{ verificationCode: string }>(
+      this.url(`/api/escrow/${id}/verification-code`),
+      { expirationMinutes },
+      this.defaultOptions,
     );
   }
 
   release(id: string, verificationCode: string): Observable<TransactionDetail> {
     return this.http.post<TransactionDetail>(
       this.url(`/api/escrow/${id}/release`), { verificationCode }, this.defaultOptions,
+    );
+  }
+
+  ship(id: string): Observable<TransactionDetail> {
+    return this.http.post<TransactionDetail>(
+      this.url(`/api/escrow/${id}/ship`), {}, this.defaultOptions,
+    );
+  }
+
+  deliver(id: string): Observable<TransactionDetail> {
+    return this.http.post<TransactionDetail>(
+      this.url(`/api/escrow/${id}/deliver`), {}, this.defaultOptions,
+    );
+  }
+
+  cancel(id: string): Observable<TransactionDetail> {
+    return this.http.post<TransactionDetail>(
+      this.url(`/api/escrow/${id}/cancel`), {}, this.defaultOptions,
     );
   }
 }

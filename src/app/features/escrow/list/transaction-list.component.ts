@@ -29,12 +29,9 @@ const FILTERS = [
           <button
             (click)="setFilter(filter.status)"
             class="shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border"
-            [class.bg-blue-600]="activeFilter() === filter.status"
-            [class.text-white]="activeFilter() === filter.status"
-            [class.border-blue-600]="activeFilter() === filter.status"
-            [class.bg-white]="activeFilter() !== filter.status"
-            [class.text-gray-600]="activeFilter() !== filter.status"
-            [class.border-gray-200]="activeFilter() !== filter.status"
+            [style.background]="activeFilter() === filter.status ? 'var(--clr-primary)' : 'var(--clr-surface)'"
+            [style.color]="activeFilter() === filter.status ? '#fff' : 'var(--clr-muted)'"
+            [style.border-color]="activeFilter() === filter.status ? 'var(--clr-primary)' : 'var(--clr-border)'"
           >
             {{ filter.key | translate }}
           </button>
@@ -57,9 +54,9 @@ const FILTERS = [
               class="flex items-center gap-3 bg-white rounded-2xl p-4 shadow-sm
                      hover:shadow-md transition-shadow active:scale-[0.99]"
             >
-              <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center
-                          text-blue-600 font-bold text-sm shrink-0">
-                {{ (tx.buyerName ?? '?')[0] }}
+              <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
+                   style="background: var(--clr-primary-lt); color: var(--clr-primary)">
+                {{ tx.buyerName[0] }}
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-gray-900">{{ tx.reference }}</p>

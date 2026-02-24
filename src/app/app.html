@@ -1,21 +1,23 @@
-<div class="min-h-screen" style="background:#EDF1F7">
+<div class="h-screen flex overflow-hidden" style="background:#EDF1F7">
+
   @if (showNav()) {
     @if (isMobile()) {
-      <app-bottom-nav />
+      <app-bottom-nav class="shrink-0" />
     } @else {
-      <app-sidebar />
+      <app-sidebar class="shrink-0" />
     }
   }
 
   <main
-    [class]="contentClass()"
     id="main-content"
     tabindex="-1"
-    class="min-h-screen"
+    [class]="contentClass()"
+    class="flex-1 min-h-0 overflow-hidden"
   >
     <router-outlet />
   </main>
 
   <app-fab />
   <app-toast-container />
+
 </div>

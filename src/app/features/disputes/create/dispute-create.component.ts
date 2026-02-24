@@ -1,15 +1,71 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DisputeService } from '../dispute.service';
+import { DisputeService, DisputeReason } from '../dispute.service';
 import { ToastService } from '../../../core/notification/toast.service';
+import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 
-const REASONS = [
-  { value: 'ITEM_NOT_RECEIVED',    labelKey: 'disputes.reasons.ITEM_NOT_RECEIVED',    icon: '📦' },
-  { value: 'ITEM_NOT_AS_DESCRIBED',labelKey: 'disputes.reasons.ITEM_NOT_AS_DESCRIBED', icon: '🔍' },
-  { value: 'SELLER_NOT_RESPONDING',labelKey: 'disputes.reasons.SELLER_NOT_RESPONDING', icon: '📵' },
-  { value: 'OTHER',                labelKey: 'disputes.reasons.OTHER',                 icon: '💬' },
+interface ReasonGroup {
+  groupKey: string;
+  reasons: { value: DisputeReason; labelKey: string; icon: string }[];
+}
+
+const REASON_GROUPS: ReasonGroup[] = [
+  {
+    groupKey: 'disputes.categories.delivery',
+    reasons: [
+      { value: 'NOT_RECEIVED',     labelKey: 'disputes.reasons.NOT_RECEIVED',     icon: '📦' },
+      { value: 'LATE_DELIVERY',    labelKey: 'disputes.reasons.LATE_DELIVERY',    icon: '⏰' },
+      { value: 'PARTIAL_DELIVERY', labelKey: 'disputes.reasons.PARTIAL_DELIVERY', icon: '🧩' },
+      { value: 'WRONG_ADDRESS',    labelKey: 'disputes.reasons.WRONG_ADDRESS',    icon: '📍' },
+    ],
+  },
+  {
+    groupKey: 'disputes.categories.quality',
+    reasons: [
+      { value: 'NOT_AS_DESCRIBED', labelKey: 'disputes.reasons.NOT_AS_DESCRIBED', icon: '🔍' },
+      { value: 'DEFECTIVE',        labelKey: 'disputes.reasons.DEFECTIVE',        icon: '🔧' },
+      { value: 'WRONG_ITEM',       labelKey: 'disputes.reasons.WRONG_ITEM',       icon: '🔄' },
+      { value: 'COUNTERFEIT',      labelKey: 'disputes.reasons.COUNTERFEIT',      icon: '⚠️' },
+      { value: 'QUALITY_ISSUE',    labelKey: 'disputes.reasons.QUALITY_ISSUE',    icon: '👎' },
+    ],
+  },
+  {
+    groupKey: 'disputes.categories.service',
+    reasons: [
+      { value: 'SERVICE_NOT_RENDERED',    labelKey: 'disputes.reasons.SERVICE_NOT_RENDERED',    icon: '🚫' },
+      { value: 'SERVICE_INCOMPLETE',      labelKey: 'disputes.reasons.SERVICE_INCOMPLETE',      icon: '⏳' },
+      { value: 'SERVICE_UNSATISFACTORY',  labelKey: 'disputes.reasons.SERVICE_UNSATISFACTORY',  icon: '😞' },
+    ],
+  },
+  {
+    groupKey: 'disputes.categories.communication',
+    reasons: [
+      { value: 'SELLER_UNRESPONSIVE', labelKey: 'disputes.reasons.SELLER_UNRESPONSIVE', icon: '📵' },
+      { value: 'BUYER_UNRESPONSIVE',  labelKey: 'disputes.reasons.BUYER_UNRESPONSIVE',  icon: '📵' },
+    ],
+  },
+  {
+    groupKey: 'disputes.categories.financial',
+    reasons: [
+      { value: 'OVERCHARGED',  labelKey: 'disputes.reasons.OVERCHARGED',  icon: '💰' },
+      { value: 'HIDDEN_FEES',  labelKey: 'disputes.reasons.HIDDEN_FEES',  icon: '💳' },
+    ],
+  },
+  {
+    groupKey: 'disputes.categories.fraud',
+    reasons: [
+      { value: 'SUSPECTED_FRAUD',          labelKey: 'disputes.reasons.SUSPECTED_FRAUD',          icon: '🚨' },
+      { value: 'UNAUTHORIZED_TRANSACTION', labelKey: 'disputes.reasons.UNAUTHORIZED_TRANSACTION', icon: '🔒' },
+    ],
+  },
+  {
+    groupKey: 'disputes.categories.other',
+    reasons: [
+      { value: 'OTHER', labelKey: 'disputes.reasons.OTHER', icon: '💬' },
+    ],
+  },
 ];
 
 @Component({
@@ -35,18 +91,28 @@ const REASONS = [
         @if (step() === 1) {
           <div class="space-y-4">
             <h2 class="text-base font-semibold">{{ 'disputes.create.reasonTitle' | translate }}</h2>
-            <div class="space-y-2">
-              @for (reason of reasons; track reason.value) {
-                <label
-                  class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
-                  [class.border-blue-600]="form.get('reason')?.value === reason.value"
-                  [class.bg-blue-50]="form.get('reason')?.value === reason.value"
-                  [class.border-gray-200]="form.get('reason')?.value !== reason.value"
-                >
-                  <input type="radio" formControlName="reason" [value]="reason.value" class="sr-only" />
-                  <span class="text-2xl">{{ reason.icon }}</span>
-                  <span class="font-medium text-sm">{{ reason.labelKey | translate }}</span>
-                </label>
+            <div class="space-y-4">
+              @for (group of reasonGroups; track group.groupKey) {
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide mb-2 px-1"
+                     style="color: var(--clr-muted)">
+                    {{ group.groupKey | translate }}
+                  </p>
+                  <div class="space-y-1.5">
+                    @for (reason of group.reasons; track reason.value) {
+                      <label
+                        class="flex items-center gap-3 px-4 py-3 border-2 rounded-xl cursor-pointer transition-colors"
+                        [class.border-blue-600]="form.get('reason')?.value === reason.value"
+                        [class.bg-blue-50]="form.get('reason')?.value === reason.value"
+                        [class.border-gray-200]="form.get('reason')?.value !== reason.value"
+                      >
+                        <input type="radio" formControlName="reason" [value]="reason.value" class="sr-only" />
+                        <span class="text-xl">{{ reason.icon }}</span>
+                        <span class="font-medium text-sm">{{ reason.labelKey | translate }}</span>
+                      </label>
+                    }
+                  </div>
+                </div>
               }
             </div>
             <button type="button" (click)="step.set(2)" [disabled]="!form.get('reason')?.value"
@@ -131,11 +197,12 @@ export class DisputeCreateComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthStore);
 
   protected readonly step = signal(1);
   protected readonly loading = signal(false);
   protected readonly transactionId = signal('');
-  protected readonly reasons = REASONS;
+  protected readonly reasonGroups = REASON_GROUPS;
 
   protected readonly form = this.fb.group({
     reason: ['', Validators.required],
@@ -149,16 +216,23 @@ export class DisputeCreateComponent implements OnInit {
 
   protected selectedReasonLabel(): string {
     const val = this.form.get('reason')?.value;
-    return REASONS.find(r => r.value === val)?.labelKey ?? '';
+    for (const group of REASON_GROUPS) {
+      const found = group.reasons.find(r => r.value === val);
+      if (found) return found.labelKey;
+    }
+    return '';
   }
 
   protected onSubmit(): void {
     if (this.form.invalid) return;
     this.loading.set(true);
+    const user = this.auth.user()!;
     this.disputeService.createDispute({
       transactionId: this.transactionId(),
-      reason: this.form.value.reason as any,
-      description: this.form.value.description!,
+      initiatorId:   user.userId,
+      initiatorRole: user.role,
+      reason:        this.form.value.reason as DisputeReason,
+      description:   this.form.value.description!,
     }).subscribe({
       next: (dispute: any) => {
         this.toast.success('Litige ouvert avec succès');

@@ -147,9 +147,15 @@
         "DELIVERED": "Delivered",
         "RELEASED": "Released"
       },
+      "contextBuyer": "Buying from {{name}}",
+      "contextSeller": "Selling to {{name}}",
+      "you": "you",
       "amount": "Amount",
       "fee": "Platform fee (3%)",
-      "net": "Net amount for seller",
+      "grossAmountBuyer": "You will pay",
+      "grossAmountSeller": "Paid by buyer",
+      "netBuyer": "Seller will receive",
+      "netSeller": "You will receive",
       "grossAmount": "Gross amount",
       "parties": "Parties",
       "buyer": "Buyer",
@@ -157,11 +163,25 @@
       "reference": "Reference",
       "createdAt": "Created",
       "description": "Description",
+      "deliverSection": {
+        "title": "I received my order",
+        "subtitle": "Confirm you physically received the package. You'll then have time to inspect its contents before releasing the payment."
+      },
+      "confirmSection": {
+        "title": "Release payment",
+        "subtitle": "Everything is as expected? Scan the seller's QR code or enter the code to transfer the funds.",
+        "codePh": "Seller's confirmation code",
+        "or": "or"
+      },
       "actions": {
         "release": "Release funds",
+        "deliver": "I received my order",
         "scanQr": "Scan QR code",
         "generateQr": "Generate my QR code",
-        "dispute": "Open a dispute"
+        "ship": "Mark as shipped",
+        "cancel": "Cancel transaction",
+        "dispute": "Open a dispute",
+        "confirmReception": "Confirm & release payment"
       }
     }
   },
@@ -171,11 +191,35 @@
       "title": "No disputes",
       "message": "Your disputes will appear here"
     },
+    "categories": {
+      "delivery":      "Delivery",
+      "quality":       "Quality / Compliance",
+      "service":       "Service",
+      "communication": "Communication",
+      "financial":     "Billing",
+      "fraud":         "Fraud",
+      "other":         "Other"
+    },
     "reasons": {
-      "ITEM_NOT_RECEIVED": "Item not received",
-      "ITEM_NOT_AS_DESCRIBED": "Item not as described",
-      "SELLER_NOT_RESPONDING": "Seller not responding",
-      "OTHER": "Other"
+      "NOT_RECEIVED":            "Package not received",
+      "LATE_DELIVERY":           "Late delivery",
+      "WRONG_ADDRESS":           "Wrong delivery address",
+      "PARTIAL_DELIVERY":        "Partial delivery",
+      "NOT_AS_DESCRIBED":        "Item not as described",
+      "DEFECTIVE":               "Defective item",
+      "COUNTERFEIT":             "Suspected counterfeit",
+      "WRONG_ITEM":              "Wrong item received",
+      "QUALITY_ISSUE":           "Quality issue",
+      "SERVICE_NOT_RENDERED":    "Service not rendered",
+      "SERVICE_INCOMPLETE":      "Incomplete service",
+      "SERVICE_UNSATISFACTORY":  "Unsatisfactory service",
+      "SELLER_UNRESPONSIVE":     "Seller unresponsive",
+      "BUYER_UNRESPONSIVE":      "Buyer unresponsive",
+      "OVERCHARGED":             "Overcharged",
+      "HIDDEN_FEES":             "Hidden fees",
+      "SUSPECTED_FRAUD":         "Suspected fraud",
+      "UNAUTHORIZED_TRANSACTION":"Unauthorized transaction",
+      "OTHER":                   "Other reason"
     },
     "create": {
       "pageTitle": "Open a dispute",
@@ -216,6 +260,7 @@
     "filter": {
       "all": "All",
       "escrow": "Escrow",
+      "disputes": "Disputes",
       "payouts": "Withdrawals"
     },
     "detail": {
@@ -349,6 +394,7 @@
       "grossAmount": "Gross amount",
       "fee": "Platform fee (3%)",
       "youReceive": "You will receive",
+      "provider": "Payment provider",
       "submit": "Create transaction",
       "submitting": "Creating…",
       "phoneError": "Phone required",

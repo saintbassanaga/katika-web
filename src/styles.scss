@@ -1,5 +1,5 @@
-@use 'tailwindcss';
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Tailwind v4 chargé via src/tailwind.css + postcss.config.mjs */
+/* Police chargée via angular.json styles[] — voir node_modules/@fontsource-variable/outfit */
 
 /* ── Brand tokens ────────────────────────────────── */
 :root {
@@ -14,6 +14,10 @@
   --clr-border:      #E2E8F0;
   --clr-text:        #0F172A;
   --clr-muted:       #64748B;
+  --clr-success:     #10B981;   /* emerald — credit, success        */
+  --clr-success-lt:  #ECFDF5;   /* emerald pale                     */
+  --clr-error:       #DC2626;   /* red — debit, error               */
+  --clr-error-lt:    #FEF2F2;   /* red pale                         */
 }
 
 /* ── Reset ──────────────────────────────────────── */
@@ -23,7 +27,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Outfit Variable', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 16px;
   color: #0F172A;
   background-color: #EDF1F7;

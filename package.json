@@ -6,7 +6,16 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+
+    "tauri:dev":           "tauri dev",
+    "tauri:build":         "tauri build",
+    "tauri:android":       "tauri android dev",
+    "tauri:ios":           "tauri ios dev",
+    "tauri:build:android": "tauri android build",
+    "tauri:build:ios":     "tauri ios build",
+    "tauri:init:android":  "tauri android init",
+    "tauri:init:ios":      "tauri ios init"
   },
   "prettier": {
     "printWidth": 100,
@@ -22,6 +31,14 @@
   },
   "private": true,
   "dependencies": {
+    "@fontsource-variable/outfit": "^5.1.1",
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-fs": "^2.0.0",
+    "@tauri-apps/plugin-http": "^2.0.0",
+    "@tauri-apps/plugin-notification": "^2.0.0",
+    "@tauri-apps/plugin-geolocation": "^2.0.0",
+    "@tauri-apps/plugin-shell": "^2.0.0",
+    "@tauri-apps/plugin-opener": "^2.0.0",
     "@angular/cdk": "^21.1.5",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
@@ -42,6 +59,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
     "@angular/build": "^20.3.5",
     "@angular/cli": "^20.3.5",
     "@angular/compiler-cli": "^20.3.0",

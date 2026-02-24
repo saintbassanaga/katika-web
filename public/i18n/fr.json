@@ -147,9 +147,15 @@
         "DELIVERED": "Livré",
         "RELEASED": "Libéré"
       },
+      "contextBuyer": "Achat auprès de {{name}}",
+      "contextSeller": "Vente à {{name}}",
+      "you": "vous",
       "amount": "Montant",
       "fee": "Frais plateforme (3%)",
-      "net": "Montant net vendeur",
+      "grossAmountBuyer": "Vous allez payer",
+      "grossAmountSeller": "Payé par l'acheteur",
+      "netBuyer": "Le vendeur va recevoir",
+      "netSeller": "Vous allez recevoir",
       "grossAmount": "Montant brut",
       "parties": "Parties",
       "buyer": "Acheteur",
@@ -157,11 +163,25 @@
       "reference": "Référence",
       "createdAt": "Créée le",
       "description": "Description",
+      "deliverSection": {
+        "title": "J'ai reçu ma commande",
+        "subtitle": "Confirmez la réception physique du colis. Vous aurez ensuite le temps de vérifier son contenu avant de libérer le paiement."
+      },
+      "confirmSection": {
+        "title": "Libérer le paiement",
+        "subtitle": "Tout est conforme ? Scannez le QR code du vendeur ou saisissez le code pour lui transférer les fonds.",
+        "codePh": "Code de confirmation du vendeur",
+        "or": "ou"
+      },
       "actions": {
         "release": "Libérer les fonds",
+        "deliver": "J'ai reçu ma commande",
         "scanQr": "Scanner le QR code",
         "generateQr": "Générer mon QR code",
-        "dispute": "Ouvrir un litige"
+        "ship": "Marquer comme expédié",
+        "cancel": "Annuler la transaction",
+        "dispute": "Ouvrir un litige",
+        "confirmReception": "Confirmer et libérer le paiement"
       }
     }
   },
@@ -171,11 +191,35 @@
       "title": "Aucun litige",
       "message": "Vos litiges apparaîtront ici"
     },
+    "categories": {
+      "delivery":      "Livraison",
+      "quality":       "Qualité / Conformité",
+      "service":       "Service",
+      "communication": "Communication",
+      "financial":     "Facturation",
+      "fraud":         "Fraude",
+      "other":         "Autre"
+    },
     "reasons": {
-      "ITEM_NOT_RECEIVED": "Article non reçu",
-      "ITEM_NOT_AS_DESCRIBED": "Article non conforme",
-      "SELLER_NOT_RESPONDING": "Vendeur non réactif",
-      "OTHER": "Autre"
+      "NOT_RECEIVED":            "Colis non reçu",
+      "LATE_DELIVERY":           "Livraison en retard",
+      "WRONG_ADDRESS":           "Mauvaise adresse de livraison",
+      "PARTIAL_DELIVERY":        "Livraison partielle",
+      "NOT_AS_DESCRIBED":        "Article non conforme à l'annonce",
+      "DEFECTIVE":               "Article défectueux",
+      "COUNTERFEIT":             "Contrefaçon suspectée",
+      "WRONG_ITEM":              "Mauvais article reçu",
+      "QUALITY_ISSUE":           "Problème de qualité",
+      "SERVICE_NOT_RENDERED":    "Service non rendu",
+      "SERVICE_INCOMPLETE":      "Service incomplet",
+      "SERVICE_UNSATISFACTORY":  "Service insatisfaisant",
+      "SELLER_UNRESPONSIVE":     "Vendeur injoignable",
+      "BUYER_UNRESPONSIVE":      "Acheteur injoignable",
+      "OVERCHARGED":             "Surfacturation",
+      "HIDDEN_FEES":             "Frais cachés",
+      "SUSPECTED_FRAUD":         "Fraude suspectée",
+      "UNAUTHORIZED_TRANSACTION":"Transaction non autorisée",
+      "OTHER":                   "Autre motif"
     },
     "create": {
       "pageTitle": "Ouvrir un litige",
@@ -216,6 +260,7 @@
     "filter": {
       "all": "Tous",
       "escrow": "Escrow",
+      "disputes": "Litiges",
       "payouts": "Retraits"
     },
     "detail": {
@@ -349,6 +394,7 @@
       "grossAmount": "Montant brut",
       "fee": "Frais plateforme (3%)",
       "youReceive": "Vous recevrez",
+      "provider": "Opérateur de paiement",
       "submit": "Créer la transaction",
       "submitting": "Création en cours…",
       "phoneError": "Numéro requis",

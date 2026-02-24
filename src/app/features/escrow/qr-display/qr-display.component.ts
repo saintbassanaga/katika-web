@@ -61,15 +61,16 @@ export class QrDisplayComponent implements OnInit {
     await this.loadQr();
   }
 
+  private readonly EXPIRATION_MINUTES = 15;
+
   private async loadQr(): Promise<void> {
     try {
-      const { code, expiresAt } = await firstValueFrom(
-        this.escrowService.generateVerificationCode(this.id()),
+      const { verificationCode: code } = await firstValueFrom(
+        this.escrowService.generateVerificationCode(this.id(), this.EXPIRATION_MINUTES),
       );
 
-      // Calculate TTL
-      const expiryMs = new Date(expiresAt).getTime() - Date.now();
-      this.ttl.set(Math.floor(expiryMs / 1000));
+      // Compute TTL from the expiration we requested
+      this.ttl.set(this.EXPIRATION_MINUTES * 60);
 
       // Countdown
       interval(1000).pipe(takeWhile(() => this.ttl() > 0))

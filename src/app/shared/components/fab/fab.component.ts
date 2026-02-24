@@ -2,12 +2,12 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { filter, map, startWith } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { EscrowService } from '../../../features/escrow/escrow.service';
-import { ToastService } from '../../../core/notification/toast.service';
+import { AuthStore } from '@core/auth/auth.store';
+import { EscrowService } from '@features/escrow/escrow.service';
+import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
 
 interface FabConfig {
@@ -228,7 +228,7 @@ interface FabConfig {
                        placeholder="Ex. 50000"
                        class="input input-amount"
                        [class.error]="txForm.get('grossAmount')?.invalid && txForm.get('grossAmount')?.touched"
-                       min="100" max="10000000" step="1" />
+                       min="25" max="10000000" step="1" />
                 <span class="amount-suffix">XAF</span>
               </div>
               @if (txForm.get('grossAmount')?.errors?.['min'] && txForm.get('grossAmount')?.touched) {
@@ -257,6 +257,23 @@ interface FabConfig {
                 </div>
               </div>
             }
+
+            <!-- Provider -->
+            <div class="field">
+              <label class="label">{{ 'fab.form.provider' | translate }}</label>
+              <div style="display:flex; gap:.75rem;">
+                @for (p of providers; track p.value) {
+                  <button
+                    type="button"
+                    (click)="txForm.get('provider')!.setValue(p.value)"
+                    style="flex:1; padding:.75rem; border-radius:12px; border:2px solid; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .15s; font-family:inherit;"
+                    [style.border-color]="txForm.get('provider')?.value === p.value ? '#1B4F8A' : '#E2E8F0'"
+                    [style.background]="txForm.get('provider')?.value === p.value ? '#EBF4FF' : '#F8FAFC'"
+                    [style.color]="txForm.get('provider')?.value === p.value ? '#1B4F8A' : '#64748B'"
+                  >{{ p.label }}</button>
+                }
+              </div>
+            </div>
 
             <!-- Description -->
             <div class="field">
@@ -306,17 +323,17 @@ export class FabComponent {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
       map((e: NavigationEnd) => e.urlAfterRedirects),
+      startWith(this.router.url),
     ),
-    { initialValue: this.router.url },
   );
 
   protected readonly fabConfig = computed<FabConfig | null>(() => {
     if (!this.auth.isAuthenticated()) return null;
     const url = this.currentUrl();
-    if (url.startsWith('/dashboard') || url.startsWith('/escrow')) {
+    if (url?.startsWith('/dashboard') || url?.startsWith('/escrow')) {
       return { labelKey: 'fab.newTransaction', icon: 'plus', action: 'escrow' };
     }
-    if (url.startsWith('/disputes')) {
+    if (url?.startsWith('/disputes')) {
       return { labelKey: 'fab.newDispute', icon: 'flag', action: 'dispute' };
     }
     return null;
@@ -326,10 +343,16 @@ export class FabComponent {
   protected readonly sheetOpen = signal(false);
   protected readonly loading   = signal(false);
 
+  protected readonly providers = [
+    { value: 'CAMPAY'   as const, label: 'CamPay' },
+    { value: 'MONETBIL' as const, label: 'MonetBil' },
+  ];
+
   /* ── Transaction form ────────────────────────── */
   protected readonly txForm = this.fb.group({
     buyerPhone:       ['', Validators.required],
-    grossAmount:      [null as number | null, [Validators.required, Validators.min(100), Validators.max(10_000_000)]],
+    grossAmount:      [null as number | null, [Validators.required, Validators.min(25), Validators.max(10_000_000)]],
+    provider:         ['CAMPAY' as 'CAMPAY' | 'MONETBIL', Validators.required],
     description:      [''],
     deliveryDeadline: [''],
   });
@@ -368,6 +391,7 @@ export class FabComponent {
       const tx = await firstValueFrom(this.escrowService.createTransaction({
         buyerPhone:       v.buyerPhone!,
         grossAmount:      Math.floor(v.grossAmount!),
+        provider:         v.provider!,
         description:      v.description || undefined,
         deliveryDeadline: v.deliveryDeadline
           ? new Date(v.deliveryDeadline).toISOString()

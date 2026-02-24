@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { filter, map, startWith } from 'rxjs';
 import { AuthStore } from './core/auth/auth.store';
 import { ToastContainerComponent } from './shared/components/toast/toast-container.component';
 import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
@@ -28,8 +28,8 @@ export class App {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
       map((e: NavigationEnd) => e.urlAfterRedirects),
+      startWith(this.router.url),
     ),
-    { initialValue: this.router.url },
   );
 
   protected readonly isMobile = toSignal(
@@ -41,7 +41,7 @@ export class App {
   protected readonly showNav = computed(() => {
     if (!this.auth.isAuthenticated()) return false;
     const url = this.currentUrl();
-    return NAV_ROUTES.some(r => url.startsWith(r));
+    return NAV_ROUTES.some(r => url?.startsWith(r));
   });
 
   protected readonly contentClass = computed(() => {
