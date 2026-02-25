@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Toast } from '../../../core/notification/toast.service';
+import { Toast } from '@core/notification/toast.service';
 
 const TOAST_STYLES = {
   success: 'bg-green-50 border-green-500 text-green-800',
