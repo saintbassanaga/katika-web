@@ -16,7 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <h1 class="text-xl font-bold text-gray-900 mb-4">{{ 'disputes.title' | translate }}</h1>
 
       @if (loading()) {
-        <app-loading-skeleton [count]="3" />
+        <app-loading-skeleton [count]="4" />
       } @else if (disputes().length === 0) {
         <app-empty-state icon="⚖" [title]="'disputes.empty.title' | translate" [message]="'disputes.empty.message' | translate" />
       } @else {

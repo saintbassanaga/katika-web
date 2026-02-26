@@ -283,7 +283,20 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
               </button>
             }
 
-            @if (['LOCKED', 'SHIPPED', 'DELIVERED'].includes(transaction()!.status)) {
+            @if (transaction()!.status === 'DISPUTED' && transaction()!.activeDisputeId) {
+              <!-- Litige en cours — accès direct au chat -->
+              <a
+                [routerLink]="['/disputes', transaction()!.activeDisputeId]"
+                class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
+                style="background: #FEF2F2; border: 1.5px solid var(--clr-error); color: var(--clr-error)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                {{ 'escrow.detail.actions.viewDispute' | translate }}
+              </a>
+            } @else if (['LOCKED', 'SHIPPED', 'DELIVERED'].includes(transaction()!.status)) {
+              <!-- Pas encore de litige — proposer d'en ouvrir un -->
               <a
                 [routerLink]="['/disputes/new']"
                 [queryParams]="{ transactionId: transaction()!.id }"

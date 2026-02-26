@@ -181,12 +181,18 @@
         "ship": "Marquer comme expédié",
         "cancel": "Annuler la transaction",
         "dispute": "Ouvrir un litige",
+        "viewDispute": "Voir le litige en cours",
         "confirmReception": "Confirmer et libérer le paiement"
       }
     }
   },
   "disputes": {
     "title": "Litiges",
+    "chat": {
+      "system": "Système",
+      "typingOne": "{{name}} est en train d'écrire…",
+      "placeholder": "Votre message…"
+    },
     "empty": {
       "title": "Aucun litige",
       "message": "Vos litiges apparaîtront ici"

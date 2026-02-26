@@ -35,6 +35,7 @@ export interface TransactionDetail {
   netAmount: number;
   currency: string;
   status: string;
+  activeDisputeId: string | null;
   createdAt: string;
   lockedAt:    string | null;
   shippedAt:   string | null;

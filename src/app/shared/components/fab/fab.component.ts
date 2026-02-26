@@ -327,16 +327,24 @@ export class FabComponent {
     ),
   );
 
+  private static readonly FAB_ROUTES: Array<{ pattern: RegExp; config: FabConfig }> = [
+    {
+      // Dashboard & escrow list — transaction FAB
+      pattern: /^\/(dashboard|escrow)(\/?)(\?.*)?$/,
+      config: { labelKey: 'fab.newTransaction', icon: 'plus', action: 'escrow' },
+    },
+    {
+      // Disputes list only — dispute FAB
+      pattern: /^\/disputes(\/?)(\?.*)?$/,
+      config: { labelKey: 'fab.newDispute', icon: 'flag', action: 'dispute' },
+    },
+  ];
+
   protected readonly fabConfig = computed<FabConfig | null>(() => {
     if (!this.auth.isAuthenticated()) return null;
-    const url = this.currentUrl();
-    if (url?.startsWith('/dashboard') || url?.startsWith('/escrow')) {
-      return { labelKey: 'fab.newTransaction', icon: 'plus', action: 'escrow' };
-    }
-    if (url?.startsWith('/disputes')) {
-      return { labelKey: 'fab.newDispute', icon: 'flag', action: 'dispute' };
-    }
-    return null;
+    const url = this.currentUrl() ?? '';
+    const match = FabComponent.FAB_ROUTES.find(r => r.pattern.test(url));
+    return match?.config ?? null;
   });
 
   /* ── Sheet state ─────────────────────────────── */

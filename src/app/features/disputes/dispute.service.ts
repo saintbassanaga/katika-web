@@ -11,14 +11,33 @@ export interface DisputeSummary {
   createdAt: string;
 }
 
+export interface DisputeDetail {
+  id: string;
+  transactionRef: string;
+  transactionId: string;
+  reason: DisputeReason;
+  status: string;
+  description?: string;
+  createdAt: string;
+  buyerName: string;
+  sellerName: string;
+  grossAmount: number;
+  currency: string;
+  messages: DisputeMessage[];
+}
+
 export interface DisputeMessage {
   id: string;
+  disputeId: string;
   content: string;
-  authorId: string;
-  authorName: string;
-  role: string;
+  senderId: string;
+  senderName: string;
+  senderRole: string;
+  messageType: string;
+  internalOnly: boolean;
+  attachmentCount: number;
+  attachmentIds: string;
   createdAt: string;
-  readBy: string[];
 }
 
 export type DisputeReason =
@@ -55,8 +74,8 @@ export class DisputeService extends ApiService {
     return this.http.get<Page<DisputeSummary>>(this.url(`/api/disputes?${query}`), this.defaultOptions);
   }
 
-  getDispute(id: string): Observable<any> {
-    return this.http.get(this.url(`/api/disputes/${id}`), this.defaultOptions);
+  getDispute(id: string): Observable<DisputeDetail> {
+    return this.http.get<DisputeDetail>(this.url(`/api/disputes/${id}`), this.defaultOptions);
   }
 
   createDispute(req: CreateDisputeRequest): Observable<any> {

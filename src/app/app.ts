@@ -12,6 +12,11 @@ import { FabComponent } from './shared/components/fab/fab.component';
 /** Routes where the global nav (sidebar / bottom-nav) is visible. */
 const NAV_ROUTES = ['/dashboard', '/escrow', '/disputes', '/payouts', '/wallet', '/admin'];
 
+/** Full-screen routes that suppress the nav (e.g. dispute chat room). */
+const FULL_SCREEN_PATTERNS = [
+  /^\/disputes\/(?!new(?:\/|$))[^/]+/, // /disputes/:id but not /disputes/new
+];
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -40,8 +45,9 @@ export class App {
   /** True only on main app pages that have the persistent nav. */
   protected readonly showNav = computed(() => {
     if (!this.auth.isAuthenticated()) return false;
-    const url = this.currentUrl();
-    return NAV_ROUTES.some(r => url?.startsWith(r));
+    const url = this.currentUrl() ?? '';
+    if (FULL_SCREEN_PATTERNS.some(p => p.test(url))) return false;
+    return NAV_ROUTES.some(r => url.startsWith(r));
   });
 
   protected readonly contentClass = computed(() => {

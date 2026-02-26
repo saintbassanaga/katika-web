@@ -181,12 +181,18 @@
         "ship": "Mark as shipped",
         "cancel": "Cancel transaction",
         "dispute": "Open a dispute",
+        "viewDispute": "View ongoing dispute",
         "confirmReception": "Confirm & release payment"
       }
     }
   },
   "disputes": {
     "title": "Disputes",
+    "chat": {
+      "system": "System",
+      "typingOne": "{{name}} is typing…",
+      "placeholder": "Your message…"
+    },
     "empty": {
       "title": "No disputes",
       "message": "Your disputes will appear here"

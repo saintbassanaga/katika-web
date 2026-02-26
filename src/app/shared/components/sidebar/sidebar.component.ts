@@ -151,20 +151,6 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         }
       </nav>
 
-      <!-- User info -->
-      <div class="user-area">
-        <div class="user-avatar">{{ auth.initials() }}</div>
-        <div style="overflow:hidden">
-          <div class="user-name">{{ auth.fullName() }}</div>
-          <div class="user-role">{{ auth.role() }}</div>
-        </div>
-      </div>
-
-      <!-- Lang switcher -->
-      <div style="padding:.5rem .75rem 0">
-        <app-lang-switcher />
-      </div>
-
       <!-- Logout -->
       <div class="logout-area">
         <button (click)="auth.logout()" class="logout-btn">
