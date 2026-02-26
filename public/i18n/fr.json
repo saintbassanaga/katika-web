@@ -111,11 +111,33 @@
     "recentTransactions": "Transactions récentes",
     "viewAll": "Voir tout",
     "noTransactions": "Aucune transaction récente",
+    "noActiveDisputes": "Aucun litige actif",
     "newTransaction": "Nouvelle transaction",
     "newDispute": "Signaler un litige",
     "disputeAlert": "{{count}} litige(s) en cours",
     "viewDisputes": "Voir les litiges",
+    "kpi": {
+      "available": "Disponible",
+      "frozen": "Gelé :",
+      "active": "Actives",
+      "toProcess": "À traiter",
+      "pending": "En attente",
+      "toReceive": "À recevoir",
+      "txCount": "{{count}} tx",
+      "activeTransactions": "Transactions actives",
+      "lockedOrShipped": "Bloquées ou en livraison",
+      "activeDisputes": "Litiges en cours",
+      "openPending": "Ouverts et en attente",
+      "amountToReceive": "Montant à recevoir",
+      "onNTransactions": "Sur {{count}} transaction(s)"
+    },
+    "table": {
+      "date": "Date",
+      "counterpart": "Contrepartie",
+      "status": "Statut"
+    },
     "quickActions": {
+      "title": "Actions rapides",
       "transactions": "Transactions",
       "withdrawal": "Retrait",
       "wallet": "Portefeuille",
@@ -188,6 +210,13 @@
   },
   "disputes": {
     "title": "Litiges",
+    "count": "{{count}} litige(s)",
+    "filters": {
+      "all": "Tous",
+      "open": "Ouverts",
+      "inProgress": "En cours",
+      "resolved": "Résolus"
+    },
     "chat": {
       "system": "Système",
       "typingOne": "{{name}} est en train d'écrire…",
@@ -381,6 +410,7 @@
     "REFUNDED": "Remboursé",
     "CANCELLED": "Annulé",
     "OPEN": "Ouvert",
+    "OPENED": "Ouvert",
     "IN_PROGRESS": "En cours",
     "RESOLVED": "Résolu",
     "PROCESSING": "En traitement",

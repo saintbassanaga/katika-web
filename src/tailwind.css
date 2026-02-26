@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  /* ── Brand colors ─────────────────────────────── */
+  --color-dark:        #0F2240;
+  --color-primary:     #1B4F8A;
+  --color-primary-dk:  #0D3D6E;
+  --color-primary-lt:  #E5EEF8;
+  --color-gold:        #C9920D;
+  --color-gold-dk:     #A37510;
+  --color-gold-lt:     #FDF4DC;
+  --color-page:        #EDF1F7;
+  --color-success:     #10B981;
+  --color-success-lt:  #ECFDF5;
+  --color-error:       #DC2626;
+  --color-error-lt:    #FEF2F2;
+}

@@ -22,11 +22,19 @@ interface FabConfig {
   imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe],
   styles: [`
     /* ── FAB button ─────────────────────────────── */
-    .fab {
+    :host {
       position: fixed;
       right: 1.25rem;
       bottom: calc(4.75rem + env(safe-area-inset-bottom));
       z-index: 40;
+      pointer-events: none;
+    }
+    @media (min-width: 768px) {
+      :host { bottom: 2rem; }
+    }
+    .fab {
+      position: relative;
+      pointer-events: auto;
       display: flex; align-items: center; gap: .5rem;
       padding: .75rem 1.25rem .75rem .875rem;
       border-radius: 99px;
@@ -47,10 +55,6 @@ interface FabConfig {
     .fab-icon {
       width: 22px; height: 22px; border-radius: 99px;
       display: flex; align-items: center; justify-content: center;
-    }
-
-    @media (min-width: 768px) {
-      .fab { bottom: 2rem; }
     }
 
     /* ── Overlay ─────────────────────────────────── */

@@ -17,46 +17,16 @@ const NAV_ITEMS: NavItem[] = [
   selector: 'app-bottom-nav',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, TranslatePipe],
-  styles: [`
-    nav {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-      background: rgba(255,255,255,.88);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border-top: 1px solid rgba(226,232,240,.8);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-    .nav-inner { display: flex; align-items: stretch; height: 60px; }
-    .nav-item {
-      flex: 1;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 3px;
-      color: #94A3B8;
-      text-decoration: none;
-      transition: color .2s;
-      position: relative;
-      min-height: 44px;
-    }
-    .nav-item:hover { color: #64748B; }
-    .nav-item.active { color: #1B4F8A; }
-    .nav-icon-wrap {
-      width: 36px; height: 28px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 10px;
-      transition: background .2s;
-    }
-    .nav-item.active .nav-icon-wrap { background: rgba(27,79,138,.1); }
-    .nav-label { font-size: .625rem; font-weight: 600; letter-spacing: .02em; }
-  `],
+  styles: [':host { display: block; }'],
   template: `
-    <nav aria-label="Navigation principale">
-      <div class="nav-inner">
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/[.88] backdrop-blur-[16px] backdrop-saturate-[180%] border-t border-slate-200/80 safe-area-bottom" aria-label="Navigation principale">
+      <div class="flex items-stretch h-[60px]">
         @for (item of navItems; track item.route) {
           <a [routerLink]="item.route"
-             routerLinkActive="active"
-             class="nav-item"
+             routerLinkActive="nav-active"
+             class="flex-1 flex flex-col items-center justify-center gap-[3px] text-slate-400 no-underline transition-colors relative min-h-[44px] hover:text-slate-500 [&.nav-active]:text-primary"
              [attr.aria-label]="item.label">
-            <div class="nav-icon-wrap">
+            <div class="w-9 h-7 flex items-center justify-center rounded-[10px] transition-colors [.nav-active_&]:bg-primary/10">
               @switch (item.key) {
                 @case ('home') {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -85,7 +55,7 @@ const NAV_ITEMS: NavItem[] = [
                 }
               }
             </div>
-            <span class="nav-label">{{ 'nav.' + item.key | translate }}</span>
+            <span class="text-[.625rem] font-semibold tracking-[.02em]">{{ 'nav.' + item.key | translate }}</span>
           </a>
         }
       </div>

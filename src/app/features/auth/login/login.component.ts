@@ -9,238 +9,53 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent, TranslatePipe],
-  styles: [`
-    /* ─── Root ───────────────────────────────────── */
-    .login-root {
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      background: #0F2240;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* ─── Orbs (shared) ─────────────────────────── */
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    .orb-a {
-      width: 420px; height: 420px; top: -18%; left: -18%;
-      background: radial-gradient(circle, rgba(27,79,138,.38) 0%, transparent 70%);
-    }
-    .orb-b {
-      width: 280px; height: 280px; bottom: 10%; right: -12%;
-      background: radial-gradient(circle, rgba(201,146,13,.28) 0%, transparent 70%);
-    }
-    .orb-c {
-      width: 200px; height: 200px; bottom: 40%; left: 5%;
-      background: radial-gradient(circle, rgba(27,79,138,.15) 0%, transparent 70%);
-    }
-
-    /* ─── MOBILE layout ─────────────────────────── */
-    .brand-area {
-      position: relative; z-index: 10;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      flex: 1;
-      padding: 3.5rem 1.5rem 2rem;
-      text-align: center;
-    }
-    .k-mark {
-      width: 68px; height: 68px;
-      background: linear-gradient(135deg, #C9920D, #96650A);
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 10px 40px rgba(201,146,13,.45);
-    }
-    .brand-name {
-      color: #fff; font-size: 2.5rem; font-weight: 800;
-      letter-spacing: -0.04em; margin: 0 0 .5rem;
-    }
-    .brand-sub {
-      color: #F5D48A; font-size: .9rem;
-      font-weight: 500; margin: 0; letter-spacing: .01em;
-    }
-    .form-card {
-      position: relative; z-index: 10;
-      background: #fff;
-      border-radius: 2rem 2rem 0 0;
-      padding: 2.25rem 1.5rem 3rem;
-    }
-
-    /* ─── DESKTOP layout ────────────────────────── */
-    @media (min-width: 768px) {
-      .login-root {
-        flex-direction: row;
-      }
-
-      /* Left brand panel */
-      .brand-area {
-        flex: 1;
-        padding: 3rem 4rem;
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-      }
-      .brand-name { font-size: 3rem; }
-      .brand-sub  { font-size: .9375rem; font-weight: 500; }
-
-      /* Feature list — only visible on desktop */
-      .feature-list {
-        display: flex; flex-direction: column; gap: .875rem; margin-top: 2.5rem;
-        list-style: none; padding: 0;
-        align-self: flex-start; text-align: left;
-      }
-      .feature-item {
-        display: flex; align-items: center; gap: .75rem;
-        color: rgba(226,232,240,.75); font-size: .875rem; font-weight: 500;
-      }
-      .feature-dot {
-        width: 32px; height: 32px; flex-shrink: 0;
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-      }
-
-      /* Right form panel */
-      .form-card {
-        flex: 1;
-        border-radius: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 4rem;
-        min-height: 100svh;
-        margin-left: auto;
-        box-shadow: -32px 0 80px rgba(0,0,0,.15);
-      }
-      .form-inner {
-        width: 100%;
-        max-width: 380px;
-      }
-    }
-
-    /* ─── Form elements ─────────────────────────── */
-    .form-title {
-      font-size: 1.5rem; font-weight: 700;
-      color: #0F2240; margin: 0 0 .3rem;
-      letter-spacing: -.02em;
-    }
-    .form-sub { font-size: .875rem; color: #64748B; margin: 0 0 1.75rem; }
-
-    .field-label {
-      display: block; font-size: .8125rem; font-weight: 600;
-      color: #334155; margin-bottom: .45rem; letter-spacing: .01em;
-    }
-    .field-input {
-      width: 100%; padding: .8125rem 1rem;
-      border: 2px solid #E2E8F0; border-radius: 12px;
-      background: #F8FAFC; font-size: .9375rem; color: #0F172A;
-      outline: none; font-family: inherit;
-      transition: border-color .2s, box-shadow .2s, background .2s;
-      box-sizing: border-box;
-    }
-    .field-input:focus {
-      border-color: #1B4F8A; background: #fff;
-      box-shadow: 0 0 0 4px rgba(27,79,138,.08);
-    }
-    .field-input.error { border-color: #DC2626; }
-    .field-input-wrap { position: relative; }
-    .pwd-toggle {
-      position: absolute; right: .875rem; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none; cursor: pointer;
-      color: #94A3B8; padding: .25rem;
-      display: flex; align-items: center; transition: color .15s;
-    }
-    .pwd-toggle:hover { color: #475569; }
-    .err-msg { font-size: .75rem; color: #DC2626; margin: .35rem 0 0; }
-
-    .forgot {
-      font-size: .8125rem; font-weight: 600;
-      color: #1B4F8A; text-decoration: none;
-    }
-    .forgot:hover { text-decoration: underline; }
-
-    .submit-btn {
-      width: 100%; padding: .9375rem;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      color: #fff; font-size: .9375rem; font-weight: 700;
-      border: none; border-radius: 14px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: .5rem;
-      min-height: 52px; font-family: inherit;
-      box-shadow: 0 4px 20px rgba(27,79,138,.38);
-      transition: opacity .2s, transform .15s;
-    }
-    .submit-btn:hover:not(:disabled) { opacity: .91; transform: translateY(-1px); }
-    .submit-btn:active:not(:disabled) { transform: translateY(0); }
-    .submit-btn:disabled { opacity: .52; cursor: not-allowed; }
-
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.35);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .form-fields { display: flex; flex-direction: column; gap: 1.125rem; }
-    .register-link { text-align: center; font-size: .875rem; color: #64748B; margin-top: 1.5rem; }
-    .register-link a { color: #1B4F8A; font-weight: 700; text-decoration: none; }
-    .register-link a:hover { text-decoration: underline; }
-
-    /* Hide feature list on mobile */
-    .feature-list { display: none; }
-  `],
   template: `
-    <div class="login-root">
-      <div class="orb orb-a orb-1"></div>
-      <div class="orb orb-b orb-2"></div>
-      <div class="orb orb-c"></div>
+    <div class="min-h-[100svh] flex flex-col bg-dark relative overflow-hidden md:flex-row">
+
+      <!-- Orbs -->
+      <div class="absolute rounded-full pointer-events-none w-[420px] h-[420px] top-[-18%] left-[-18%] bg-[radial-gradient(circle,rgba(27,79,138,.38)_0%,transparent_70%)] orb-1"></div>
+      <div class="absolute rounded-full pointer-events-none w-[280px] h-[280px] bottom-[10%] right-[-12%] bg-[radial-gradient(circle,rgba(201,146,13,.28)_0%,transparent_70%)] orb-2"></div>
+      <div class="absolute rounded-full pointer-events-none w-[200px] h-[200px] bottom-[40%] left-[5%] bg-[radial-gradient(circle,rgba(27,79,138,.15)_0%,transparent_70%)]"></div>
 
       <!-- LEFT: Brand panel -->
-      <div class="brand-area animate-entry">
-        <div class="k-mark">
+      <div class="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-14 pb-8 text-center animate-entry
+                  md:px-16 md:py-12">
+        <div class="w-[68px] h-[68px] bg-gradient-to-br from-gold to-[#96650A] rounded-[20px] flex items-center justify-center mb-5 shadow-[0_10px_40px_rgba(201,146,13,.45)]">
           <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
-            <path d="M7 5v18M7 14l10-9M7 14l10 9"
-                  stroke="#fff" stroke-width="2.5"
-                  stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <h1 class="brand-name">Katika</h1>
-        <p class="brand-sub">{{ 'auth.login.tagline' | translate }}</p>
+        <h1 class="text-white text-[2.5rem] font-extrabold tracking-[-0.04em] m-0 mb-2 md:text-5xl">Katika</h1>
+        <p class="text-[#F5D48A] text-[.9rem] font-medium m-0 tracking-[.01em] md:text-[.9375rem]">{{ 'auth.login.tagline' | translate }}</p>
 
         <!-- Desktop-only feature list -->
-        <ul class="feature-list">
-          <li class="feature-item">
-            <div class="feature-dot" style="background:rgba(27,79,138,.25)">
+        <ul class="hidden md:flex md:flex-col gap-3.5 mt-10 list-none p-0 self-start text-left">
+          <li class="flex items-center gap-3 text-slate-200/75 text-sm font-medium">
+            <div class="w-8 h-8 shrink-0 rounded-[10px] flex items-center justify-center bg-[rgba(27,79,138,.25)]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#74B3F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
             {{ 'auth.login.features.escrow' | translate }}
           </li>
-          <li class="feature-item">
-            <div class="feature-dot" style="background:rgba(16,185,129,.2)">
+          <li class="flex items-center gap-3 text-slate-200/75 text-sm font-medium">
+            <div class="w-8 h-8 shrink-0 rounded-[10px] flex items-center justify-center bg-[rgba(16,185,129,.2)]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
             {{ 'auth.login.features.protection' | translate }}
           </li>
-          <li class="feature-item">
-            <div class="feature-dot" style="background:rgba(245,158,11,.18)">
+          <li class="flex items-center gap-3 text-slate-200/75 text-sm font-medium">
+            <div class="w-8 h-8 shrink-0 rounded-[10px] flex items-center justify-center bg-[rgba(245,158,11,.18)]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
             </div>
             {{ 'auth.login.features.disputes' | translate }}
           </li>
-          <li class="feature-item">
-            <div class="feature-dot" style="background:rgba(139,92,246,.18)">
+          <li class="flex items-center gap-3 text-slate-200/75 text-sm font-medium">
+            <div class="w-8 h-8 shrink-0 rounded-[10px] flex items-center justify-center bg-[rgba(139,92,246,.18)]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
               </svg>
@@ -251,65 +66,70 @@ import { PhoneInputComponent } from '../../../shared/components/phone-input/phon
       </div>
 
       <!-- RIGHT: Form panel -->
-      <div class="form-card animate-card">
-        <div class="form-inner">
-          <p class="form-title">{{ 'auth.login.title' | translate }}</p>
-          <p class="form-sub">{{ 'auth.login.subtitle' | translate }}</p>
+      <div class="relative z-10 bg-white rounded-t-[2rem] px-6 pt-9 pb-12 animate-card
+                  md:flex-1 md:rounded-none md:flex md:flex-col md:items-center md:justify-center md:px-16 md:py-12 md:min-h-[100svh] md:shadow-[-32px_0_80px_rgba(0,0,0,.15)]">
+        <div class="w-full md:max-w-[380px]">
+          <p class="text-[1.5rem] font-bold text-dark m-0 mb-1 tracking-[-0.02em]">{{ 'auth.login.title' | translate }}</p>
+          <p class="text-sm text-slate-500 m-0 mb-7">{{ 'auth.login.subtitle' | translate }}</p>
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-fields">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-[1.125rem]">
 
             <div>
-              <label class="field-label">{{ 'auth.login.phone' | translate }}</label>
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.45rem] tracking-[.01em]">{{ 'auth.login.phone' | translate }}</label>
               <app-phone-input formControlName="phoneNumber" />
               @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
-                <p class="err-msg">{{ 'auth.login.phoneError' | translate }}</p>
+                <p class="text-xs text-error mt-1.5">{{ 'auth.login.phoneError' | translate }}</p>
               }
             </div>
 
             <div>
-              <label class="field-label">{{ 'auth.login.password' | translate }}</label>
-              <div class="field-input-wrap">
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.45rem] tracking-[.01em]">{{ 'auth.login.password' | translate }}</label>
+              <div class="relative">
                 <input
                   [type]="showPassword() ? 'text' : 'password'"
                   formControlName="password"
                   placeholder="••••••••"
-                  class="field-input"
-                  [class.error]="form.get('password')?.invalid && form.get('password')?.touched"
-                  style="padding-right:3rem"
+                  class="w-full px-4 py-[.8125rem] pr-12 border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]"
+                  [class.border-error]="form.get('password')?.invalid && form.get('password')?.touched"
                 />
-                <button type="button" (click)="showPassword.set(!showPassword())"
-                        class="pwd-toggle"
+                <button type="button"
+                        (click)="showPassword.set(!showPassword())"
+                        class="absolute right-3.5 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-slate-400 p-1 flex items-center transition-colors hover:text-slate-600"
                         [attr.aria-label]="showPassword() ? 'Masquer' : 'Afficher'">
-                  @if (showPassword()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
+                  @if (showPassword()) {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  } @else {
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  }
                 </button>
               </div>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="err-msg">{{ 'auth.login.passwordError' | translate }}</p>
+                <p class="text-xs text-error mt-1.5">{{ 'auth.login.passwordError' | translate }}</p>
               }
             </div>
 
-            <div style="text-align:right">
-              <a routerLink="/auth/forgot-password" class="forgot">{{ 'auth.login.forgotPassword' | translate }}</a>
+            <div class="text-right">
+              <a routerLink="/auth/forgot-password" class="text-[.8125rem] font-semibold text-primary no-underline hover:underline">{{ 'auth.login.forgotPassword' | translate }}</a>
             </div>
 
-            <button type="submit" class="submit-btn"
+            <button type="submit"
+                    class="w-full py-[.9375rem] bg-gradient-to-br from-primary to-primary-dk text-white text-[.9375rem] font-bold border-none rounded-[14px] cursor-pointer flex items-center justify-center gap-2 min-h-[52px] font-[inherit] shadow-[0_4px_20px_rgba(27,79,138,.38)] transition-all hover:opacity-90 hover:-translate-y-px active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     [disabled]="form.invalid || auth.loading()">
               @if (auth.loading()) {
-                <span class="spinner"></span>
+                <span class="w-[18px] h-[18px] border-[2.5px] border-white/35 border-t-white rounded-full animate-spin"></span>
                 {{ 'auth.login.submitting' | translate }}
               } @else {
                 {{ 'auth.login.submit' | translate }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
               }
             </button>
           </form>
 
-          <p class="register-link">
+          <p class="text-center text-sm text-slate-500 mt-6">
             {{ 'auth.login.noAccount' | translate }}
-            <a routerLink="/auth/register">{{ 'auth.login.signUp' | translate }}</a>
+            <a routerLink="/auth/register" class="text-primary font-bold no-underline hover:underline">{{ 'auth.login.signUp' | translate }}</a>
           </p>
         </div>
       </div>

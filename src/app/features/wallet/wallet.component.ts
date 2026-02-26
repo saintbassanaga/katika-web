@@ -80,300 +80,30 @@ const TYPE_ICONS: Record<MovementType, string> = {
   selector: 'app-wallet',
   standalone: true,
   imports: [RouterLink, AmountPipe, TimeAgoPipe, BottomSheetComponent, TranslatePipe],
-  styles: [`
-    :host { display: block; }
-
-    /* ── Hero ─────────────────────────────────────────── */
-    .hero {
-      position: relative;
-      overflow: hidden;
-      background: var(--clr-dark);
-      padding: 2.75rem 1.5rem 2rem;
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-      filter: blur(72px);
-    }
-    .orb-gold {
-      width: 260px; height: 260px;
-      top: -80px; right: -60px;
-      background: radial-gradient(circle, rgba(201,146,13,.22) 0%, transparent 70%);
-    }
-    .orb-blue {
-      width: 200px; height: 200px;
-      bottom: -50px; left: -50px;
-      background: radial-gradient(circle, rgba(27,79,138,.25) 0%, transparent 70%);
-    }
-
-    .hero-label {
-      font-size: .6875rem;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.38);
-      margin-bottom: 1rem;
-    }
-
-    .balance-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: .5rem;
-      margin-bottom: .625rem;
-    }
-
-    .balance-amount {
-      font-size: clamp(2rem, 8vw, 3rem);
-      font-weight: 800;
-      letter-spacing: -.04em;
-      line-height: 1;
-      color: #fff;
-    }
-    .balance-hidden {
-      color: rgba(255,255,255,.18);
-      letter-spacing: .08em;
-    }
-
-    .eye-btn {
-      flex-shrink: 0;
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.1);
-      color: rgba(255,255,255,.45);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      margin-top: 4px;
-      transition: background .15s;
-    }
-    .eye-btn:hover { background: rgba(255,255,255,.12); color: rgba(255,255,255,.75); }
-
-    .frozen-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(201,146,13,.1);
-      border: 1px solid rgba(201,146,13,.28);
-      border-radius: 99px;
-      padding: 4px 12px;
-      margin-bottom: 1.5rem;
-      font-size: .75rem;
-      font-weight: 600;
-      color: #D4A330;
-    }
-
-    .action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .625rem;
-    }
-    .btn-withdraw {
-      padding: .8125rem;
-      border-radius: 12px;
-      background: var(--clr-primary);
-      border: none;
-      color: #fff;
-      font-size: .875rem;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      display: block;
-      transition: opacity .15s;
-    }
-    .btn-withdraw:hover { opacity: .88; }
-    .btn-refresh {
-      padding: .8125rem;
-      border-radius: 12px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.1);
-      color: rgba(255,255,255,.55);
-      font-size: .875rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background .15s;
-    }
-    .btn-refresh:hover { background: rgba(255,255,255,.12); color: rgba(255,255,255,.8); }
-
-    /* ── Content section ──────────────────────────────── */
-    .content {
-      padding: 0 1rem 6rem;
-      background: var(--clr-page);
-      min-height: 50vh;
-    }
-
-    .section-head {
-      padding: 1.25rem 0 .875rem;
-      font-size: .9375rem;
-      font-weight: 700;
-      color: var(--clr-text);
-    }
-
-    .filters {
-      display: flex;
-      gap: .5rem;
-      overflow-x: auto;
-      padding-bottom: .875rem;
-      scrollbar-width: none;
-    }
-    .filters::-webkit-scrollbar { display: none; }
-
-    .chip {
-      flex-shrink: 0;
-      padding: 5px 16px;
-      border-radius: 99px;
-      font-size: .8125rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1.5px solid;
-      font-family: inherit;
-      transition: all .15s;
-      white-space: nowrap;
-    }
-    .chip-on {
-      background: var(--clr-primary);
-      border-color: var(--clr-primary);
-      color: #fff;
-    }
-    .chip-off {
-      background: var(--clr-surface);
-      border-color: var(--clr-border);
-      color: var(--clr-muted);
-    }
-
-    /* ── Movement cards ───────────────────────────────── */
-    .list { display: flex; flex-direction: column; gap: .5rem; }
-
-    .mov {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: .875rem;
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-left-width: 3px;
-      border-radius: 14px;
-      padding: .875rem 1rem;
-      cursor: pointer;
-      text-align: left;
-      font-family: inherit;
-      transition: box-shadow .15s;
-    }
-    .mov:hover { box-shadow: 0 2px 12px rgba(15,34,64,.08); }
-    .mov-c { border-left-color: var(--clr-success); }
-    .mov-d { border-left-color: var(--clr-error); }
-
-    .mov-icon {
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .9375rem;
-    }
-    .mov-icon-c { background: var(--clr-success-lt); }
-    .mov-icon-d { background: var(--clr-error-lt); }
-
-    .mov-desc {
-      font-size: .875rem;
-      font-weight: 600;
-      color: var(--clr-text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .mov-meta {
-      font-size: .6875rem;
-      color: var(--clr-muted);
-      margin-top: 2px;
-    }
-
-    .mov-amt {
-      font-size: .9375rem;
-      font-weight: 800;
-      flex-shrink: 0;
-      letter-spacing: -.01em;
-    }
-    .mov-amt-c { color: var(--clr-success); }
-    .mov-amt-d { color: var(--clr-error); }
-
-    /* ── Skeleton ─────────────────────────────────────── */
-    .skel {
-      height: 64px;
-      border-radius: 14px;
-    }
-
-    /* ── Empty ────────────────────────────────────────── */
-    .empty {
-      text-align: center;
-      padding: 4rem 1.5rem;
-    }
-    .empty-icon { font-size: 2.5rem; margin-bottom: .75rem; opacity: .35; }
-    .empty-title { font-size: .9375rem; font-weight: 600; color: var(--clr-muted); }
-    .empty-sub   { font-size: .8125rem; color: #94A3B8; margin-top: .25rem; }
-
-    /* ── Load more ────────────────────────────────────── */
-    .load-more {
-      width: 100%;
-      padding: .875rem;
-      border: 1.5px dashed var(--clr-border);
-      border-radius: 12px;
-      color: var(--clr-muted);
-      font-size: .875rem;
-      background: transparent;
-      cursor: pointer;
-      font-family: inherit;
-      transition: border-color .15s, color .15s;
-    }
-    .load-more:hover:not(:disabled) {
-      border-color: var(--clr-primary);
-      color: var(--clr-primary);
-    }
-
-    /* ── Detail sheet ─────────────────────────────────── */
-    .d-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: .625rem 0;
-      border-bottom: 1px solid var(--clr-border);
-      font-size: .875rem;
-    }
-    .d-row:last-child { border-bottom: none; }
-    .d-lbl { color: var(--clr-muted); }
-    .d-val { font-weight: 600; color: var(--clr-text); }
-    .d-amt-c { color: var(--clr-success) !important; }
-    .d-amt-d { color: var(--clr-error)   !important; }
-  `],
+  styles: [':host { display: block; }'],
   template: `
     <!-- ── Hero ─────────────────────────────────────── -->
-    <div class="hero">
-      <div class="orb orb-gold orb-1"></div>
-      <div class="orb orb-blue orb-2"></div>
+    <div class="relative overflow-hidden bg-dark px-6 pt-11 pb-8">
+      <div class="absolute rounded-full pointer-events-none blur-[72px] w-[260px] h-[260px] top-[-80px] right-[-60px] bg-[radial-gradient(circle,rgba(201,146,13,.22)_0%,transparent_70%)] orb-1"></div>
+      <div class="absolute rounded-full pointer-events-none blur-[72px] w-[200px] h-[200px] bottom-[-50px] left-[-50px] bg-[radial-gradient(circle,rgba(27,79,138,.25)_0%,transparent_70%)] orb-2"></div>
 
-      <p class="hero-label">{{ 'wallet.balance' | translate }}</p>
+      <p class="text-[.6875rem] font-bold tracking-[.14em] uppercase text-white/[.38] mb-4">{{ 'wallet.balance' | translate }}</p>
 
-      <div class="balance-row">
+      <div class="flex items-start justify-between gap-2 mb-2.5">
         @if (balanceVisible()) {
-          <div class="balance-amount">{{ wallet()?.balance | amount }}</div>
+          <div class="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-[-0.04em] leading-none text-white">{{ wallet()?.balance | amount }}</div>
         } @else {
-          <div class="balance-amount balance-hidden">••••••</div>
+          <div class="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-[.08em] leading-none text-white/[.18]">••••••</div>
         }
-        <button class="eye-btn" (click)="balanceVisible.set(!balanceVisible())">
+        <button class="shrink-0 w-9 h-9 rounded-[10px] bg-white/[.07] border border-white/10 text-white/45 cursor-pointer flex items-center justify-center mt-1 transition-colors hover:bg-white/[.12] hover:text-white/75" (click)="balanceVisible.set(!balanceVisible())">
           @if (balanceVisible()) {
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
               <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
               <line x1="1" y1="1" x2="23" y2="23"/>
             </svg>
           } @else {
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
@@ -382,75 +112,85 @@ const TYPE_ICONS: Record<MovementType, string> = {
       </div>
 
       @if ((wallet()?.frozenAmount ?? 0) > 0) {
-        <div class="frozen-pill">
+        <div class="inline-flex items-center gap-[5px] bg-[rgba(201,146,13,.1)] border border-[rgba(201,146,13,.28)] rounded-full px-3 py-1 mb-6 text-xs font-semibold text-[#D4A330]">
           🔒 {{ 'wallet.frozen' | translate }}: {{ wallet()?.frozenAmount | amount }}
         </div>
       }
 
-      <div class="action-row">
-        <a routerLink="/payouts/new" class="btn-withdraw">{{ 'wallet.withdrawBtn' | translate }}</a>
-        <button class="btn-refresh" (click)="refresh()">{{ 'wallet.refreshBtn' | translate }}</button>
+      <div class="grid grid-cols-2 gap-2.5">
+        <a routerLink="/payouts/new"
+           class="py-[.8125rem] rounded-xl bg-primary border-none text-white text-sm font-bold font-[inherit] cursor-pointer text-center no-underline block transition-opacity hover:opacity-[.88]">
+          {{ 'wallet.withdrawBtn' | translate }}
+        </a>
+        <button class="py-[.8125rem] rounded-xl bg-white/[.07] border border-white/10 text-white/55 text-sm font-semibold font-[inherit] cursor-pointer transition-colors hover:bg-white/[.12] hover:text-white/80"
+                (click)="refresh()">
+          {{ 'wallet.refreshBtn' | translate }}
+        </button>
       </div>
     </div>
 
     <!-- ── Movements ─────────────────────────────────── -->
-    <div class="content">
+    <div class="px-4 pb-24 bg-page min-h-[50vh]">
 
-      <h2 class="section-head">{{ 'wallet.history' | translate }}</h2>
+      <h2 class="pt-5 pb-3.5 text-[.9375rem] font-bold text-slate-800">{{ 'wallet.history' | translate }}</h2>
 
-      <div class="filters">
+      <div class="flex gap-2 overflow-x-auto pb-3.5 scrollbar-hide">
         @for (f of typeFilters; track f.types) {
           <button
-            class="chip"
-            [class.chip-on]="activeTypeFilter() === f.types"
-            [class.chip-off]="activeTypeFilter() !== f.types"
+            class="shrink-0 px-4 py-[5px] rounded-full text-[.8125rem] font-semibold cursor-pointer border-[1.5px] font-[inherit] transition-all whitespace-nowrap"
+            [class]="activeTypeFilter() === f.types
+              ? 'bg-primary border-primary text-white'
+              : 'bg-white border-slate-200 text-slate-500'"
             (click)="setTypeFilter(f.types)"
           >{{ f.labelKey | translate }}</button>
         }
       </div>
 
       @if (loading()) {
-        <div class="list">
+        <div class="flex flex-col gap-2">
           @for (i of skeletons; track i) {
-            <div class="skel skeleton-shimmer"></div>
+            <div class="h-16 rounded-[14px] skeleton-shimmer"></div>
           }
         </div>
 
       } @else if (movements().length === 0) {
-        <div class="empty">
-          <div class="empty-icon">📊</div>
-          <p class="empty-title">{{ 'wallet.empty.title' | translate }}</p>
-          <p class="empty-sub">{{ 'wallet.empty.message' | translate }}</p>
+        <div class="text-center py-16 px-6">
+          <div class="text-[2.5rem] mb-3 opacity-35">📊</div>
+          <p class="text-[.9375rem] font-semibold text-slate-500">{{ 'wallet.empty.title' | translate }}</p>
+          <p class="text-[.8125rem] text-slate-400 mt-1">{{ 'wallet.empty.message' | translate }}</p>
         </div>
 
       } @else {
-        <div class="list">
+        <div class="flex flex-col gap-2">
           @for (mov of movements(); track mov.id) {
             <button
-              class="mov"
-              [class.mov-c]="isCredit(mov)"
-              [class.mov-d]="!isCredit(mov)"
+              class="w-full flex items-center gap-3.5 bg-white border border-slate-200 border-l-[3px] rounded-[14px] px-4 py-3.5 cursor-pointer text-left font-[inherit] transition-shadow hover:shadow-[0_2px_12px_rgba(15,34,64,.08)]"
+              [class.border-l-success]="isCredit(mov)"
+              [class.border-l-error]="!isCredit(mov)"
               (click)="selectedMovement.set(mov); sheetOpen.set(true)"
             >
               <div
-                class="mov-icon"
-                [class.mov-icon-c]="isCredit(mov)"
-                [class.mov-icon-d]="!isCredit(mov)"
+                class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center text-[.9375rem]"
+                [class.bg-success-lt]="isCredit(mov)"
+                [class.bg-error-lt]="!isCredit(mov)"
               >{{ typeIcon(mov.type) }}</div>
 
-              <div style="flex:1; min-width:0;">
-                <p class="mov-desc">{{ mov.description }}</p>
-                <p class="mov-meta">{{ mov.reference }} · {{ mov.createdAt | timeAgo }}</p>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis m-0">{{ mov.description }}</p>
+                <p class="text-[.6875rem] text-slate-400 mt-0.5 m-0">{{ mov.reference }} · {{ mov.createdAt | timeAgo }}</p>
               </div>
 
-              <p class="mov-amt" [class.mov-amt-c]="isCredit(mov)" [class.mov-amt-d]="!isCredit(mov)">
+              <p class="text-[.9375rem] font-extrabold shrink-0 tracking-[-0.01em] m-0"
+                 [class.text-success]="isCredit(mov)"
+                 [class.text-error]="!isCredit(mov)">
                 {{ isCredit(mov) ? '+' : '−' }}{{ mov.amount | amount }}
               </p>
             </button>
           }
 
           @if (hasMore()) {
-            <button class="load-more" (click)="loadMore()" [disabled]="loadingMore()">
+            <button class="w-full py-3.5 border-[1.5px] border-dashed border-slate-200 rounded-xl text-slate-400 text-sm bg-transparent cursor-pointer font-[inherit] transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+                    (click)="loadMore()" [disabled]="loadingMore()">
               {{ loadingMore() ? ('common.loading' | translate) : ('common.loadMore' | translate) }}
             </button>
           }
@@ -467,36 +207,36 @@ const TYPE_ICONS: Record<MovementType, string> = {
     >
       @if (selectedMovement(); as mov) {
         <div>
-          <div style="text-align:center; padding:.5rem 0 1.5rem;">
-            <p
-              style="font-size:2rem; font-weight:900; letter-spacing:-.03em;"
-              [class.d-amt-c]="isCredit(mov)"
-              [class.d-amt-d]="!isCredit(mov)"
-            >{{ isCredit(mov) ? '+' : '−' }}{{ mov.amount | amount }}</p>
-            <p style="font-size:.8125rem; color:var(--clr-muted); margin-top:4px;">{{ mov.description }}</p>
+          <div class="text-center py-2 pb-6">
+            <p class="text-[2rem] font-black tracking-[-0.03em] m-0"
+               [class.text-success]="isCredit(mov)"
+               [class.text-error]="!isCredit(mov)">
+              {{ isCredit(mov) ? '+' : '−' }}{{ mov.amount | amount }}
+            </p>
+            <p class="text-[.8125rem] text-slate-400 mt-1 m-0">{{ mov.description }}</p>
           </div>
 
-          <div class="d-row">
-            <span class="d-lbl">{{ 'wallet.detail.reference' | translate }}</span>
-            <span class="d-val" style="font-family:monospace; font-size:.8125rem;">{{ mov.reference }}</span>
+          <div class="flex justify-between items-baseline py-2.5 border-b border-slate-100 text-sm last:border-b-0">
+            <span class="text-slate-400">{{ 'wallet.detail.reference' | translate }}</span>
+            <span class="font-semibold text-slate-700 font-mono text-[.8125rem]">{{ mov.reference }}</span>
           </div>
-          <div class="d-row">
-            <span class="d-lbl">{{ 'wallet.detail.balanceBefore' | translate }}</span>
-            <span class="d-val">{{ mov.balanceBefore | amount }}</span>
+          <div class="flex justify-between items-baseline py-2.5 border-b border-slate-100 text-sm">
+            <span class="text-slate-400">{{ 'wallet.detail.balanceBefore' | translate }}</span>
+            <span class="font-semibold text-slate-700">{{ mov.balanceBefore | amount }}</span>
           </div>
-          <div class="d-row">
-            <span class="d-lbl">{{ 'wallet.detail.balanceAfter' | translate }}</span>
-            <span class="d-val">{{ mov.balanceAfter | amount }}</span>
+          <div class="flex justify-between items-baseline py-2.5 border-b border-slate-100 text-sm last:border-b-0">
+            <span class="text-slate-400">{{ 'wallet.detail.balanceAfter' | translate }}</span>
+            <span class="font-semibold text-slate-700">{{ mov.balanceAfter | amount }}</span>
           </div>
 
           @if (mov.frozenBefore !== mov.frozenAfter) {
-            <div class="d-row" style="border-top: 1px solid var(--clr-border); margin-top:.25rem;">
-              <span class="d-lbl">{{ 'wallet.detail.frozenBefore' | translate }}</span>
-              <span class="d-val">{{ mov.frozenBefore | amount }}</span>
+            <div class="flex justify-between items-baseline py-2.5 border-t border-b border-slate-100 text-sm mt-1">
+              <span class="text-slate-400">{{ 'wallet.detail.frozenBefore' | translate }}</span>
+              <span class="font-semibold text-slate-700">{{ mov.frozenBefore | amount }}</span>
             </div>
-            <div class="d-row">
-              <span class="d-lbl">{{ 'wallet.detail.frozenAfter' | translate }}</span>
-              <span class="d-val">{{ mov.frozenAfter | amount }}</span>
+            <div class="flex justify-between items-baseline py-2.5 text-sm">
+              <span class="text-slate-400">{{ 'wallet.detail.frozenAfter' | translate }}</span>
+              <span class="font-semibold text-slate-700">{{ mov.frozenAfter | amount }}</span>
             </div>
           }
         </div>

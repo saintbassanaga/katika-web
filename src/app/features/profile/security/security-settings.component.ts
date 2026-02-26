@@ -16,293 +16,131 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   selector: 'app-security-settings',
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule, TranslatePipe],
-  styles: [`
-    .page { min-height: 100svh; background: #EDF1F7; }
-
-    /* Topbar */
-    .topbar {
-      background: #0F2240; padding: 1rem 1.25rem;
-      display: flex; align-items: center; gap: .875rem;
-    }
-    .back-btn {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: rgba(255,255,255,.1); border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; flex-shrink: 0; transition: background .2s; text-decoration: none;
-    }
-    .back-btn:hover { background: rgba(255,255,255,.18); }
-    .topbar-title { color: #fff; font-size: 1rem; font-weight: 700; letter-spacing: -.01em; }
-
-    .content { padding: 1.25rem; max-width: 560px; margin: 0 auto; }
-
-    /* Section title */
-    .section-label {
-      font-size: .6875rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: #94A3B8; margin: 1.25rem 0 .5rem .25rem;
-    }
-    .section-label:first-child { margin-top: 0; }
-
-    /* Cards */
-    .card {
-      background: #fff; border-radius: 20px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(15,23,42,.06); margin-bottom: .75rem;
-    }
-
-    /* Verification banner */
-    .verify-banner {
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      border-radius: 20px; padding: 1.25rem 1.5rem;
-      display: flex; align-items: center; gap: 1rem;
-      margin-bottom: .75rem; position: relative; overflow: hidden;
-    }
-    .verify-banner::before {
-      content: ''; position: absolute; top: -40%; right: -10%;
-      width: 200px; height: 200px; border-radius: 50%;
-      background: rgba(255,255,255,.07); pointer-events: none;
-    }
-    .verify-icon {
-      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
-      background: rgba(255,255,255,.15);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .verify-title { color: #fff; font-size: .9375rem; font-weight: 700; margin: 0 0 .2rem; }
-    .verify-sub   { color: rgba(255,255,255,.7); font-size: .8125rem; margin: 0; }
-    .verify-cta {
-      margin-left: auto; flex-shrink: 0;
-      padding: .5rem 1rem; border-radius: 10px;
-      background: rgba(255,255,255,.2); color: #fff;
-      font-size: .8125rem; font-weight: 700; border: none; cursor: pointer;
-      font-family: inherit; transition: background .2s; white-space: nowrap;
-    }
-    .verify-cta:hover:not(:disabled) { background: rgba(255,255,255,.3); }
-    .verify-cta:disabled { opacity: .6; cursor: not-allowed; }
-
-    .verified-banner {
-      background: linear-gradient(135deg, #059669, #047857);
-      border-radius: 20px; padding: 1rem 1.5rem;
-      display: flex; align-items: center; gap: .875rem;
-      margin-bottom: .75rem;
-    }
-    .verified-icon {
-      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-      background: rgba(255,255,255,.18);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .verified-text { color: #fff; font-size: .875rem; font-weight: 600; margin: 0; }
-    .verified-sub  { color: rgba(255,255,255,.7); font-size: .75rem; margin: .1rem 0 0; }
-
-    /* Row inside card */
-    .card-row {
-      display: flex; align-items: center; gap: .875rem;
-      padding: 1rem 1.25rem; border-bottom: 1px solid #F8FAFC;
-    }
-    .card-row:last-child { border-bottom: none; }
-    .row-icon {
-      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .row-label { font-size: .875rem; font-weight: 600; color: #0F172A; }
-    .row-sub   { font-size: .75rem; color: #94A3B8; margin-top: .1rem; }
-    .row-action {
-      margin-left: auto; flex-shrink: 0;
-      padding: .375rem .875rem; border-radius: 8px;
-      font-size: .8125rem; font-weight: 700; border: none; cursor: pointer;
-      font-family: inherit; transition: all .2s; text-decoration: none;
-    }
-    .action-primary { background: #E5EEF8; color: #1B4F8A; }
-    .action-primary:hover { background: #C8DCF2; }
-    .action-danger  { background: #FEF2F2; color: #DC2626; }
-    .action-danger:hover  { background: #FEE2E2; }
-
-    /* Expandable form sections */
-    .expand-form {
-      padding: 0 1.25rem 1.25rem;
-      border-top: 1px solid #EDF1F7;
-      animation: slideDown .25s ease-out both;
-    }
-    @keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-
-    .field { margin-bottom: 1rem; }
-    .label { display: block; font-size: .8125rem; font-weight: 600; color: #334155; margin-bottom: .4rem; }
-    .input {
-      width: 100%; padding: .75rem 1rem; box-sizing: border-box;
-      border: 2px solid #E2E8F0; border-radius: 12px;
-      background: #F8FAFC; font-size: .9375rem; color: #0F172A;
-      outline: none; font-family: inherit;
-      transition: border-color .2s, box-shadow .2s, background .2s;
-    }
-    .input:focus { border-color: #1B4F8A; background: #fff; box-shadow: 0 0 0 4px rgba(27,79,138,.08); }
-    .input.error { border-color: #DC2626; }
-    .input-wrap { position: relative; }
-    .eye-btn {
-      position: absolute; right: .875rem; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer; color: #94A3B8; padding: .25rem;
-      display: flex; align-items: center; transition: color .15s;
-    }
-    .eye-btn:hover { color: #475569; }
-    .err { font-size: .75rem; color: #DC2626; margin: .3rem 0 0; }
-
-    .form-actions { display: flex; gap: .625rem; margin-top: 1.125rem; }
-    .btn-save {
-      flex: 1; padding: .75rem; border-radius: 12px;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      color: #fff; font-size: .875rem; font-weight: 700;
-      border: none; cursor: pointer; font-family: inherit;
-      display: flex; align-items: center; justify-content: center; gap: .5rem;
-      box-shadow: 0 3px 12px rgba(27,79,138,.3);
-      transition: opacity .2s;
-    }
-    .btn-save:disabled { opacity: .5; cursor: not-allowed; }
-    .btn-cancel-sm {
-      padding: .75rem 1.125rem; border-radius: 12px;
-      background: #EDF1F7; color: #64748B;
-      font-size: .875rem; font-weight: 600;
-      border: none; cursor: pointer; font-family: inherit;
-      transition: background .2s;
-    }
-    .btn-cancel-sm:hover { background: #E2E8F0; }
-
-    .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.35);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* MFA disable OTP */
-    .otp-row { display: flex; gap: .5rem; }
-    .otp-cell {
-      width: 44px; height: 52px; text-align: center;
-      border: 2px solid #E2E8F0; border-radius: 12px;
-      background: #F8FAFC; font-size: 1.25rem; font-weight: 700; color: #0F172A;
-      outline: none; font-family: inherit;
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .otp-cell:focus { border-color: #DC2626; box-shadow: 0 0 0 4px rgba(220,38,38,.08); }
-  `],
   template: `
-    <div class="page animate-fade">
+    <div class="min-h-[100svh] bg-page animate-fade">
 
       <!-- Topbar -->
-      <div class="topbar">
-        <a routerLink="/profile" class="back-btn" aria-label="Retour">
+      <div class="bg-dark px-5 py-4 flex items-center gap-3.5">
+        <a routerLink="/profile" class="w-9 h-9 rounded-[10px] bg-white/10 border-none cursor-pointer flex items-center justify-center text-white no-underline shrink-0 transition-colors hover:bg-white/[.18]" aria-label="Retour">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
         </a>
-        <span class="topbar-title">{{ 'profile.securityForm.topbarTitle' | translate }}</span>
+        <span class="text-white text-base font-bold tracking-[-0.01em]">{{ 'profile.securityForm.topbarTitle' | translate }}</span>
       </div>
 
-      <div class="content animate-entry">
+      <div class="px-5 py-5 max-w-[560px] mx-auto animate-entry">
 
         <!-- ── Verification ─────────────────────── -->
-        <p class="section-label">{{ 'profile.securityForm.verificationSection' | translate }}</p>
+        <p class="text-[.6875rem] font-bold uppercase tracking-[.08em] text-slate-400 mb-2 ml-0.5">{{ 'profile.securityForm.verificationSection' | translate }}</p>
 
         @if (auth.isVerified()) {
-          <div class="verified-banner">
-            <div class="verified-icon">
+          <div class="bg-gradient-to-br from-success to-[#047857] rounded-[20px] px-6 py-4 flex items-center gap-3.5 mb-3">
+            <div class="w-10 h-10 rounded-xl shrink-0 bg-white/[.18] flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>
               </svg>
             </div>
             <div>
-              <p class="verified-text">{{ 'profile.securityForm.verified' | translate }}</p>
-              <p class="verified-sub">{{ 'profile.securityForm.verifiedSub' | translate }}</p>
+              <p class="text-white text-sm font-semibold m-0">{{ 'profile.securityForm.verified' | translate }}</p>
+              <p class="text-white/70 text-xs m-0 mt-[.1rem]">{{ 'profile.securityForm.verifiedSub' | translate }}</p>
             </div>
           </div>
         } @else {
-          <div class="verify-banner">
-            <div class="verify-icon">
+          <div class="bg-gradient-to-br from-primary to-primary-dk rounded-[20px] px-6 py-5 flex items-center gap-4 mb-3 relative overflow-hidden">
+            <div class="absolute top-[-40%] right-[-10%] w-[200px] h-[200px] rounded-full bg-white/[.07] pointer-events-none"></div>
+            <div class="w-12 h-12 rounded-[14px] shrink-0 bg-white/[.15] flex items-center justify-center">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
             </div>
-            <div style="flex:1">
-              <p class="verify-title">{{ 'profile.securityForm.notVerified' | translate }}</p>
-              <p class="verify-sub">{{ 'profile.securityForm.notVerifiedSub' | translate }}</p>
+            <div class="flex-1">
+              <p class="text-white text-[.9375rem] font-bold m-0 mb-[.2rem]">{{ 'profile.securityForm.notVerified' | translate }}</p>
+              <p class="text-white/70 text-[.8125rem] m-0">{{ 'profile.securityForm.notVerifiedSub' | translate }}</p>
             </div>
-            <button class="verify-cta" (click)="requestVerification()" [disabled]="verifyLoading()">
+            <button class="ml-auto shrink-0 px-4 py-2 rounded-[10px] bg-white/20 text-white text-[.8125rem] font-bold border-none cursor-pointer font-[inherit] whitespace-nowrap transition-colors hover:bg-white/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                    (click)="requestVerification()" [disabled]="verifyLoading()">
               @if (verifyLoading()) { {{ 'profile.securityForm.sending' | translate }} } @else { {{ 'profile.securityForm.verifyBtn' | translate }} }
             </button>
           </div>
         }
 
         <!-- ── Password ─────────────────────────── -->
-        <p class="section-label">{{ 'profile.securityForm.passwordSection' | translate }}</p>
-        <div class="card">
-          <div class="card-row">
-            <div class="row-icon" style="background:#FFF7ED">
+        <p class="text-[.6875rem] font-bold uppercase tracking-[.08em] text-slate-400 mt-5 mb-2 ml-0.5">{{ 'profile.securityForm.passwordSection' | translate }}</p>
+        <div class="bg-white rounded-[20px] overflow-hidden shadow-[0_1px_4px_rgba(15,23,42,.06)] mb-3">
+          <div class="flex items-center gap-3.5 px-5 py-4">
+            <div class="w-[38px] h-[38px] rounded-[11px] bg-[#FFF7ED] shrink-0 flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
               </svg>
             </div>
             <div>
-              <p class="row-label">{{ 'profile.securityForm.passwordLabel' | translate }}</p>
-              <p class="row-sub">{{ 'profile.securityForm.lastChanged' | translate }}</p>
+              <p class="text-sm font-semibold text-slate-900 m-0">{{ 'profile.securityForm.passwordLabel' | translate }}</p>
+              <p class="text-xs text-slate-400 mt-[.1rem] m-0">{{ 'profile.securityForm.lastChanged' | translate }}</p>
             </div>
-            <button class="row-action action-primary" (click)="togglePwdForm()">
+            <button class="ml-auto shrink-0 px-3.5 py-1.5 rounded-lg bg-primary-lt text-primary text-[.8125rem] font-bold border-none cursor-pointer font-[inherit] transition-colors hover:bg-[#C8DCF2]"
+                    (click)="togglePwdForm()">
               {{ showPwdForm() ? ('profile.securityForm.cancel' | translate) : ('profile.securityForm.modify' | translate) }}
             </button>
           </div>
 
           @if (showPwdForm()) {
-            <div class="expand-form">
+            <div class="px-5 pb-5 border-t border-page animate-slide-down">
               <form [formGroup]="pwdForm" (ngSubmit)="changePassword()">
 
-                <div class="field">
-                  <label class="label">{{ 'profile.securityForm.currentPassword' | translate }}</label>
-                  <div class="input-wrap">
-                    <input [type]="showCurrent() ? 'text' : 'password'"
-                           formControlName="currentPassword"
-                           placeholder="••••••••" class="input"
-                           style="padding-right:3rem"
-                           [class.error]="isInvalidPwd('currentPassword')" />
-                    <button type="button" class="eye-btn" (click)="showCurrent.set(!showCurrent())">
+                <div class="mb-4 mt-4">
+                  <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem]">{{ 'profile.securityForm.currentPassword' | translate }}</label>
+                  <div class="relative">
+                    <input [type]="showCurrent() ? 'text' : 'password'" formControlName="currentPassword" placeholder="••••••••"
+                           class="w-full px-4 py-3 pr-12 border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]"
+                           [class.border-error]="isInvalidPwd('currentPassword')" />
+                    <button type="button" class="absolute right-3.5 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-slate-400 p-1 flex items-center transition-colors hover:text-slate-600" (click)="showCurrent.set(!showCurrent())">
                       @if (showCurrent()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
                     </button>
                   </div>
                   @if (isInvalidPwd('currentPassword')) {
-                    <p class="err">{{ 'profile.securityForm.currentPasswordRequired' | translate }}</p>
+                    <p class="text-xs text-error mt-1.5">{{ 'profile.securityForm.currentPasswordRequired' | translate }}</p>
                   }
                 </div>
 
-                <div class="field">
-                  <label class="label">{{ 'profile.securityForm.newPassword' | translate }}</label>
-                  <div class="input-wrap">
-                    <input [type]="showNew() ? 'text' : 'password'"
-                           formControlName="newPassword"
+                <div class="mb-4">
+                  <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem]">{{ 'profile.securityForm.newPassword' | translate }}</label>
+                  <div class="relative">
+                    <input [type]="showNew() ? 'text' : 'password'" formControlName="newPassword"
                            [placeholder]="'profile.securityForm.passwordPh' | translate"
-                           class="input" style="padding-right:3rem"
-                           [class.error]="isInvalidPwd('newPassword')" />
-                    <button type="button" class="eye-btn" (click)="showNew.set(!showNew())">
+                           class="w-full px-4 py-3 pr-12 border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]"
+                           [class.border-error]="isInvalidPwd('newPassword')" />
+                    <button type="button" class="absolute right-3.5 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-slate-400 p-1 flex items-center transition-colors hover:text-slate-600" (click)="showNew.set(!showNew())">
                       @if (showNew()) { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> } @else { <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
                     </button>
                   </div>
                   @if (pwdForm.get('newPassword')?.errors?.['minlength'] && pwdForm.get('newPassword')?.touched) {
-                    <p class="err">{{ 'profile.securityForm.passwordMin' | translate }}</p>
+                    <p class="text-xs text-error mt-1.5">{{ 'profile.securityForm.passwordMin' | translate }}</p>
                   }
                   @if (pwdForm.get('newPassword')?.errors?.['pattern'] && pwdForm.get('newPassword')?.touched) {
-                    <p class="err">{{ 'profile.securityForm.passwordStrong' | translate }}</p>
+                    <p class="text-xs text-error mt-1.5">{{ 'profile.securityForm.passwordStrong' | translate }}</p>
                   }
                 </div>
 
-                <div class="field">
-                  <label class="label">{{ 'profile.securityForm.confirmPassword' | translate }}</label>
-                  <input [type]="showNew() ? 'text' : 'password'"
-                         formControlName="confirmPassword"
-                         placeholder="••••••••" class="input"
-                         [class.error]="pwdForm.errors?.['mismatch'] && pwdForm.get('confirmPassword')?.touched" />
+                <div class="mb-4">
+                  <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem]">{{ 'profile.securityForm.confirmPassword' | translate }}</label>
+                  <input [type]="showNew() ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••"
+                         class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]"
+                         [class.border-error]="pwdForm.errors?.['mismatch'] && pwdForm.get('confirmPassword')?.touched" />
                   @if (pwdForm.errors?.['mismatch'] && pwdForm.get('confirmPassword')?.touched) {
-                    <p class="err">{{ 'profile.securityForm.passwordMismatch' | translate }}</p>
+                    <p class="text-xs text-error mt-1.5">{{ 'profile.securityForm.passwordMismatch' | translate }}</p>
                   }
                 </div>
 
-                <div class="form-actions">
-                  <button type="button" class="btn-cancel-sm" (click)="togglePwdForm()">{{ 'profile.securityForm.cancel' | translate }}</button>
-                  <button type="submit" class="btn-save" [disabled]="pwdForm.invalid || pwdLoading()">
+                <div class="flex gap-2.5 mt-[1.125rem]">
+                  <button type="button" class="px-[1.125rem] py-3 rounded-xl bg-page text-slate-500 text-sm font-semibold border-none cursor-pointer font-[inherit] transition-colors hover:bg-slate-200"
+                          (click)="togglePwdForm()">{{ 'profile.securityForm.cancel' | translate }}</button>
+                  <button type="submit"
+                          class="flex-1 py-3 rounded-xl bg-gradient-to-br from-primary to-primary-dk text-white text-sm font-bold border-none cursor-pointer font-[inherit] flex items-center justify-center gap-2 shadow-[0_3px_12px_rgba(27,79,138,.3)] transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                          [disabled]="pwdForm.invalid || pwdLoading()">
                     @if (pwdLoading()) {
-                      <span class="spinner"></span> {{ 'profile.securityForm.changing' | translate }}
+                      <span class="w-4 h-4 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
+                      {{ 'profile.securityForm.changing' | translate }}
                     } @else {
                       {{ 'profile.securityForm.changePassword' | translate }}
                     }
@@ -314,50 +152,51 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         </div>
 
         <!-- ── 2FA ──────────────────────────────── -->
-        <p class="section-label">{{ 'profile.securityForm.mfaSection' | translate }}</p>
-        <div class="card">
-          <div class="card-row">
-            <div class="row-icon" style="background:#F0FDF4">
+        <p class="text-[.6875rem] font-bold uppercase tracking-[.08em] text-slate-400 mt-5 mb-2 ml-0.5">{{ 'profile.securityForm.mfaSection' | translate }}</p>
+        <div class="bg-white rounded-[20px] overflow-hidden shadow-[0_1px_4px_rgba(15,23,42,.06)] mb-3">
+          <div class="flex items-center gap-3.5 px-5 py-4">
+            <div class="w-[38px] h-[38px] rounded-[11px] bg-[#F0FDF4] shrink-0 flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
               </svg>
             </div>
             <div>
-              <p class="row-label">{{ 'profile.securityForm.mfaLabel' | translate }}</p>
-              <p class="row-sub" [style.color]="auth.hasMfa() ? '#16A34A' : '#94A3B8'">
+              <p class="text-sm font-semibold text-slate-900 m-0">{{ 'profile.securityForm.mfaLabel' | translate }}</p>
+              <p class="text-xs mt-[.1rem] m-0" [style.color]="auth.hasMfa() ? '#16A34A' : '#94A3B8'">
                 {{ auth.hasMfa() ? ('profile.securityForm.mfaEnabled' | translate) : ('profile.securityForm.mfaDisabled' | translate) }}
               </p>
             </div>
             @if (auth.hasMfa()) {
-              <button class="row-action action-danger" (click)="toggleMfaDisable()">
+              <button class="ml-auto shrink-0 px-3.5 py-1.5 rounded-lg bg-error-lt text-error text-[.8125rem] font-bold border-none cursor-pointer font-[inherit] transition-colors hover:bg-red-100"
+                      (click)="toggleMfaDisable()">
                 {{ showMfaDisable() ? ('profile.securityForm.cancel' | translate) : ('profile.securityForm.disable' | translate) }}
               </button>
             } @else {
-              <a routerLink="/profile/security/mfa" class="row-action action-primary">{{ 'profile.securityForm.enable' | translate }}</a>
+              <a routerLink="/profile/security/mfa" class="ml-auto shrink-0 px-3.5 py-1.5 rounded-lg bg-primary-lt text-primary text-[.8125rem] font-bold no-underline transition-colors hover:bg-[#C8DCF2]">{{ 'profile.securityForm.enable' | translate }}</a>
             }
           </div>
 
           @if (showMfaDisable()) {
-            <div class="expand-form">
-              <p style="font-size:.8125rem;color:#64748B;margin:0 0 .875rem">
-                {{ 'profile.securityForm.disablePrompt' | translate }}
-              </p>
-              <div class="otp-row">
+            <div class="px-5 pb-5 border-t border-page animate-slide-down">
+              <p class="text-[.8125rem] text-slate-500 m-0 mt-4 mb-3.5">{{ 'profile.securityForm.disablePrompt' | translate }}</p>
+              <div class="flex gap-2">
                 @for (i of [0,1,2,3,4,5]; track i) {
                   <input #mfaCell type="text" inputmode="numeric" maxlength="1"
-                         class="otp-cell"
+                         class="otp-cell w-11 h-[52px] text-center border-2 border-slate-200 rounded-xl bg-slate-50 text-[1.25rem] font-bold text-slate-900 outline-none font-[inherit] transition-all focus:border-error focus:shadow-[0_0_0_4px_rgba(220,38,38,.08)]"
                          (input)="onMfaCellInput($event, i)"
                          (keydown)="onMfaCellKeydown($event, i)" />
                 }
               </div>
-              <div class="form-actions" style="margin-top:.875rem">
-                <button type="button" class="btn-cancel-sm" (click)="toggleMfaDisable()">{{ 'profile.securityForm.cancel' | translate }}</button>
-                <button type="button" class="btn-save"
-                        style="background:linear-gradient(135deg,#DC2626,#B91C1C);box-shadow:0 3px 12px rgba(220,38,38,.3)"
+              <div class="flex gap-2.5 mt-3.5">
+                <button type="button" class="px-[1.125rem] py-3 rounded-xl bg-page text-slate-500 text-sm font-semibold border-none cursor-pointer font-[inherit] transition-colors hover:bg-slate-200"
+                        (click)="toggleMfaDisable()">{{ 'profile.securityForm.cancel' | translate }}</button>
+                <button type="button"
+                        class="flex-1 py-3 rounded-xl bg-gradient-to-br from-error to-[#B91C1C] text-white text-sm font-bold border-none cursor-pointer font-[inherit] flex items-center justify-center gap-2 shadow-[0_3px_12px_rgba(220,38,38,.3)] disabled:opacity-50 disabled:cursor-not-allowed"
                         [disabled]="mfaCode().length < 6 || mfaLoading()"
                         (click)="disableMfa()">
                   @if (mfaLoading()) {
-                    <span class="spinner"></span> {{ 'profile.securityForm.disabling' | translate }}
+                    <span class="w-4 h-4 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
+                    {{ 'profile.securityForm.disabling' | translate }}
                   } @else {
                     {{ 'profile.securityForm.confirmDisable' | translate }}
                   }

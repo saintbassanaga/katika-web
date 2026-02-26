@@ -8,236 +8,106 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-profile-edit',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
-  styles: [`
-    .page { min-height: 100svh; background: #EDF1F7; }
-
-    .topbar {
-      background: #0F2240;
-      padding: 1rem 1.25rem;
-      display: flex; align-items: center; gap: .875rem;
-    }
-    .back-btn {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: rgba(255,255,255,.1); border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; flex-shrink: 0; transition: background .2s;
-    }
-    .back-btn:hover { background: rgba(255,255,255,.18); }
-    .topbar-title { color: #fff; font-size: 1rem; font-weight: 700; letter-spacing: -.01em; }
-
-    .content { padding: 1.25rem; max-width: 560px; margin: 0 auto; }
-
-    /* Avatar section */
-    .avatar-section {
-      display: flex; flex-direction: column; align-items: center;
-      background: #fff; border-radius: 20px; padding: 2rem 1.5rem 1.5rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 1px 4px rgba(15,23,42,.06);
-    }
-    .avatar-circle {
-      width: 80px; height: 80px; border-radius: 50%;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 1.75rem; font-weight: 700;
-      margin-bottom: 1rem;
-      box-shadow: 0 6px 24px rgba(27,79,138,.3);
-    }
-    .avatar-name { font-size: 1.125rem; font-weight: 700; color: #0F172A; margin: 0 0 .2rem; }
-    .avatar-role {
-      font-size: .75rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .07em; color: #92680A;
-      background: #FDF4DC; border: 1px solid rgba(201,146,13,.2);
-      padding: .25rem .75rem; border-radius: 99px;
-    }
-
-    /* Form card */
-    .form-card {
-      background: #fff; border-radius: 20px; padding: 1.5rem;
-      box-shadow: 0 1px 4px rgba(15,23,42,.06);
-    }
-    .card-title { font-size: .9375rem; font-weight: 700; color: #0F172A; margin: 0 0 1.25rem; }
-
-    .field { margin-bottom: 1.125rem; }
-    .label {
-      display: block; font-size: .8125rem; font-weight: 600;
-      color: #334155; margin-bottom: .4rem; letter-spacing: .01em;
-    }
-    .label-opt { color: #94A3B8; font-weight: 400; }
-    .input {
-      width: 100%; padding: .8125rem 1rem;
-      border: 2px solid #E2E8F0; border-radius: 12px;
-      background: #F8FAFC; font-size: .9375rem; color: #0F172A;
-      outline: none; font-family: inherit; box-sizing: border-box;
-      transition: border-color .2s, box-shadow .2s, background .2s;
-    }
-    .input:focus {
-      border-color: #1B4F8A; background: #fff;
-      box-shadow: 0 0 0 4px rgba(27,79,138,.08);
-    }
-    .input.error { border-color: #DC2626; }
-    .hint { font-size: .75rem; color: #94A3B8; margin: .3rem 0 0; }
-    .err  { font-size: .75rem; color: #DC2626; margin: .3rem 0 0; }
-
-    /* Actions */
-    .actions { display: flex; gap: .75rem; margin-top: 1.5rem; }
-    .btn-primary {
-      flex: 1; padding: .875rem;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      color: #fff; font-size: .9375rem; font-weight: 700;
-      border: none; border-radius: 14px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: .5rem;
-      box-shadow: 0 4px 16px rgba(27,79,138,.35); font-family: inherit;
-      transition: opacity .2s, transform .15s;
-    }
-    .btn-primary:hover:not(:disabled) { opacity: .91; transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: .52; cursor: not-allowed; }
-    .btn-cancel {
-      padding: .875rem 1.25rem;
-      background: #EDF1F7; color: #475569;
-      font-size: .9375rem; font-weight: 600;
-      border: none; border-radius: 14px; cursor: pointer;
-      font-family: inherit; text-decoration: none;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .2s;
-    }
-    .btn-cancel:hover { background: #E2E8F0; }
-
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.35);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Non-editable info row */
-    .info-card {
-      background: #fff; border-radius: 20px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(15,23,42,.06); margin-bottom: 1rem;
-    }
-    .info-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .875rem 1.25rem; border-bottom: 1px solid #EDF1F7;
-    }
-    .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: .8125rem; color: #94A3B8; font-weight: 500; }
-    .info-value { font-size: .875rem; color: #334155; font-weight: 600; }
-    .info-locked {
-      display: flex; align-items: center; gap: .375rem;
-      font-size: .75rem; color: #94A3B8;
-    }
-  `],
   template: `
-    <div class="page animate-fade">
+    <div class="min-h-[100svh] bg-page animate-fade">
 
       <!-- Top bar -->
-      <div class="topbar">
-        <a routerLink="/profile" class="back-btn" aria-label="Retour">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="bg-dark px-5 py-4 flex items-center gap-3.5">
+        <a routerLink="/profile" class="w-9 h-9 rounded-[10px] bg-white/10 border-none cursor-pointer flex items-center justify-center text-white no-underline shrink-0 transition-colors hover:bg-white/[.18]" aria-label="Retour">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
         </a>
-        <span class="topbar-title">{{ 'profile.editForm.topbarTitle' | translate }}</span>
+        <span class="text-white text-base font-bold tracking-[-0.01em]">{{ 'profile.editForm.topbarTitle' | translate }}</span>
       </div>
 
-      <div class="content">
+      <div class="px-5 py-5 max-w-[560px] mx-auto">
 
         <!-- Avatar / identity card -->
-        <div class="avatar-section animate-entry">
-          <div class="avatar-circle">{{ auth.initials() }}</div>
-          <p class="avatar-name">{{ auth.fullName() }}</p>
-          <span class="avatar-role">{{ auth.role() }}</span>
+        <div class="flex flex-col items-center bg-white rounded-[20px] px-6 pt-8 pb-6 mb-4 shadow-[0_1px_4px_rgba(15,23,42,.06)] animate-entry">
+          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-dk flex items-center justify-center text-white text-[1.75rem] font-bold mb-4 shadow-[0_6px_24px_rgba(27,79,138,.3)]">{{ auth.initials() }}</div>
+          <p class="text-[1.125rem] font-bold text-slate-900 m-0 mb-[.2rem]">{{ auth.fullName() }}</p>
+          <span class="text-xs font-bold uppercase tracking-[.07em] text-[#92680A] bg-gold-lt border border-[rgba(201,146,13,.2)] px-3 py-1 rounded-full">{{ auth.role() }}</span>
         </div>
 
-        <!-- Read-only info (phone + role cannot be changed here) -->
-        <div class="info-card animate-entry">
-          <div class="info-row">
-            <span class="info-label">{{ 'profile.editForm.phone' | translate }}</span>
-            <span class="info-locked">
+        <!-- Read-only info -->
+        <div class="bg-white rounded-[20px] overflow-hidden shadow-[0_1px_4px_rgba(15,23,42,.06)] mb-4 animate-entry">
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-page">
+            <span class="text-[.8125rem] text-slate-400 font-medium">{{ 'profile.editForm.phone' | translate }}</span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-400">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
               </svg>
               {{ 'profile.editForm.nonEditable' | translate }}
             </span>
           </div>
-          <div class="info-row">
-            <span class="info-label">{{ 'profile.editForm.role' | translate }}</span>
-            <span class="info-value">{{ auth.role() }}</span>
+          <div class="flex items-center justify-between px-5 py-3.5">
+            <span class="text-[.8125rem] text-slate-400 font-medium">{{ 'profile.editForm.role' | translate }}</span>
+            <span class="text-sm text-slate-600 font-semibold">{{ auth.role() }}</span>
           </div>
         </div>
 
         <!-- Editable form -->
-        <div class="form-card animate-entry">
-          <p class="card-title">{{ 'profile.editForm.editableSection' | translate }}</p>
+        <div class="bg-white rounded-[20px] p-6 shadow-[0_1px_4px_rgba(15,23,42,.06)] animate-entry">
+          <p class="text-[.9375rem] font-bold text-slate-900 m-0 mb-5">{{ 'profile.editForm.editableSection' | translate }}</p>
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
             <!-- Full name -->
-            <div class="field">
-              <label class="label">{{ 'profile.fullName' | translate }}</label>
-              <input
-                type="text"
-                formControlName="fullName"
-                [placeholder]="'profile.editForm.fullNamePh' | translate"
-                class="input"
-                [class.error]="isInvalid('fullName')"
-              />
+            <div class="mb-[1.125rem]">
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">{{ 'profile.fullName' | translate }}</label>
+              <input type="text" formControlName="fullName"
+                     [placeholder]="'profile.editForm.fullNamePh' | translate"
+                     class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]"
+                     [class.border-error]="isInvalid('fullName')" />
               @if (form.get('fullName')?.errors?.['required'] && form.get('fullName')?.touched) {
-                <p class="err">{{ 'profile.editForm.fullNameRequired' | translate }}</p>
+                <p class="text-xs text-error mt-1.5">{{ 'profile.editForm.fullNameRequired' | translate }}</p>
               }
               @if (form.get('fullName')?.errors?.['minlength'] && form.get('fullName')?.touched) {
-                <p class="err">{{ 'profile.editForm.fullNameMin' | translate }}</p>
+                <p class="text-xs text-error mt-1.5">{{ 'profile.editForm.fullNameMin' | translate }}</p>
               }
             </div>
 
             <!-- Email -->
-            <div class="field">
-              <label class="label">
-                {{ 'profile.email' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span>
+            <div class="mb-[1.125rem]">
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                {{ 'profile.email' | translate }} <span class="text-slate-400 font-normal">{{ 'common.optional' | translate }}</span>
               </label>
-              <input
-                type="email"
-                formControlName="email"
-                [placeholder]="'auth.register.emailPh' | translate"
-                class="input"
-                [class.error]="isInvalid('email')"
-              />
+              <input type="email" formControlName="email"
+                     [placeholder]="'auth.register.emailPh' | translate"
+                     class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]"
+                     [class.border-error]="isInvalid('email')" />
               @if (isInvalid('email')) {
-                <p class="err">{{ 'profile.editForm.emailInvalid' | translate }}</p>
+                <p class="text-xs text-error mt-1.5">{{ 'profile.editForm.emailInvalid' | translate }}</p>
               }
-              <p class="hint">{{ 'profile.editForm.emailHint' | translate }}</p>
+              <p class="text-xs text-slate-400 mt-1.5">{{ 'profile.editForm.emailHint' | translate }}</p>
             </div>
 
             <!-- CNI number -->
-            <div class="field">
-              <label class="label">
-                {{ 'profile.editForm.cni' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span>
+            <div class="mb-[1.125rem]">
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                {{ 'profile.editForm.cni' | translate }} <span class="text-slate-400 font-normal">{{ 'common.optional' | translate }}</span>
               </label>
-              <input
-                type="text"
-                formControlName="cniNumber"
-                placeholder="123456789"
-                class="input"
-              />
-              <p class="hint">{{ 'profile.editForm.cniHint' | translate }}</p>
+              <input type="text" formControlName="cniNumber" placeholder="123456789"
+                     class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]" />
+              <p class="text-xs text-slate-400 mt-1.5">{{ 'profile.editForm.cniHint' | translate }}</p>
             </div>
 
             <!-- Actions -->
-            <div class="actions">
-              <a routerLink="/profile" class="btn-cancel">{{ 'profile.editForm.cancel' | translate }}</a>
-              <button
-                type="submit"
-                class="btn-primary"
-                [disabled]="form.invalid || form.pristine || auth.loading()"
-              >
+            <div class="flex gap-3 mt-6">
+              <a routerLink="/profile"
+                 class="px-5 py-3.5 bg-page text-slate-600 text-[.9375rem] font-semibold border-none rounded-[14px] cursor-pointer font-[inherit] no-underline flex items-center justify-center transition-colors hover:bg-slate-200">
+                {{ 'profile.editForm.cancel' | translate }}
+              </a>
+              <button type="submit"
+                      class="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary-dk text-white text-[.9375rem] font-bold border-none rounded-[14px] cursor-pointer flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(27,79,138,.35)] font-[inherit] transition-all hover:opacity-90 hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
+                      [disabled]="form.invalid || form.pristine || auth.loading()">
                 @if (auth.loading()) {
-                  <span class="spinner"></span>
+                  <span class="w-[18px] h-[18px] border-[2.5px] border-white/35 border-t-white rounded-full animate-spin"></span>
                   {{ 'profile.editForm.saving' | translate }}
                 } @else {
                   {{ 'profile.editForm.save' | translate }}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
                 }

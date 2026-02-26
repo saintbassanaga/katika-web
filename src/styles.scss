@@ -1,23 +1,23 @@
-/* Tailwind v4 chargé via src/tailwind.css + postcss.config.mjs */
-/* Police chargée via angular.json styles[] — voir node_modules/@fontsource-variable/outfit */
+/* Tailwind v4 loaded via src/tailwind.css + postcss.config.mjs */
+/* Font loaded via angular.json styles[] — see node_modules/@fontsource-variable/outfit */
 
 /* ── Brand tokens ────────────────────────────────── */
 :root {
-  --clr-dark:        #0F2240;   /* deep ink navy — headers, nav     */
-  --clr-primary:     #1B4F8A;   /* cobalt sérieux — actions         */
-  --clr-primary-dk:  #0D3D6E;   /* cobalt profond — gradients       */
-  --clr-primary-lt:  #E5EEF8;   /* cobalt pâle — fonds light        */
-  --clr-gold:        #C9920D;   /* or chaud — accents premium       */
-  --clr-gold-lt:     #FDF4DC;   /* or très pâle — fonds badge       */
-  --clr-page:        #EDF1F7;   /* fond page — gris-bleu subtil     */
+  --clr-dark:        #0F2240;
+  --clr-primary:     #1B4F8A;
+  --clr-primary-dk:  #0D3D6E;
+  --clr-primary-lt:  #E5EEF8;
+  --clr-gold:        #C9920D;
+  --clr-gold-lt:     #FDF4DC;
+  --clr-page:        #EDF1F7;
   --clr-surface:     #FFFFFF;
   --clr-border:      #E2E8F0;
   --clr-text:        #0F172A;
   --clr-muted:       #64748B;
-  --clr-success:     #10B981;   /* emerald — credit, success        */
-  --clr-success-lt:  #ECFDF5;   /* emerald pale                     */
-  --clr-error:       #DC2626;   /* red — debit, error               */
-  --clr-error-lt:    #FEF2F2;   /* red pale                         */
+  --clr-success:     #10B981;
+  --clr-success-lt:  #ECFDF5;
+  --clr-error:       #DC2626;
+  --clr-error-lt:    #FEF2F2;
 }
 
 /* ── Reset ──────────────────────────────────────── */
@@ -46,6 +46,7 @@ input, textarea, select {
   outline-offset: 2px;
 }
 
+/* ── Global utilities ───────────────────────────── */
 .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
 .scrollbar-hide {
@@ -54,7 +55,7 @@ input, textarea, select {
   &::-webkit-scrollbar { display: none; }
 }
 
-/* ── Animations ─────────────────────────────────── */
+/* ── Keyframe animations ─────────────────────────── */
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -79,12 +80,32 @@ input, textarea, select {
   from { background-position: -200% 0; }
   to   { background-position:  200% 0; }
 }
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.animate-entry { animation: fadeSlideUp 0.45s cubic-bezier(0.22,1,0.36,1) both; }
-.animate-card  { animation: cardEntry  0.5s  cubic-bezier(0.22,1,0.36,1) 0.08s both; }
-.animate-fade  { animation: fadeIn     0.35s ease-out both; }
-.orb-1         { animation: orbFloat1  9s  ease-in-out infinite; }
-.orb-2         { animation: orbFloat2  12s ease-in-out infinite; }
+/* ── Animation utilities ────────────────────────── */
+.animate-entry    { animation: fadeSlideUp 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-card     { animation: cardEntry  0.5s  cubic-bezier(0.22,1,0.36,1) 0.08s both; }
+.animate-fade     { animation: fadeIn     0.35s ease-out both; }
+.orb-1            { animation: orbFloat1  9s  ease-in-out infinite; }
+.orb-2            { animation: orbFloat2  12s ease-in-out infinite; }
+.animate-fade-in  { animation: fadeIn     200ms ease-out; }
+.animate-slide-up { animation: slideUp    300ms ease-out; }
+.animate-slide-in { animation: slideIn    200ms ease-out; }
+.animate-slide-down { animation: slideDown 250ms ease-out both; }
 
 .skeleton-shimmer {
   background: linear-gradient(90deg, #E2E8F0 25%, #EDF1F7 50%, #E2E8F0 75%);

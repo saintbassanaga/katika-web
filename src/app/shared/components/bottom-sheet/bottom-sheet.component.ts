@@ -45,18 +45,6 @@ import {
       </div>
     }
   `,
-  styles: [`
-    @keyframes fade-in {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slide-up {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-    .animate-fade-in { animation: fade-in 200ms ease-out; }
-    .animate-slide-up { animation: slide-up 300ms ease-out; }
-  `],
 })
 export class BottomSheetComponent {
   readonly open = input<boolean>(false);

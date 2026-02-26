@@ -1,33 +1,47 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lang-switcher',
   standalone: true,
-  styles: [`
-    .switcher {
-      display: flex; align-items: center; gap: 2px;
-      background: rgba(255,255,255,.08); border-radius: 10px;
-      color: rgba(226,232,240,.7);
-      padding: 3px;
-    }
-    .lang-btn {
-      padding: .25rem .625rem; border-radius: 7px;
-      border: none; cursor: pointer; font-size: .75rem; font-weight: 700;
-      letter-spacing: .04em; transition: background .15s, color .15s;
-      font-family: inherit; background: none; color: rgba(148,163,184,.7);
-    }
-    .lang-btn.active {
-      background: rgba(255,255,255,.15); color: #fff;
-    }
-    .lang-btn:hover:not(.active) { color: rgba(226,232,240,.8); }
-  `],
   template: `
-    <div class="switcher" role="group" aria-label="Language">
-      <button class="lang-btn" [class.active]="current() === 'fr'"
-              (click)="use('fr')">FR</button>
-      <button class="lang-btn" [class.active]="current() === 'en'"
-              (click)="use('en')">EN</button>
+    <div
+      class="relative flex items-center bg-black/[.08] backdrop-blur-[6px] rounded-[11px] p-[3px] select-none"
+      role="group"
+      aria-label="Language"
+    >
+      <!-- Sliding pill indicator -->
+      <div
+        class="absolute top-[3px] bottom-[3px] left-[3px] w-[calc(50%-3px)] rounded-[8px] bg-white shadow-[0_1px_4px_rgba(0,0,0,.13),0_0_0_0.5px_rgba(0,0,0,.07)] pointer-events-none"
+        style="transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)"
+        [style.transform]="current() === 'en' ? 'translateX(100%)' : 'translateX(0)'"
+      ></div>
+
+      <!-- FR -->
+      <button
+        (click)="use('fr')"raduit tout ca
+        class="relative z-10 w-1/2 flex items-center justify-center gap-1 py-[5px] px-3 rounded-[8px] border-none bg-transparent cursor-pointer font-bold text-[11px] tracking-[.06em]"
+        style="font-family: inherit; transition: opacity 0.2s"
+        [style.color]="current() === 'fr' ? '#0f172a' : 'inherit'"
+        [style.opacity]="current() === 'fr' ? '1' : '0.45'"
+        aria-pressed="current() === 'fr'"
+      >
+        <span style="font-size:13px;line-height:1">🇫🇷</span>
+        <span>FR</span>
+      </button>
+
+      <!-- EN -->
+      <button
+        (click)="use('en')"
+        class="relative z-10 w-1/2 flex items-center justify-center gap-1 py-[5px] px-3 rounded-[8px] border-none bg-transparent cursor-pointer font-bold text-[11px] tracking-[.06em]"
+        style="font-family: inherit; transition: opacity 0.2s"
+        [style.color]="current() === 'en' ? '#0f172a' : 'inherit'"
+        [style.opacity]="current() === 'en' ? '1' : '0.45'"
+        aria-pressed="current() === 'en'"
+      >
+        <span style="font-size:13px;line-height:1">🇬🇧</span>
+        <span>EN</span>
+      </button>
     </div>
   `,
 })

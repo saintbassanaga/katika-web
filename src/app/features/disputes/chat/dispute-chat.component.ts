@@ -165,76 +165,7 @@ import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
       </div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Custom scrollbar */
-    .overflow-y-auto::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .overflow-y-auto::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-
-    .overflow-y-auto::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 3px;
-    }
-
-    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-      background: #a1a1a1;
-    }
-
-    /* Message animations */
-    .max-w-\\[80\\%\\] {
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Typing indicator animation */
-    .typing-indicator {
-      position: relative;
-    }
-
-    .typing-indicator::after {
-      content: '...';
-      position: absolute;
-      width: 20px;
-      animation: typingDots 1.5s steps(4) infinite;
-    }
-
-    @keyframes typingDots {
-      0%, 20% { content: ''; }
-      40% { content: '.'; }
-      60% { content: '..'; }
-      80%, 100% { content: '...'; }
-    }
-
-    /* Scroll smooth behavior */
-    .scroll-smooth {
-      scroll-behavior: smooth;
-    }
-
-    /* Ensure messages container takes full height */
-    .flex-1.overflow-y-auto {
-      height: calc(100vh - 130px); /* Adjust based on header + input height */
-    }
-  `]
+  styles: [':host { display: block; height: 100vh; overflow: hidden; }']
 })
 export class DisputeChatComponent implements OnInit, OnDestroy {
 

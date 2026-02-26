@@ -13,6 +13,7 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
   REFUNDED:    { label: 'Remboursé',     bg: '#FDF4FF', color: '#6B21A8', dot: '#A855F7' },
   CANCELLED:   { label: 'Annulé',        bg: '#F8FAFC', color: '#64748B', dot: '#CBD5E1' },
   OPEN:        { label: 'Ouvert',        bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
+  OPENED:      { label: 'Ouvert',        bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
   IN_PROGRESS: { label: 'En cours',      bg: '#FFFBEB', color: '#B45309', dot: '#F59E0B' },
   RESOLVED:    { label: 'Résolu',        bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
   PROCESSING:  { label: 'En traitement', bg: '#E5EEF8', color: '#154B85', dot: '#3A7BC8' },

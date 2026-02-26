@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth.store';
-import { LangSwitcherComponent } from '../lang-switcher/lang-switcher.component';
 
 interface SidebarItem { key: string; label: string; route: string; roles?: string[]; }
 
@@ -20,94 +19,31 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, TranslatePipe],
-  styles: [`
-    aside {
-      position: fixed; left: 0; top: 0; bottom: 0; width: 256px;
-      background: #0F2240; z-index: 40;
-      display: flex; flex-direction: column;
-    }
-    .logo-area {
-      padding: 1.5rem 1.25rem 1.25rem;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      display: flex; align-items: center; gap: .75rem;
-    }
-    .k-mark {
-      width: 40px; height: 40px; flex-shrink: 0;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-text { color: #fff; font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; }
-    .logo-sub  { color: rgba(148,163,184,.5); font-size: .6875rem; font-weight: 400; }
-
-    .user-area {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      display: flex; align-items: center; gap: .75rem;
-    }
-    .user-avatar {
-      width: 40px; height: 40px; flex-shrink: 0;
-      background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: .8125rem; font-weight: 700;
-    }
-    .user-name  { color: #EDF1F7; font-size: .875rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .user-role  { color: rgba(148,163,184,.6); font-size: .6875rem; text-transform: uppercase; letter-spacing: .06em; }
-
-    nav { flex: 1; overflow-y: auto; padding: .75rem; }
-    .nav-item {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .6875rem .875rem;
-      border-radius: 12px;
-      color: rgba(148,163,184,.8);
-      text-decoration: none;
-      font-size: .875rem; font-weight: 500;
-      transition: background .18s, color .18s;
-      min-height: 44px;
-      margin-bottom: 2px;
-    }
-    .nav-item:hover { background: rgba(255,255,255,.05); color: #E2E8F0; }
-    .nav-item.active {
-      background: rgba(27,79,138,.18);
-      color: #74B3F0;
-      font-weight: 600;
-    }
-    .nav-icon { width: 20px; height: 20px; flex-shrink: 0; }
-
-    .logout-area { padding: .75rem; border-top: 1px solid rgba(255,255,255,.07); }
-    .logout-btn {
-      display: flex; align-items: center; gap: .75rem;
-      width: 100%; padding: .6875rem .875rem;
-      border-radius: 12px;
-      background: none; border: none; cursor: pointer;
-      color: rgba(248,113,113,.75); font-size: .875rem; font-weight: 500;
-      transition: background .18s, color .18s;
-      min-height: 44px; font-family: inherit;
-    }
-    .logout-btn:hover { background: rgba(220,38,38,.1); color: #F87171; }
-  `],
   template: `
-    <aside>
+    <aside class="fixed left-0 top-0 bottom-0 w-64 bg-dark z-40 flex flex-col">
+
       <!-- Logo -->
-      <div class="logo-area">
-        <div class="k-mark">
+      <div class="px-5 pt-6 pb-5 border-b border-white/[.07] flex items-center gap-3">
+        <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-primary to-primary-dk rounded-xl flex items-center justify-center">
           <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
             <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div>
-          <div class="logo-text">Katika</div>
-          <div class="logo-sub">{{ 'nav.subtitle' | translate }}</div>
+          <div class="text-white text-xl font-extrabold tracking-[-0.02em]">Katika</div>
+          <div class="text-slate-400/50 text-[.6875rem]">{{ 'nav.subtitle' | translate }}</div>
         </div>
       </div>
 
-
       <!-- Nav -->
-      <nav [attr.aria-label]="'nav.dashboard' | translate">
+      <nav class="flex-1 overflow-y-auto p-3" [attr.aria-label]="'nav.dashboard' | translate">
         @for (item of visibleItems(); track item.route) {
-          <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
-            <span class="nav-icon">
+          <a [routerLink]="item.route"
+             routerLinkActive="nav-active"
+             class="flex items-center gap-3 px-3.5 py-[.6875rem] rounded-xl text-slate-400/80 no-underline text-sm font-medium transition-all min-h-[44px] mb-0.5
+                    hover:bg-white/5 hover:text-slate-200
+                    [&.nav-active]:bg-primary/[.18] [&.nav-active]:text-[#74B3F0] [&.nav-active]:font-semibold">
+            <span class="w-5 h-5 shrink-0">
               @switch (item.key) {
                 @case ('home') {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -152,8 +88,9 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       </nav>
 
       <!-- Logout -->
-      <div class="logout-area">
-        <button (click)="auth.logout()" class="logout-btn">
+      <div class="p-3 border-t border-white/[.07]">
+        <button (click)="auth.logout()"
+                class="flex items-center gap-3 w-full px-3.5 py-[.6875rem] rounded-xl bg-none border-none cursor-pointer text-red-400/75 text-sm font-medium transition-all min-h-[44px] font-[inherit] hover:bg-red-600/10 hover:text-red-400">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
           </svg>

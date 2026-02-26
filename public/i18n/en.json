@@ -111,11 +111,33 @@
     "recentTransactions": "Recent transactions",
     "viewAll": "View all",
     "noTransactions": "No recent transactions",
+    "noActiveDisputes": "No active disputes",
     "newTransaction": "New transaction",
     "newDispute": "Report a dispute",
     "disputeAlert": "{{count}} dispute(s) in progress",
     "viewDisputes": "View disputes",
+    "kpi": {
+      "available": "Available",
+      "frozen": "Frozen:",
+      "active": "Active",
+      "toProcess": "To process",
+      "pending": "Pending",
+      "toReceive": "To receive",
+      "txCount": "{{count}} tx",
+      "activeTransactions": "Active transactions",
+      "lockedOrShipped": "On hold or in delivery",
+      "activeDisputes": "Active disputes",
+      "openPending": "Open and pending",
+      "amountToReceive": "Amount to receive",
+      "onNTransactions": "Over {{count}} tx"
+    },
+    "table": {
+      "date": "Date",
+      "counterpart": "Counterpart",
+      "status": "Status"
+    },
     "quickActions": {
+      "title": "Quick actions",
       "transactions": "Transactions",
       "withdrawal": "Withdrawal",
       "wallet": "Wallet",
@@ -188,6 +210,13 @@
   },
   "disputes": {
     "title": "Disputes",
+    "count": "{{count}} dispute(s)",
+    "filters": {
+      "all": "All",
+      "open": "Open",
+      "inProgress": "In progress",
+      "resolved": "Resolved"
+    },
     "chat": {
       "system": "System",
       "typingOne": "{{name}} is typing…",
@@ -381,6 +410,7 @@
     "REFUNDED": "Refunded",
     "CANCELLED": "Cancelled",
     "OPEN": "Open",
+    "OPENED": "Open",
     "IN_PROGRESS": "In progress",
     "RESOLVED": "Resolved",
     "PROCESSING": "Processing",
