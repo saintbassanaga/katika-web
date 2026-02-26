@@ -675,7 +675,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     forkJoin({
       transactions: this.http.get<{ content: TransactionSummary[] }>(
-        `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED&page=0&size=5`,
+        `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED&page=0&size=5`,
         { withCredentials: true },
       ),
       disputes: this.http.get<{ content: DisputeSummary[] }>(

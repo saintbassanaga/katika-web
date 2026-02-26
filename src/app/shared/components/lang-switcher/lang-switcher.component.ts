@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
     .switcher {
       display: flex; align-items: center; gap: 2px;
       background: rgba(255,255,255,.08); border-radius: 10px;
+      color: rgba(226,232,240,.7);
       padding: 3px;
     }
     .lang-btn {

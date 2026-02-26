@@ -19,7 +19,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, LangSwitcherComponent],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe],
   styles: [`
     aside {
       position: fixed; left: 0; top: 0; bottom: 0; width: 256px;
