@@ -87,21 +87,24 @@
     "forgotPassword": {
       "title": "Forgot password",
       "subtitle": "Recover access to your account",
-      "phoneLabel": "Phone number",
-      "phoneSub": "Enter the number linked to your account",
-      "sendCode": "Send code",
-      "sending": "Sending…",
-      "codeLabel": "Verification code",
-      "codeSub": "Enter the code received by SMS",
-      "verify": "Verify",
-      "verifying": "Verifying…",
+      "emailLabel": "Email address",
+      "emailSub": "Enter the email address linked to your account",
+      "emailPh": "example@email.com",
+      "sendLink": "Send reset link",
+      "sendingLink": "Sending…",
+      "checkInboxTitle": "Check your inbox",
+      "checkInboxSub": "A reset link has been sent to your email address. The link expires in 1 hour.",
       "newPassword": "New password",
       "confirmPassword": "Confirm",
-      "changePassword": "Change password",
-      "changing": "Changing…",
       "successTitle": "Password changed!",
       "successSub": "You can now sign in with your new password.",
       "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "New password",
+      "subtitle": "Set your new password",
+      "submit": "Reset password",
+      "submitting": "Resetting…"
     }
   },
   "dashboard": {

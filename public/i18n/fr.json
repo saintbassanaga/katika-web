@@ -87,21 +87,24 @@
     "forgotPassword": {
       "title": "Mot de passe oublié",
       "subtitle": "Récupérez l'accès à votre compte",
-      "phoneLabel": "Numéro de téléphone",
-      "phoneSub": "Entrez le numéro lié à votre compte",
-      "sendCode": "Envoyer le code",
-      "sending": "Envoi…",
-      "codeLabel": "Code de vérification",
-      "codeSub": "Entrez le code reçu par SMS",
-      "verify": "Vérifier",
-      "verifying": "Vérification…",
+      "emailLabel": "Adresse email",
+      "emailSub": "Entrez l'adresse email liée à votre compte",
+      "emailPh": "exemple@email.cm",
+      "sendLink": "Envoyer le lien",
+      "sendingLink": "Envoi…",
+      "checkInboxTitle": "Vérifiez votre boîte email",
+      "checkInboxSub": "Un lien de réinitialisation a été envoyé à votre adresse email. Le lien expire dans 1 heure.",
       "newPassword": "Nouveau mot de passe",
       "confirmPassword": "Confirmer",
-      "changePassword": "Changer le mot de passe",
-      "changing": "Modification…",
       "successTitle": "Mot de passe modifié !",
       "successSub": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
       "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Définissez votre nouveau mot de passe",
+      "submit": "Réinitialiser le mot de passe",
+      "submitting": "Réinitialisation…"
     }
   },
   "dashboard": {
