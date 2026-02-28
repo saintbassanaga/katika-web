@@ -1,16 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthStore } from '../../../core/auth/auth.store';
 
-interface NavItem { key: string; label: string; route: string; }
+interface NavItem { key: string; route: string; }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'home',    label: 'Accueil',      route: '/dashboard' },
-  { key: 'escrow',  label: 'Transactions', route: '/escrow'    },
-  { key: 'disputes',label: 'Litiges',      route: '/disputes'  },
-  { key: 'payouts', label: 'Retrait',      route: '/payouts'   },
-  { key: 'profile', label: 'Profil',       route: '/profile'   },
+  { key: 'home',     route: '/dashboard' },
+  { key: 'escrow',   route: '/escrow'    },
+  { key: 'disputes', route: '/disputes'  },
+  { key: 'payouts',  route: '/payouts'   },
+  { key: 'profile',  route: '/profile'   },
 ];
 
 @Component({
@@ -25,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
           <a [routerLink]="item.route"
              routerLinkActive="nav-active"
              class="flex-1 flex flex-col items-center justify-center gap-[3px] text-slate-400 no-underline transition-colors relative min-h-[44px] hover:text-slate-500 [&.nav-active]:text-primary"
-             [attr.aria-label]="item.label">
+             [attr.aria-label]="'nav.' + item.key | translate">
             <div class="w-9 h-7 flex items-center justify-center rounded-[10px] transition-colors [.nav-active_&]:bg-primary/10">
               @switch (item.key) {
                 @case ('home') {
@@ -63,6 +62,5 @@ const NAV_ITEMS: NavItem[] = [
   `,
 })
 export class BottomNavComponent {
-  protected readonly auth = inject(AuthStore);
   protected readonly navItems = NAV_ITEMS;
 }

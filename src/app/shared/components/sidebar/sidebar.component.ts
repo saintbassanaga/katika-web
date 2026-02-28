@@ -3,16 +3,16 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth.store';
 
-interface SidebarItem { key: string; label: string; route: string; roles?: string[]; }
+interface SidebarItem { key: string; route: string; roles?: string[]; }
 
 const SIDEBAR_ITEMS: SidebarItem[] = [
-  { key: 'home',    label: 'Tableau de bord', route: '/dashboard' },
-  { key: 'escrow',  label: 'Transactions',    route: '/escrow'    },
-  { key: 'disputes',label: 'Litiges',         route: '/disputes'  },
-  { key: 'wallet',  label: 'Portefeuille',    route: '/wallet'    },
-  { key: 'payouts', label: 'Retraits',        route: '/payouts'   },
-  { key: 'admin',   label: 'Administration',  route: '/admin', roles: ['ADMIN', 'SUPERVISOR'] },
-  { key: 'profile', label: 'Profil',          route: '/profile'   },
+  { key: 'home',     route: '/dashboard' },
+  { key: 'escrow',   route: '/escrow'    },
+  { key: 'disputes', route: '/disputes'  },
+  { key: 'wallet',   route: '/wallet'    },
+  { key: 'payouts',  route: '/payouts'   },
+  { key: 'admin',    route: '/admin', roles: ['ADMIN', 'SUPERVISOR'] },
+  { key: 'profile',  route: '/profile'   },
 ];
 
 @Component({

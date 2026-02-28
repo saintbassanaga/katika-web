@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { forkJoin, catchError, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
@@ -251,7 +251,11 @@ interface WalletInfo {
           }
         } @else if (transactions().length === 0) {
           <div class="text-center py-10">
-            <div class="text-3xl mb-2">📋</div>
+            <div class="w-12 h-12 rounded-[14px] bg-slate-100 flex items-center justify-center mx-auto mb-3">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/>
+              </svg>
+            </div>
             <p class="text-sm font-bold text-slate-900 m-0 mb-1">{{ 'dashboard.noTransactions' | translate }}</p>
             <p class="text-xs text-slate-400 m-0">{{ 'escrow.empty.message' | translate }}</p>
           </div>
@@ -279,7 +283,7 @@ interface WalletInfo {
       <!-- Top bar -->
       <div class="d-topbar">
         <div class="d-greeting">
-          {{ 'dashboard.greeting' | translate }},&nbsp;<strong>{{ auth.fullName() }}</strong>&nbsp;🌟
+          {{ 'dashboard.greeting' | translate }},&nbsp;<strong>{{ auth.fullName() }}</strong>
         </div>
         <div class="d-topbar-right">
           <app-lang-switcher />
@@ -374,7 +378,11 @@ interface WalletInfo {
               }
             } @else if (transactions().length === 0) {
               <div class="d-empty">
-                <div class="d-empty-icon">📋</div>
+                <div class="d-empty-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/>
+                  </svg>
+                </div>
                 <p class="d-empty-title">{{ 'dashboard.noTransactions' | translate }}</p>
                 <p class="d-empty-sub">{{ 'escrow.empty.message' | translate }}</p>
               </div>
@@ -419,7 +427,11 @@ interface WalletInfo {
               </div>
               @if (disputes().length === 0) {
                 <div class="d-empty" style="padding:1.5rem">
-                  <div class="d-empty-icon">✅</div>
+                  <div class="d-empty-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
                   <p class="d-empty-title" style="font-size:.875rem">{{ 'dashboard.noActiveDisputes' | translate }}</p>
                 </div>
               } @else {
@@ -474,8 +486,8 @@ export class DashboardComponent implements OnInit {
   protected readonly disputes     = signal<DisputeSummary[]>([]);
   protected readonly wallet       = signal<WalletInfo | null>(null);
 
-  protected readonly pendingAmount = () =>
-    this.transactions().reduce((sum, tx) => sum + (tx.amount ?? 0), 0);
+  protected readonly pendingAmount = computed(() =>
+    this.transactions().reduce((sum, tx) => sum + (tx.amount ?? 0), 0));
 
   ngOnInit(): void {
     forkJoin({

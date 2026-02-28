@@ -98,13 +98,25 @@
       "confirmPassword": "Confirm",
       "successTitle": "Password changed!",
       "successSub": "You can now sign in with your new password.",
-      "backToLogin": "Back to sign in"
+      "backToLogin": "Back to sign in",
+      "resend": "Resend email",
+      "resendIn": "Resend in {{count}}s"
     },
     "resetPassword": {
       "title": "New password",
       "subtitle": "Set your new password",
       "submit": "Reset password",
-      "submitting": "Resetting…"
+      "submitting": "Resetting…",
+      "successTitle": "Password updated!",
+      "successSub": "Your password has been successfully changed. You can now sign in.",
+      "redirectIn": "Redirecting in {{count}}s…",
+      "requirements": {
+        "length": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "number": "One number",
+        "special": "One special character",
+        "match": "Passwords match"
+      }
     }
   },
   "dashboard": {
@@ -418,7 +430,8 @@
     "RESOLVED": "Resolved",
     "PROCESSING": "Processing",
     "COMPLETED": "Completed",
-    "FAILED": "Failed"
+    "FAILED": "Failed",
+    "EXPIRED": "Expired"
   },
   "fab": {
     "newTransaction": "New transaction",
@@ -443,6 +456,12 @@
       "deadlineHint": "The buyer must confirm receipt before this date."
     }
   },
+  "toast": {
+    "loginError": "Incorrect phone number or password.",
+    "mfaError": "Invalid MFA code. Please try again.",
+    "profileUpdated": "Profile updated successfully.",
+    "transactionCreated": "Transaction created successfully."
+  },
   "errors": {
     "notFound": {
       "title": "Page not found",
@@ -453,6 +472,16 @@
       "title": "Access denied",
       "message": "You do not have the required permissions to access this page.",
       "back": "Back to home"
+    },
+    "codes": {
+      "RATE_LIMIT_EXCEEDED":    "Too many attempts. Please try again in a few minutes.",
+      "INSUFFICIENT_BALANCE":   "Insufficient balance for this operation.",
+      "TRANSACTION_NOT_FOUND":  "Transaction not found.",
+      "INVALID_MFA_CODE":       "Invalid verification code.",
+      "INVALID_OTP":            "Invalid or expired OTP code.",
+      "DISPUTE_ALREADY_EXISTS": "A dispute is already open for this transaction.",
+      "OFFLINE":                "Please check your internet connection.",
+      "default":                "An error occurred. Please try again."
     }
   }
 }

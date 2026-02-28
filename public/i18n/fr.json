@@ -98,13 +98,25 @@
       "confirmPassword": "Confirmer",
       "successTitle": "Mot de passe modifié !",
       "successSub": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
-      "backToLogin": "Retour à la connexion"
+      "backToLogin": "Retour à la connexion",
+      "resend": "Renvoyer l'email",
+      "resendIn": "Renvoyer dans {{count}}s"
     },
     "resetPassword": {
       "title": "Nouveau mot de passe",
       "subtitle": "Définissez votre nouveau mot de passe",
       "submit": "Réinitialiser le mot de passe",
-      "submitting": "Réinitialisation…"
+      "submitting": "Réinitialisation…",
+      "successTitle": "Mot de passe mis à jour !",
+      "successSub": "Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter.",
+      "redirectIn": "Redirection dans {{count}}s…",
+      "requirements": {
+        "length": "Au moins 8 caractères",
+        "uppercase": "Une lettre majuscule",
+        "number": "Un chiffre",
+        "special": "Un caractère spécial",
+        "match": "Les mots de passe correspondent"
+      }
     }
   },
   "dashboard": {
@@ -418,7 +430,8 @@
     "RESOLVED": "Résolu",
     "PROCESSING": "En traitement",
     "COMPLETED": "Complété",
-    "FAILED": "Échoué"
+    "FAILED": "Échoué",
+    "EXPIRED": "Expiré"
   },
   "fab": {
     "newTransaction": "Nouvelle transaction",
@@ -443,6 +456,12 @@
       "deadlineHint": "L'acheteur devra confirmer la réception avant cette date."
     }
   },
+  "toast": {
+    "loginError": "Numéro de téléphone ou mot de passe incorrect.",
+    "mfaError": "Code MFA invalide. Réessayez.",
+    "profileUpdated": "Profil mis à jour avec succès.",
+    "transactionCreated": "Transaction créée avec succès."
+  },
   "errors": {
     "notFound": {
       "title": "Page introuvable",
@@ -453,6 +472,16 @@
       "title": "Accès refusé",
       "message": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
       "back": "Retour à l'accueil"
+    },
+    "codes": {
+      "RATE_LIMIT_EXCEEDED":    "Trop de tentatives. Réessayez dans quelques minutes.",
+      "INSUFFICIENT_BALANCE":   "Solde insuffisant pour cette opération.",
+      "TRANSACTION_NOT_FOUND":  "Transaction introuvable.",
+      "INVALID_MFA_CODE":       "Code de vérification invalide.",
+      "INVALID_OTP":            "Code OTP invalide ou expiré.",
+      "DISPUTE_ALREADY_EXISTS": "Un litige est déjà en cours pour cette transaction.",
+      "OFFLINE":                "Vérifiez votre connexion internet.",
+      "default":                "Une erreur est survenue. Réessayez."
     }
   }
 }

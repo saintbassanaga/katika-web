@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../../core/auth/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -26,7 +26,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           <span class="text-[1.125rem] font-extrabold text-dark tracking-[-0.02em]">Katika</span>
         </div>
 
-        <!-- Step dots -->
+        <!-- Step indicators -->
         <div class="flex gap-1.5 mb-7">
           <div class="h-1 rounded-full flex-1 transition-colors duration-300" [class]="step() >= 1 ? 'bg-primary' : 'bg-slate-200'"></div>
           <div class="h-1 rounded-full flex-1 transition-colors duration-300" [class]="step() >= 2 ? 'bg-success' : 'bg-slate-200'"></div>
@@ -68,7 +68,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           </div>
         }
 
-        <!-- ── STEP 2 : Check inbox ──────────────── -->
+        <!-- ── STEP 2 : Check inbox + resend ──────── -->
         @if (step() === 2) {
           <div class="text-center">
             <div class="w-16 h-16 rounded-[20px] mx-auto mb-6 bg-gradient-to-br from-primary to-primary-dk flex items-center justify-center shadow-[0_8px_24px_rgba(27,79,138,.3)]">
@@ -78,10 +78,35 @@ import { TranslatePipe } from '@ngx-translate/core';
               </svg>
             </div>
             <p class="text-[1.375rem] font-bold text-slate-900 m-0 mb-2 tracking-[-0.02em]">{{ 'auth.forgotPassword.checkInboxTitle' | translate }}</p>
-            <p class="text-sm text-slate-500 text-center leading-relaxed m-0 mb-8">{{ 'auth.forgotPassword.checkInboxSub' | translate }}</p>
+            <p class="text-sm text-slate-500 text-center leading-relaxed m-0 mb-6">{{ 'auth.forgotPassword.checkInboxSub' | translate }}</p>
+
+            <!-- Resend section -->
+            <div class="mb-6 p-4 rounded-[14px] bg-slate-50 border border-slate-100">
+              @if (canResend()) {
+                <button type="button"
+                        class="w-full text-[.875rem] font-semibold text-primary bg-transparent border-none cursor-pointer py-1 transition-colors hover:text-primary-dk disabled:opacity-50"
+                        [disabled]="loading()"
+                        (click)="resend()">
+                  @if (loading()) {
+                    <span class="inline-flex items-center gap-2">
+                      <span class="w-3.5 h-3.5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></span>
+                      {{ 'auth.forgotPassword.sendingLink' | translate }}
+                    </span>
+                  } @else {
+                    {{ 'auth.forgotPassword.resend' | translate }}
+                  }
+                </button>
+              } @else {
+                <div class="flex items-center justify-center gap-2 text-[.8125rem] text-slate-400">
+                  <span class="w-3.5 h-3.5 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0"></span>
+                  {{ 'auth.forgotPassword.resendIn' | translate: { count: resendCooldown() } }}
+                </div>
+              }
+            </div>
+
             <a routerLink="/auth/login"
                class="w-full py-[.9375rem] bg-gradient-to-br from-primary to-primary-dk text-white text-[.9375rem] font-bold no-underline rounded-[14px] flex items-center justify-center gap-2 min-h-[52px] shadow-[0_4px_20px_rgba(27,79,138,.35)] transition-all hover:opacity-90">
-              {{ 'auth.login.submit' | translate }}
+              {{ 'auth.forgotPassword.backToLogin' | translate }}
             </a>
           </div>
         }
@@ -90,16 +115,25 @@ import { TranslatePipe } from '@ngx-translate/core';
     </div>
   `,
 })
-export class ForgotPasswordComponent {
-  private readonly svc  = inject(AuthService);
-  private readonly fb   = inject(FormBuilder);
+export class ForgotPasswordComponent implements OnDestroy {
+  private readonly svc = inject(AuthService);
+  private readonly fb  = inject(FormBuilder);
 
-  protected readonly step    = signal(1);
-  protected readonly loading = signal(false);
+  protected readonly step          = signal(1);
+  protected readonly loading       = signal(false);
+  protected readonly resendCooldown = signal(60);
+
+  protected readonly canResend = computed(() => this.resendCooldown() <= 0);
+
+  private cooldownTimer?: ReturnType<typeof setInterval>;
 
   protected readonly form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
   });
+
+  ngOnDestroy(): void {
+    if (this.cooldownTimer) clearInterval(this.cooldownTimer);
+  }
 
   protected async submit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
@@ -107,10 +141,34 @@ export class ForgotPasswordComponent {
     try {
       await firstValueFrom(this.svc.forgotPassword(this.form.value.email!));
       this.step.set(2);
+      this.startResendCooldown();
     } catch {
       // error interceptor shows toast
     } finally {
       this.loading.set(false);
     }
+  }
+
+  protected async resend(): Promise<void> {
+    if (!this.canResend() || this.loading()) return;
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.svc.forgotPassword(this.form.value.email!));
+      this.resendCooldown.set(60);
+      this.startResendCooldown();
+    } catch {
+      // error interceptor shows toast
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private startResendCooldown(): void {
+    if (this.cooldownTimer) clearInterval(this.cooldownTimer);
+    this.cooldownTimer = setInterval(() => {
+      const next = this.resendCooldown() - 1;
+      this.resendCooldown.set(next);
+      if (next <= 0) clearInterval(this.cooldownTimer);
+    }, 1000);
   }
 }
