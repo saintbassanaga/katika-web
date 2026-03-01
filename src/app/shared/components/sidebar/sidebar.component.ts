@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthStore } from '../../../core/auth/auth.store';
+import { AuthStore } from '@core/auth/auth.store';
 
 interface SidebarItem { key: string; route: string; roles?: string[]; }
 

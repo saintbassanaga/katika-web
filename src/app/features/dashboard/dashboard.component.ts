@@ -3,10 +3,10 @@ import { forkJoin, catchError, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { AuthStore } from '../../core/auth/auth.store';
-import { AmountPipe } from '../../shared/pipes/amount.pipe';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
-import { environment } from '../../../environments/environment';
+import { AuthStore } from '@core/auth/auth.store';
+import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
+import { environment } from '@env/environment';
 import { TranslatePipe } from '@ngx-translate/core';
 import {LangSwitcherComponent} from '@shared/components/lang-switcher/lang-switcher.component';
 

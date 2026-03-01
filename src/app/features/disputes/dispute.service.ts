@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../core/http/api.service';
-import { Page } from '../escrow/escrow.service';
+import { ApiService } from '@core/http/api.service';
+import { Page } from '@features/escrow/escrow.service';
 
 export interface DisputeSummary {
   id: string;

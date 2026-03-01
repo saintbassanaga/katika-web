@@ -1,6 +1,6 @@
 import { Component, inject, signal, ViewChild } from '@angular/core';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { OtpInputComponent } from '../../../shared/components/otp-input/otp-input.component';
+import { AuthStore } from '@core/auth/auth.store';
+import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';

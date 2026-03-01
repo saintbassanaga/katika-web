@@ -2,15 +2,13 @@ import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DisputeService, DisputeSummary } from '../dispute.service';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
-import { LoadingSkeletonComponent } from '@shared/components/loading-skeleton/loading-skeleton.component';
-import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dispute-list',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent, LoadingSkeletonComponent, EmptyStateComponent, TimeAgoPipe, TranslatePipe],
+  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, TranslatePipe],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="flex flex-col min-h-full bg-page">

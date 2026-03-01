@@ -1,9 +1,9 @@
 import { Component, inject, input, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ToastService } from '../../../core/notification/toast.service';
+import { ToastService } from '@core/notification/toast.service';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { environment } from '@env/environment';
 
 const RESOLUTIONS = [
   { value: 'FULL_REFUND_BUYER',     label: 'Remboursement total à l\'acheteur' },

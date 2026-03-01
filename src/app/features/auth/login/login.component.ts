@@ -2,8 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
+import { AuthStore } from '@core/auth/auth.store';
+import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-login',

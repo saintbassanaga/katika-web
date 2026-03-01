@@ -2,11 +2,11 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EscrowService, TransactionSummary } from '../escrow.service';
-import { AmountPipe } from '../../../shared/pipes/amount.pipe';
-import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
-import { LoadingSkeletonComponent } from '../../../shared/components/loading-skeleton/loading-skeleton.component';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
+import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
+import { LoadingSkeletonComponent } from '@shared/components/loading-skeleton/loading-skeleton.component';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 
 const FILTERS = [
   { key: 'escrow.filters.all',      status: '' },
