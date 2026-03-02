@@ -619,5 +619,12 @@
       "OFFLINE":                            "Please check your internet connection.",
       "default":                            "An error occurred. Please try again."
     }
+  },
+  "roles": {
+    "BUYER":      "Buyer",
+    "SELLER":     "Seller",
+    "ADMIN":      "Admin",
+    "SUPPORT":    "Support",
+    "SUPERVISOR": "Supervisor"
   }
 }

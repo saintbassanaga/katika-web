@@ -7,8 +7,11 @@ import { AuthService, UpdateProfileRequest, UserProfile } from './auth.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../notification/toast.service';
 
+const ROLE_KEY = 'katika_role';
+
 interface AuthState {
   user: UserProfile | null;
+  storedRole: string | null;
   mfaRequired: boolean;
   challengeId: string | null;
   loading: boolean;
@@ -20,23 +23,24 @@ export const AuthStore = signalStore(
 
   withState<AuthState>({
     user: null,
+    storedRole: sessionStorage.getItem(ROLE_KEY),
     mfaRequired: false,
     challengeId: null,
     loading: false,
     initialized: false,
   }),
 
-  withComputed(({ user }) => ({
+  withComputed(({ user, storedRole }) => ({
     isAuthenticated: computed(() => !!user()),
-    role: computed(() => user()?.role ?? null),
-    isBuyer: computed(() => user()?.role === 'BUYER'),
-    isSeller: computed(() => user()?.role === 'SELLER'),
-    isSupport: computed(() => ['ADMIN', 'SUPPORT', 'SUPERVISOR'].includes(user()?.role ?? '')),
-    isAdmin: computed(() => user()?.role === 'ADMIN'),
-    hasMfa:      computed(() => user()?.mfaEnabled ?? false),
-    isVerified:  computed(() => user()?.verified   ?? false),
-    fullName: computed(() => user()?.fullName ?? ''),
-    initials: computed(() => {
+    role:       computed(() => user()?.role ?? storedRole() ?? null),
+    isBuyer:    computed(() => (user()?.role ?? storedRole()) === 'BUYER'),
+    isSeller:   computed(() => (user()?.role ?? storedRole()) === 'SELLER'),
+    isSupport:  computed(() => ['ADMIN', 'SUPPORT', 'SUPERVISOR'].includes(user()?.role ?? storedRole() ?? '')),
+    isAdmin:    computed(() => (user()?.role ?? storedRole()) === 'ADMIN'),
+    hasMfa:     computed(() => user()?.mfaEnabled ?? false),
+    isVerified: computed(() => user()?.verified   ?? false),
+    fullName:   computed(() => user()?.fullName ?? ''),
+    initials:   computed(() => {
       const parts = (user()?.fullName ?? '').trim().split(/\s+/);
       if (parts.length === 0 || !parts[0]) return '';
       const first = parts[0][0] ?? '';
@@ -50,7 +54,9 @@ export const AuthStore = signalStore(
     async init(): Promise<void> {
       try {
         const user = await firstValueFrom(svc.getMe());
-        patchState(store, { user, initialized: true });
+        const storedRole = user.role ?? sessionStorage.getItem(ROLE_KEY);
+        if (storedRole) sessionStorage.setItem(ROLE_KEY, storedRole);
+        patchState(store, { user, storedRole, initialized: true });
       } catch {
         patchState(store, { initialized: true });
       }
@@ -70,9 +76,12 @@ export const AuthStore = signalStore(
             return EMPTY;
           }
           // No MFA — session cookie is set, fetch user profile
+          const loginRole = res.role ?? null;
           return svc.getMe().pipe(
             tap(user => {
-              patchState(store, { user, loading: false });
+              const storedRole = user.role ?? loginRole;
+              if (storedRole) sessionStorage.setItem(ROLE_KEY, storedRole);
+              patchState(store, { user, storedRole, loading: false });
               router.navigate(['/dashboard']);
             }),
           );
@@ -95,11 +104,13 @@ export const AuthStore = signalStore(
         ...(backupCode ? { backupCode } : {}),
       }).pipe(
         switchMap(() =>
-          // Session cookie set server-side — now fetch the user profile
           svc.getMe().pipe(
             tap(user => {
+              const storedRole = user.role ?? sessionStorage.getItem(ROLE_KEY);
+              if (storedRole) sessionStorage.setItem(ROLE_KEY, storedRole);
               patchState(store, {
                 user,
+                storedRole,
                 mfaRequired: false,
                 challengeId: null,
                 loading: false,
@@ -119,8 +130,10 @@ export const AuthStore = signalStore(
     logout: rxMethod<void>(pipe(
       switchMap(() => svc.logout().pipe(
         tap(() => {
+          sessionStorage.removeItem(ROLE_KEY);
           patchState(store, {
             user: null,
+            storedRole: null,
             mfaRequired: false,
             challengeId: null,
           });

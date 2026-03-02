@@ -33,9 +33,9 @@ interface FabConfig {
     .fab {
       position: relative;
       pointer-events: auto;
-      display: flex; align-items: center; gap: .5rem;
-      padding: .75rem 1.25rem .75rem .875rem;
-      border-radius: 99px;
+      display: flex; align-items: center; justify-content: center;
+      width: 56px; height: 56px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
       color: #fff; font-size: .875rem; font-weight: 700;
       border: none; cursor: pointer; font-family: inherit;
@@ -45,11 +45,6 @@ interface FabConfig {
     }
     .fab:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(27,79,138,.5); }
     .fab:active { transform: translateY(0); }
-    .fab-icon {
-      width: 22px; height: 22px; border-radius: 99px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
     /* ── Overlay ─────────────────────────────────── */
     .overlay {
       position: fixed; inset: 0; z-index: 50;
@@ -173,13 +168,10 @@ interface FabConfig {
         (click)="onFabClick()"
         [attr.aria-label]="cfg.labelKey | translate"
       >
-        <span class="fab-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </span>
-        {{ cfg.labelKey | translate }}
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
       </button>
     }
 

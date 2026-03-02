@@ -619,5 +619,12 @@
       "OFFLINE":                            "Vérifiez votre connexion internet.",
       "default":                            "Une erreur est survenue. Réessayez."
     }
+  },
+  "roles": {
+    "BUYER":      "Acheteur",
+    "SELLER":     "Vendeur",
+    "ADMIN":      "Admin",
+    "SUPPORT":    "Support",
+    "SUPERVISOR": "Superviseur"
   }
 }

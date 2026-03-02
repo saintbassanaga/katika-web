@@ -5,7 +5,7 @@ import { ApiService } from '../http/api.service';
 export interface UserProfile {
   userId: string;
   fullName: string;
-  role: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  role?: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
   email?: string;
   cniNumber?: string;
   mfaEnabled: boolean;
