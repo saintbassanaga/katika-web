@@ -34,6 +34,7 @@ export interface RegisterRequest {
   fullName: string;
   password: string;
   email?: string;
+  role: 'BUYER' | 'SELLER';
 }
 
 export interface MfaVerifyRequest {

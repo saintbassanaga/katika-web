@@ -260,6 +260,7 @@ export class RegisterComponent {
       phoneNumber: v.phone!,
       password: v.password!,
       email: v.email || undefined,
+      role: v.role as 'BUYER' | 'SELLER',
     }).subscribe({
       next:     () => { this.toast.success('Compte créé ! Connectez-vous.'); this.router.navigate(['/auth/login']); },
       error:    () => this.loading.set(false),

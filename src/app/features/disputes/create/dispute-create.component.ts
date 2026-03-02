@@ -3,7 +3,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DisputeService, DisputeReason } from '../dispute.service';
 import { ToastService } from '@core/notification/toast.service';
-import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 
 interface ReasonGroup {
@@ -197,8 +196,6 @@ export class DisputeCreateComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
-  private readonly auth = inject(AuthStore);
-
   protected readonly step = signal(1);
   protected readonly loading = signal(false);
   protected readonly transactionId = signal('');
@@ -226,11 +223,8 @@ export class DisputeCreateComponent implements OnInit {
   protected onSubmit(): void {
     if (this.form.invalid) return;
     this.loading.set(true);
-    const user = this.auth.user()!;
     this.disputeService.createDispute({
       transactionId: this.transactionId(),
-      initiatorId:   user.userId,
-      initiatorRole: user.role,
       reason:        this.form.value.reason as DisputeReason,
       description:   this.form.value.description!,
     }).subscribe({
