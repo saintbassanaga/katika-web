@@ -40,7 +40,7 @@ interface TimelineStep {
   imports: [FormsModule, RouterLink, StatusBadgeComponent, TimeAgoPipe, TitleCasePipe, TranslatePipe, AmountPipe],
   styles: [':host { display: block; height: 100vh; overflow: hidden; }'],
   template: `
-    <div class="flex flex-col h-screen bg-page md:flex-row">
+    <div class="animate-fade flex flex-col h-screen bg-page md:flex-row">
 
       <div class="flex flex-col min-h-0 flex-1">
 

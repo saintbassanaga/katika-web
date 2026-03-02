@@ -7,6 +7,7 @@ export interface UserProfile {
   fullName: string;
   role: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
   email?: string;
+  cniNumber?: string;
   mfaEnabled: boolean;
   verified: boolean;
   issuedAt: string;

@@ -94,7 +94,7 @@ export class DisputeService extends ApiService {
     if (params?.status) query.set('status', params.status);
     query.set('page', String(params?.page ?? 0));
     query.set('size', String(params?.size ?? 20));
-    return this.http.get<Page<DisputeResponse>>(this.url(`/api/disputes/me?${query}`), this.defaultOptions);
+    return this.http.get<Page<DisputeResponse>>(this.url(`/api/disputes?${query}`), this.defaultOptions);
   }
 
   getDispute(id: string): Observable<DisputeResponse> {

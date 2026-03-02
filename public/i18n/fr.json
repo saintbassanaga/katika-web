@@ -520,7 +520,11 @@
     "loginError": "Numéro de téléphone ou mot de passe incorrect.",
     "mfaError": "Code MFA invalide. Réessayez.",
     "profileUpdated": "Profil mis à jour avec succès.",
-    "transactionCreated": "Transaction créée avec succès."
+    "transactionCreated": "Transaction créée avec succès.",
+    "passwordChanged": "Mot de passe modifié avec succès.",
+    "mfaDisabled": "Double authentification désactivée.",
+    "invalidCode": "Code invalide. Réessayez.",
+    "verificationSent": "Demande de vérification envoyée."
   },
   "admin": {
     "title": "Administration",

@@ -27,7 +27,7 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
   imports: [RouterLink, FormsModule, StatusBadgeComponent, TimeAgoPipe, AmountPipe, DatePipe, TranslatePipe],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
-    <div class="flex flex-col min-h-full bg-page">
+    <div class="animate-fade flex flex-col min-h-full bg-page">
 
       <!-- Topbar -->
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">

@@ -9,7 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
-    <div class="min-h-[100svh] bg-page animate-fade">
+    <div class="h-[100svh] bg-page animate-fade flex flex-col overflow-hidden">
 
       <!-- Top bar -->
       <div class="bg-dark px-5 py-4 flex items-center gap-3.5">
@@ -21,7 +21,8 @@ import { TranslatePipe } from '@ngx-translate/core';
         <span class="text-white text-base font-bold tracking-[-0.01em]">{{ 'profile.editForm.topbarTitle' | translate }}</span>
       </div>
 
-      <div class="px-5 py-5 max-w-[560px] mx-auto">
+      <div class="flex-1 overflow-y-auto overscroll-contain">
+      <div class="px-5 py-5 max-w-[560px] mx-auto pb-8">
 
         <!-- Avatar / identity card -->
         <div class="flex flex-col items-center bg-white rounded-[20px] px-6 pt-8 pb-6 mb-4 shadow-[0_1px_4px_rgba(15,23,42,.06)] animate-entry">
@@ -117,6 +118,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         </div>
 
       </div>
+      </div>
     </div>
   `,
 })
@@ -134,8 +136,9 @@ export class ProfileEditComponent implements OnInit {
     const user = this.auth.user();
     if (user) {
       this.form.patchValue({
-        fullName: user.fullName,
-        email:    user.email ?? '',
+        fullName:  user.fullName,
+        email:     user.email     ?? '',
+        cniNumber: user.cniNumber ?? '',
       });
     }
   }

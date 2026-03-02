@@ -7,7 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [RouterLink, TranslatePipe],
   template: `
-    <div class="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+    <div class="animate-fade flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <div class="text-8xl font-bold text-gray-200 mb-4">404</div>
       <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ 'errors.notFound.title' | translate }}</h1>
       <p class="text-gray-500 mb-8">{{ 'errors.notFound.message' | translate }}</p>

@@ -15,7 +15,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
   standalone: true,
   imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe],
   template: `
-    <div class="px-4 py-6 max-w-lg mx-auto">
+    <div class="animate-fade px-4 py-6 max-w-lg mx-auto">
 
       <!-- Back -->
       <a routerLink="/escrow" class="flex items-center gap-2 text-sm text-gray-500 mb-4 hover:text-gray-700">
@@ -54,7 +54,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           </div>
 
           <!-- Status timeline -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="animate-entry bg-white rounded-2xl p-4 shadow-sm">
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.progress' | translate }}
             </h2>
@@ -89,7 +89,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           </div>
 
           <!-- Amount breakdown — emphasis differs by role -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="animate-entry bg-white rounded-2xl p-4 shadow-sm">
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.amount' | translate }}
             </h2>
@@ -133,7 +133,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           </div>
 
           <!-- Parties — "you" badge on the current user's row -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="animate-entry bg-white rounded-2xl p-4 shadow-sm">
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.parties' | translate }}
             </h2>
