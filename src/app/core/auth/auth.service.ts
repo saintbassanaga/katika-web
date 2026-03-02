@@ -1,16 +1,67 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../http/api.service';
-import {
-  UserProfile,
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  MfaVerifyRequest,
-  ChangePasswordRequest,
-  UpdateProfileRequest,
-  MfaSetupResponse,
-} from '@app/models';
+
+export interface UserProfile {
+  userId: string;
+  fullName: string;
+  role?: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  email?: string;
+  cniNumber?: string;
+  mfaEnabled: boolean;
+  verified: boolean;
+  issuedAt: string;
+  expiresAt: string;
+}
+
+export interface LoginRequest {
+  phoneNumber: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  success:      boolean;
+  requiresMfa:  boolean;
+  challengeId:  string | null;
+  mfaExpiresIn: number | null;
+  mfaType:      string | null;
+  userId:       string | null;
+  role:         string | null;
+  message:      string;
+}
+
+export interface RegisterRequest {
+  phoneNumber: string;
+  fullName: string;
+  password: string;
+  email?: string;
+  role: 'BUYER' | 'SELLER';
+}
+
+export interface MfaVerifyRequest {
+  challengeId: string;
+  code: string;
+  backupCode?: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword:string;
+}
+
+export interface UpdateProfileRequest {
+  fullName: string;
+  email?: string;
+  cniNumber?: string;
+}
+
+export interface MfaSetupResponse {
+  secretKey: string;
+  qrCodeDataUrl: string;
+  backupCodes: string[];
+  message: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {

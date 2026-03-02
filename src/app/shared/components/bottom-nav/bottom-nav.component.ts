@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
              routerLinkActive="nav-active"
              class="flex-1 flex flex-col items-center justify-center gap-[3px] text-slate-400 no-underline transition-colors relative min-h-[44px] hover:text-slate-500 [&.nav-active]:text-primary"
              [attr.aria-label]="'nav.' + item.key | translate">
-            <div class="w-9 h-7 flex items-center justify-center rounded-[10px] transition-colors [.nav-active_&]:bg-primary/10">
+            <div class="nav-icon w-9 h-7 flex items-center justify-center rounded-[10px] transition-colors [.nav-active_&]:bg-primary/10">
               @switch (item.key) {
                 @case ('home') {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

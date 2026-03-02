@@ -1,8 +1,7 @@
 import { Component, inject, signal, OnInit, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { EscrowService } from '../escrow.service';
-import { TransactionDetail } from '@app/models';
+import { EscrowService, TransactionDetail } from '../escrow.service';
 import { AuthStore } from '@core/auth/auth.store';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
@@ -16,7 +15,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
   standalone: true,
   imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe],
   template: `
-    <div class="px-4 py-6 max-w-lg mx-auto h-full overflow-y-auto">
+    <div class="animate-fade px-4 py-6 max-w-lg mx-auto">
 
       <!-- Back -->
       <a routerLink="/escrow" class="flex items-center gap-2 text-sm text-gray-500 mb-4 hover:text-gray-700">
@@ -55,7 +54,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           </div>
 
           <!-- Status timeline -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="animate-entry bg-white rounded-2xl p-4 shadow-sm">
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.progress' | translate }}
             </h2>
@@ -90,7 +89,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           </div>
 
           <!-- Amount breakdown — emphasis differs by role -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="animate-entry bg-white rounded-2xl p-4 shadow-sm">
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.amount' | translate }}
             </h2>
@@ -134,7 +133,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           </div>
 
           <!-- Parties — "you" badge on the current user's row -->
-          <div class="bg-white rounded-2xl p-4 shadow-sm">
+          <div class="animate-entry bg-white rounded-2xl p-4 shadow-sm">
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.parties' | translate }}
             </h2>
@@ -264,7 +263,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           <!-- Actions -->
           <div class="space-y-2">
 
-            @if (isSeller() && ['LOCKED', 'SHIPPED', 'DELIVERED'].includes(transaction()!.status)) {
+            @if (isSeller() && transaction()!.status === 'LOCKED') {
               <a
                 [routerLink]="['/escrow', transaction()!.id, 'qr']"
                 class="flex items-center justify-center gap-2 w-full py-3 text-white
@@ -273,9 +272,6 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
               >
                 🔲 {{ 'escrow.detail.actions.generateQr' | translate }}
               </a>
-            }
-
-            @if (isSeller() && transaction()!.status === 'LOCKED') {
               <button
                 (click)="ship()"
                 [disabled]="actionLoading()"
@@ -381,13 +377,11 @@ export class TransactionDetailComponent implements OnInit {
     const code = this.confirmCode().trim();
     if (!code) return;
     this.actionLoading.set(true);
-    this.escrowService.scanVerificationCode(this.id(), code).subscribe({
-      next: () => {
+    this.escrowService.release(this.id(), code).subscribe({
+      next: (tx) => {
+        this.transaction.set(tx);
         this.confirmCode.set('');
-        this.escrowService.getTransaction(this.id()).subscribe({
-          next: (tx) => { this.transaction.set(tx); this.actionLoading.set(false); },
-          error: () => this.actionLoading.set(false),
-        });
+        this.actionLoading.set(false);
       },
       error: () => this.actionLoading.set(false),
     });

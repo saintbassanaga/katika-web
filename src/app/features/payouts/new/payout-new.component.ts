@@ -19,17 +19,17 @@ const PROVIDERS = [
   standalone: true,
   imports: [ReactiveFormsModule, AmountPipe, PhoneInputComponent, TranslatePipe],
   template: `
-    <div class="px-4 py-6 max-w-sm mx-auto">
+    <div class="animate-fade px-4 py-6 max-w-sm mx-auto">
       <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.title' | translate }}</h1>
 
       @if (balance() !== null) {
-        <div class="bg-blue-50 rounded-2xl p-4 mb-6">
+        <div class="animate-entry bg-blue-50 rounded-2xl p-4 mb-6">
           <p class="text-xs text-blue-600 font-medium mb-1">{{ 'payouts.balance' | translate }}</p>
           <p class="text-2xl font-bold text-blue-700">{{ balance() | amount }}</p>
         </div>
       }
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="animate-entry space-y-5">
 
         <!-- Amount -->
         <div>

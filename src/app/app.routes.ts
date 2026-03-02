@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
-import { roleGuard } from './core/auth/role.guard';
+import { authGuard } from '@core/auth/auth.guard';
+import { roleGuard } from '@core/auth/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -47,11 +47,10 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [authGuard, roleGuard('ADMIN', 'SUPERVISOR')],
+    canActivate: [authGuard, roleGuard('ADMIN', 'SUPERVISOR', 'SUPPORT')],
     loadChildren: () =>
       import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES),
   },
-  // Top-level alias for /reset-password emails (query params preserved with direct load)
   {
     path: 'reset-password',
     loadComponent: () =>

@@ -10,7 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [OtpInputComponent, TranslatePipe],
   template: `
-    <div class="px-4 py-12 max-w-sm mx-auto text-center">
+    <div class="animate-fade px-4 py-12 max-w-sm mx-auto text-center">
       <div class="text-5xl mb-4">📱</div>
       <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.otp.title' | translate }}</h1>
       <p class="text-sm text-gray-500 mb-8">

@@ -54,6 +54,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
   imports: [RouterLink, AmountPipe, TimeAgoPipe, BottomSheetComponent, TranslatePipe],
   styles: [':host { display: block; }'],
   template: `
+    <div class="animate-fade">
     <!-- ── Hero ─────────────────────────────────────── -->
     <div class="relative overflow-hidden bg-dark px-6 pt-11 pb-8">
       <div class="absolute rounded-full pointer-events-none blur-[72px] w-[260px] h-[260px] top-[-80px] right-[-60px] bg-[radial-gradient(circle,rgba(201,146,13,.22)_0%,transparent_70%)] orb-1"></div>
@@ -102,7 +103,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
     </div>
 
     <!-- ── Movements ─────────────────────────────────── -->
-    <div class="px-4 pb-24 bg-page min-h-[50vh]">
+    <div class="animate-entry px-4 pb-24 bg-page min-h-[50vh]">
 
       <h2 class="pt-5 pb-3.5 text-[.9375rem] font-bold text-slate-800">{{ 'wallet.history' | translate }}</h2>
 
@@ -136,7 +137,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
         <div class="flex flex-col gap-2">
           @for (mov of movements(); track mov.id) {
             <button
-              class="w-full flex items-center gap-3.5 bg-white border border-slate-200 border-l-[3px] rounded-[14px] px-4 py-3.5 cursor-pointer text-left font-[inherit] transition-shadow hover:shadow-[0_2px_12px_rgba(15,34,64,.08)]"
+              class="animate-entry stagger-item w-full flex items-center gap-3.5 bg-white border border-slate-200 border-l-[3px] rounded-[14px] px-4 py-3.5 cursor-pointer text-left font-[inherit] transition-shadow hover:shadow-[0_2px_12px_rgba(15,34,64,.08)]"
               [class.border-l-success]="isCredit(mov)"
               [class.border-l-error]="!isCredit(mov)"
               (click)="selectedMovement.set(mov); sheetOpen.set(true)"
@@ -170,6 +171,8 @@ const TYPE_ICONS: Record<MovementType, string> = {
       }
 
     </div>
+
+    </div><!-- end animate-fade wrapper -->
 
     <!-- ── Detail bottom sheet ───────────────────────── -->
     <app-bottom-sheet

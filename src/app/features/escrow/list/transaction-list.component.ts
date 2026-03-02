@@ -21,7 +21,7 @@ const FILTERS = [
   standalone: true,
   imports: [RouterLink, AmountPipe, StatusBadgeComponent, LoadingSkeletonComponent, EmptyStateComponent, TimeAgoPipe, TranslatePipe],
   template: `
-    <div class="px-4 py-6 max-w-lg mx-auto">
+    <div class="animate-fade px-4 py-6 max-w-lg mx-auto">
       <h1 class="text-xl font-bold text-gray-900 mb-4">{{ 'escrow.title' | translate }}</h1>
 
       <!-- Filter chips -->
@@ -52,7 +52,7 @@ const FILTERS = [
           @for (tx of transactions(); track tx.id) {
             <a
               [routerLink]="['/escrow', tx.id]"
-              class="flex items-center gap-3 bg-white rounded-2xl p-4 shadow-sm
+              class="animate-entry stagger-item flex items-center gap-3 bg-white rounded-2xl p-4 shadow-sm
                      hover:shadow-md transition-shadow active:scale-[0.99]"
             >
               <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0"

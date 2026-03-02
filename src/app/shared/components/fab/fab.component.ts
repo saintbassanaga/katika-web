@@ -8,7 +8,11 @@ import { AuthStore } from '@core/auth/auth.store';
 import { EscrowService } from '@features/escrow/escrow.service';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
-import { FabConfig } from '@app/models';
+
+interface FabConfig {
+  labelKey: string;
+  action: 'escrow';
+}
 
 @Component({
   selector: 'app-fab',
@@ -20,7 +24,7 @@ import { FabConfig } from '@app/models';
       position: fixed;
       right: 1.25rem;
       bottom: calc(4.75rem + env(safe-area-inset-bottom));
-      z-index: 40;
+      z-index: 60; /* must be > navbar z-50 so overlay/sheet render above it */
       pointer-events: none;
     }
     @media (min-width: 768px) {
@@ -29,9 +33,9 @@ import { FabConfig } from '@app/models';
     .fab {
       position: relative;
       pointer-events: auto;
-      display: flex; align-items: center; gap: .5rem;
-      padding: .75rem 1.25rem .75rem .875rem;
-      border-radius: 99px;
+      display: flex; align-items: center; justify-content: center;
+      width: 56px; height: 56px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
       color: #fff; font-size: .875rem; font-weight: 700;
       border: none; cursor: pointer; font-family: inherit;
@@ -41,19 +45,10 @@ import { FabConfig } from '@app/models';
     }
     .fab:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(27,79,138,.5); }
     .fab:active { transform: translateY(0); }
-    .fab.dispute-mode {
-      background: linear-gradient(135deg, #DC2626, #B91C1C);
-      box-shadow: 0 6px 24px rgba(220,38,38,.4), 0 2px 8px rgba(0,0,0,.15);
-    }
-    .fab.dispute-mode:hover { box-shadow: 0 10px 30px rgba(220,38,38,.45); }
-    .fab-icon {
-      width: 22px; height: 22px; border-radius: 99px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
     /* ── Overlay ─────────────────────────────────── */
     .overlay {
       position: fixed; inset: 0; z-index: 50;
+      pointer-events: auto;
       background: rgba(0,0,0,.5);
       backdrop-filter: blur(2px);
       animation: fadeIn .2s ease both;
@@ -63,11 +58,12 @@ import { FabConfig } from '@app/models';
     /* ── Bottom sheet ────────────────────────────── */
     .sheet {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 51;
+      pointer-events: auto;
       background: #fff; border-radius: 24px 24px 0 0;
       padding: 0 0 env(safe-area-inset-bottom);
       box-shadow: 0 -8px 40px rgba(0,0,0,.18);
       animation: slideUp .3s cubic-bezier(0.22,1,0.36,1) both;
-      max-height: 92svh; overflow-y: auto;
+      max-height: 92svh; overflow-y: auto; overscroll-behavior: contain;
     }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -84,18 +80,18 @@ import { FabConfig } from '@app/models';
     /* ── Sheet header ────────────────────────────── */
     .sheet-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 1.5rem 1rem;
+      padding: .875rem 1.25rem .625rem;
       border-bottom: 1px solid #EDF1F7;
       position: sticky; top: 0; background: #fff; z-index: 1;
       border-radius: 24px 24px 0 0;
     }
     .drag-handle {
-      position: absolute; top: .625rem; left: 50%; transform: translateX(-50%);
-      width: 36px; height: 4px; border-radius: 99px; background: #E2E8F0;
+      position: absolute; top: .5rem; left: 50%; transform: translateX(-50%);
+      width: 32px; height: 3px; border-radius: 99px; background: #E2E8F0;
     }
-    .sheet-title { font-size: 1.0625rem; font-weight: 700; color: #0F2240; letter-spacing: -.01em; }
+    .sheet-title { font-size: 1rem; font-weight: 700; color: #0F2240; letter-spacing: -.01em; }
     .close-btn {
-      width: 32px; height: 32px; border-radius: 10px;
+      width: 30px; height: 30px; border-radius: 8px;
       background: #EDF1F7; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       color: #64748B; transition: background .15s; flex-shrink: 0;
@@ -103,91 +99,79 @@ import { FabConfig } from '@app/models';
     .close-btn:hover { background: #E2E8F0; }
 
     /* ── Form ────────────────────────────────────── */
-    .sheet-body { padding: 1.25rem 1.5rem 1.75rem; }
+    .sheet-body { padding: .875rem 1.25rem 1.25rem; }
 
-    .field { margin-bottom: 1.125rem; }
+    .field { margin-bottom: .75rem; }
     .label {
-      display: block; font-size: .8125rem; font-weight: 600;
-      color: #334155; margin-bottom: .4rem;
+      display: block; font-size: .75rem; font-weight: 600;
+      color: #334155; margin-bottom: .25rem;
     }
     .label-opt { color: #94A3B8; font-weight: 400; }
     .input {
-      width: 100%; padding: .8125rem 1rem; box-sizing: border-box;
-      border: 2px solid #E2E8F0; border-radius: 12px;
-      background: #F8FAFC; font-size: .9375rem; color: #0F172A;
+      width: 100%; padding: .625rem .875rem; box-sizing: border-box;
+      border: 2px solid #E2E8F0; border-radius: 10px;
+      background: #F8FAFC; font-size: .875rem; color: #0F172A;
       outline: none; font-family: inherit;
       transition: border-color .2s, box-shadow .2s, background .2s;
     }
-    .input:focus { border-color: #1B4F8A; background: #fff; box-shadow: 0 0 0 4px rgba(27,79,138,.08); }
+    .input:focus { border-color: #1B4F8A; background: #fff; box-shadow: 0 0 0 3px rgba(27,79,138,.08); }
     .input.error { border-color: #DC2626; }
-    .err { font-size: .75rem; color: #DC2626; margin: .3rem 0 0; }
+    .err { font-size: .6875rem; color: #DC2626; margin: .2rem 0 0; }
 
     /* Amount wrapper with XAF suffix */
     .amount-wrap { position: relative; }
     .amount-suffix {
-      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
-      font-size: .8125rem; font-weight: 700; color: #94A3B8; pointer-events: none;
+      position: absolute; right: .875rem; top: 50%; transform: translateY(-50%);
+      font-size: .75rem; font-weight: 700; color: #94A3B8; pointer-events: none;
     }
-    .input-amount { padding-right: 3.5rem; }
+    .input-amount { padding-right: 3.25rem; }
 
     /* Fee preview */
     .fee-preview {
-      background: #E5EEF8; border-radius: 12px;
-      padding: .875rem 1rem; margin-top: -.5rem; margin-bottom: 1.125rem;
-      display: flex; flex-direction: column; gap: .3rem;
+      background: #E5EEF8; border-radius: 10px;
+      padding: .625rem .875rem; margin-top: -.375rem; margin-bottom: .75rem;
+      display: flex; flex-direction: column; gap: .2rem;
     }
     .fee-row { display: flex; justify-content: space-between; align-items: center; }
-    .fee-label { font-size: .8125rem; color: #64748B; font-weight: 500; }
-    .fee-value { font-size: .8125rem; font-weight: 700; color: #0F172A; }
-    .fee-net   { font-size: .9375rem; font-weight: 800; color: #1B4F8A; }
-    .fee-sep   { border: none; border-top: 1px solid #C8DCF2; margin: .25rem 0; }
+    .fee-label { font-size: .75rem; color: #64748B; font-weight: 500; }
+    .fee-value { font-size: .75rem; font-weight: 700; color: #0F172A; }
+    .fee-net   { font-size: .875rem; font-weight: 800; color: #1B4F8A; }
+    .fee-sep   { border: none; border-top: 1px solid #C8DCF2; margin: .2rem 0; }
 
     /* Submit */
     .submit-btn {
-      width: 100%; padding: .9375rem; border-radius: 14px;
+      width: 100%; padding: .75rem; border-radius: 12px;
       background: linear-gradient(135deg, #1B4F8A, #0D3D6E);
-      color: #fff; font-size: .9375rem; font-weight: 700;
+      color: #fff; font-size: .875rem; font-weight: 700;
       border: none; cursor: pointer; font-family: inherit;
       display: flex; align-items: center; justify-content: center; gap: .5rem;
-      min-height: 52px; box-shadow: 0 4px 16px rgba(27,79,138,.35);
-      transition: opacity .2s, transform .15s; margin-top: .5rem;
+      min-height: 44px; box-shadow: 0 4px 16px rgba(27,79,138,.35);
+      transition: opacity .2s, transform .15s; margin-top: .375rem;
     }
     .submit-btn:hover:not(:disabled) { opacity: .91; transform: translateY(-1px); }
     .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
     .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.35);
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.35);
       border-top-color: #fff; border-radius: 50%;
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .hint { font-size: .75rem; color: #94A3B8; margin: .3rem 0 0; }
+    .hint { font-size: .6875rem; color: #94A3B8; margin: .2rem 0 0; }
   `],
   template: `
     <!-- FAB button -->
     @if (fabConfig(); as cfg) {
       <button
         class="fab"
-        [class.dispute-mode]="cfg.action === 'dispute'"
-        (click)="onFabClick(cfg)"
+        (click)="onFabClick()"
         [attr.aria-label]="cfg.labelKey | translate"
       >
-        <span class="fab-icon">
-          @if (cfg.icon === 'plus') {
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-          } @else {
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-              <line x1="4" y1="22" x2="4" y2="15"/>
-            </svg>
-          }
-        </span>
-        {{ cfg.labelKey | translate }}
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
       </button>
     }
 
@@ -279,7 +263,7 @@ import { FabConfig } from '@app/models';
               <textarea formControlName="description"
                         [placeholder]="'fab.form.descriptionPh' | translate"
                         class="input" rows="2"
-                        style="resize:vertical; min-height:68px"></textarea>
+                        style="resize:vertical; min-height:52px"></textarea>
               <p class="hint">{{ 'fab.form.maxChars' | translate }}</p>
             </div>
 
@@ -328,9 +312,8 @@ export class FabComponent {
 
   private static readonly FAB_ROUTES: Array<{ pattern: RegExp; config: FabConfig }> = [
     {
-      // Dashboard & escrow list — transaction FAB
       pattern: /^\/(dashboard|escrow)(\/?)(\?.*)?$/,
-      config: { labelKey: 'fab.newTransaction', icon: 'plus', action: 'escrow' },
+      config: { labelKey: 'fab.newTransaction', action: 'escrow' },
     },
   ];
 
@@ -377,12 +360,8 @@ export class FabComponent {
   }
 
   /* ── Actions ─────────────────────────────────── */
-  protected onFabClick(cfg: FabConfig): void {
-    if (cfg.action === 'dispute') {
-      this.router.navigate(['/disputes/create']);
-    } else {
-      this.sheetOpen.set(true);
-    }
+  protected onFabClick(): void {
+    this.sheetOpen.set(true);
   }
 
   protected closeSheet(): void {
@@ -407,7 +386,7 @@ export class FabComponent {
       }));
       this.toast.success(this.translate.instant('toast.transactionCreated'));
       this.closeSheet();
-      this.router.navigate(['/escrow', tx.id]);
+      await this.router.navigate(['/escrow', tx.id]);
     } catch {
       // error interceptor handles toast
     } finally {

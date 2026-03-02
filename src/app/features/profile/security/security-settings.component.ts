@@ -1,11 +1,11 @@
-import {Component, inject, signal} from '@angular/core';
+import { Component, ElementRef, inject, QueryList, signal, ViewChildren } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { AuthService } from '@core/auth/auth.service';
 import { ToastService } from '@core/notification/toast.service';
 import { firstValueFrom } from 'rxjs';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   return c.get('newPassword')?.value === c.get('confirmPassword')?.value
@@ -215,6 +215,9 @@ export class SecuritySettingsComponent {
   private  readonly authService = inject(AuthService);
   private  readonly toast       = inject(ToastService);
   private  readonly fb          = inject(FormBuilder);
+  private  readonly translate   = inject(TranslateService);
+
+  @ViewChildren('mfaCell') private readonly mfaCells!: QueryList<ElementRef<HTMLInputElement>>;
 
   /* ── UI state ── */
   protected readonly showPwdForm    = signal(false);
@@ -256,7 +259,7 @@ export class SecuritySettingsComponent {
         newPassword:     this.pwdForm.value.newPassword!,
         confirmPassword:     this.pwdForm.value.confirmPassword!,
       }));
-      this.toast.success('Mot de passe modifié avec succès.');
+      this.toast.success(this.translate.instant('toast.passwordChanged'));
       this.togglePwdForm();
     } finally {
       this.pwdLoading.set(false);
@@ -274,22 +277,20 @@ export class SecuritySettingsComponent {
     const val   = input.value.replace(/\D/g, '').slice(-1);
     input.value = val;
 
-    const cells = document.querySelectorAll<HTMLInputElement>('.otp-cell');
+    const cells = this.mfaCells.toArray().map(r => r.nativeElement);
     if (val && index < 5) cells[index + 1]?.focus();
 
-    const code = Array.from(cells).map(c => c.value).join('');
-    this.mfaCode.set(code);
+    this.mfaCode.set(cells.map(c => c.value).join(''));
   }
 
   protected onMfaCellKeydown(event: KeyboardEvent, index: number): void {
     if (event.key === 'Backspace') {
-      const cells = document.querySelectorAll<HTMLInputElement>('.otp-cell');
+      const cells = this.mfaCells.toArray().map(r => r.nativeElement);
       if (!(event.target as HTMLInputElement).value && index > 0) {
         cells[index - 1].value = '';
         cells[index - 1].focus();
       }
-      const code = Array.from(cells).map(c => c.value).join('');
-      this.mfaCode.set(code);
+      this.mfaCode.set(cells.map(c => c.value).join(''));
     }
   }
 
@@ -297,12 +298,12 @@ export class SecuritySettingsComponent {
     this.mfaLoading.set(true);
     try {
       await firstValueFrom(this.authService.disableMfa(this.mfaCode()));
-      this.toast.success('Double authentification désactivée.');
+      this.toast.success(this.translate.instant('toast.mfaDisabled'));
       this.toggleMfaDisable();
       const user = await firstValueFrom(this.authService.getMe());
       this.auth.updateUser(user);
     } catch {
-      this.toast.error('Code invalide. Réessayez.');
+      this.toast.error(this.translate.instant('toast.invalidCode'));
     } finally {
       this.mfaLoading.set(false);
     }
@@ -313,7 +314,7 @@ export class SecuritySettingsComponent {
     this.verifyLoading.set(true);
     try {
       const res = await firstValueFrom(this.authService.requestVerification());
-      this.toast.success(res.message ?? 'Demande de vérification envoyée.');
+      this.toast.success(res.message ?? this.translate.instant('toast.verificationSent'));
     } catch {
       // error interceptor shows toast
     } finally {

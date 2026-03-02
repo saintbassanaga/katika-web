@@ -50,7 +50,9 @@ import type { ProfileMenuItem } from '@app/models';
         <div class="w-16 h-16 rounded-full shrink-0 bg-gradient-to-br from-primary to-primary-dk flex items-center justify-center text-white text-[1.375rem] font-bold shadow-[0_4px_16px_rgba(27,79,138,.3)]">{{ auth.initials() }}</div>
         <div>
           <p class="text-[1.0625rem] font-bold text-slate-900 m-0 mb-[.2rem]">{{ auth.fullName() }}</p>
-          <span class="inline-block text-[.6875rem] font-bold uppercase tracking-[.07em] text-[#92680A] bg-gold-lt px-[.7rem] py-[.2rem] rounded-full border border-[rgba(201,146,13,.2)]">{{ auth.role() }}</span>
+          @if (auth.role()) {
+            <span class="inline-block text-[.6875rem] font-bold uppercase tracking-[.07em] text-[#92680A] bg-gold-lt px-[.7rem] py-[.2rem] rounded-full border border-[rgba(201,146,13,.2)]">{{ 'roles.' + auth.role() | translate }}</span>
+          }
         </div>
         <a routerLink="/profile/edit" class="ml-auto shrink-0 px-4 py-2 rounded-[10px] bg-gradient-to-br from-primary to-primary-dk text-white text-[.8125rem] font-bold no-underline flex items-center gap-1.5 shadow-[0_2px_8px_rgba(27,79,138,.3)] transition-all hover:opacity-90 hover:-translate-y-px" [attr.aria-label]="'profile.edit' | translate">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
