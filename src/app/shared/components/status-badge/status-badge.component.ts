@@ -1,7 +1,6 @@
 import { Component, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-
-interface StatusConfig { bg: string; color: string; dot: string; }
+import { StatusConfig } from '@app/models';
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
   INITIATED:   { bg: '#EDF1F7', color: '#475569', dot: '#94A3B8' },

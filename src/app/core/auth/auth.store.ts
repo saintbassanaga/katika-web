@@ -3,7 +3,8 @@ import { signalStore, withState, withComputed, withMethods, patchState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, catchError, EMPTY, firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService, UpdateProfileRequest, UserProfile } from './auth.service';
+import { AuthService } from './auth.service';
+import { UpdateProfileRequest, UserProfile } from '@app/models';
 import { Router } from '@angular/router';
 import { ToastService } from '../notification/toast.service';
 
@@ -48,10 +49,15 @@ export const AuthStore = signalStore(
   withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService), translate = inject(TranslateService)) => ({
 
     async init(): Promise<void> {
+      if (!localStorage.getItem('katika:session')) {
+        patchState(store, { initialized: true });
+        return;
+      }
       try {
         const user = await firstValueFrom(svc.getMe());
         patchState(store, { user, initialized: true });
       } catch {
+        localStorage.removeItem('katika:session');
         patchState(store, { initialized: true });
       }
     },
@@ -72,6 +78,7 @@ export const AuthStore = signalStore(
           // No MFA — session cookie is set, fetch user profile
           return svc.getMe().pipe(
             tap(user => {
+              localStorage.setItem('katika:session', '1');
               patchState(store, { user, loading: false });
               router.navigate(['/dashboard']);
             }),
@@ -98,6 +105,7 @@ export const AuthStore = signalStore(
           // Session cookie set server-side — now fetch the user profile
           svc.getMe().pipe(
             tap(user => {
+              localStorage.setItem('katika:session', '1');
               patchState(store, {
                 user,
                 mfaRequired: false,
@@ -119,6 +127,7 @@ export const AuthStore = signalStore(
     logout: rxMethod<void>(pipe(
       switchMap(() => svc.logout().pipe(
         tap(() => {
+          localStorage.removeItem('katika:session');
           patchState(store, {
             user: null,
             mfaRequired: false,

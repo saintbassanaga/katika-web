@@ -8,30 +8,8 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { environment } from '@env/environment';
 import { TranslatePipe } from '@ngx-translate/core';
-import {LangSwitcherComponent} from '@shared/components/lang-switcher/lang-switcher.component';
-
-interface TransactionSummary {
-  id: string;
-  reference: string;
-  counterpartName: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-}
-
-interface DisputeSummary {
-  id: string;
-  transactionRef: string;
-  reason: string;
-  status: string;
-  createdAt: string;
-}
-
-interface WalletInfo {
-  available: number;
-  frozen: number;
-  currency: string;
-}
+import { LangSwitcherComponent } from '@shared/components/lang-switcher/lang-switcher.component';
+import { DashboardTransaction, DisputeSummary, WalletBalance } from '@app/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -194,9 +172,9 @@ interface WalletInfo {
             </div>
             <div class="text-[.75rem] text-slate-500 font-medium mb-1">{{ 'dashboard.balance' | translate }}</div>
             <div class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">
-              @if (wallet()) { {{ wallet()!.available | amount }} } @else { — }
+              @if (wallet()) { {{ wallet()!.balance | amount }} } @else { — }
             </div>
-            @if (wallet()?.frozen) { <div class="text-[.6875rem] text-slate-400 mt-1">{{ 'dashboard.kpi.frozen' | translate }} {{ wallet()!.frozen | amount }}</div> }
+            @if (wallet()?.frozenAmount) { <div class="text-[.6875rem] text-slate-400 mt-1">{{ 'dashboard.kpi.frozen' | translate }} {{ wallet()!.frozenAmount | amount }}</div> }
           </div>
 
           <div class="bg-white border border-slate-200 rounded-2xl px-4 py-4 shadow-[0_1px_3px_rgba(15,23,42,.05)]">
@@ -318,8 +296,8 @@ interface WalletInfo {
               @if (wallet()) { <span class="d-kpi-trend d-kpi-trend--up">{{ 'dashboard.kpi.available' | translate }}</span> }
             </div>
             <div class="d-kpi-label">{{ 'dashboard.balance' | translate }}</div>
-            <div class="d-kpi-value">@if (wallet()) { {{ wallet()!.available | amount }} } @else { — }</div>
-            @if (wallet()?.frozen) { <div class="d-kpi-sub">{{ 'dashboard.kpi.frozen' | translate }} {{ wallet()!.frozen | amount }}</div> }
+            <div class="d-kpi-value">@if (wallet()) { {{ wallet()!.balance | amount }} } @else { — }</div>
+            @if (wallet()?.frozenAmount) { <div class="d-kpi-sub">{{ 'dashboard.kpi.frozen' | translate }} {{ wallet()!.frozenAmount | amount }}</div> }
           </div>
 
           <div class="d-kpi-card">
@@ -482,16 +460,16 @@ export class DashboardComponent implements OnInit {
 
   protected readonly today        = new Date();
   protected readonly loading      = signal(true);
-  protected readonly transactions = signal<TransactionSummary[]>([]);
+  protected readonly transactions = signal<DashboardTransaction[]>([]);
   protected readonly disputes     = signal<DisputeSummary[]>([]);
-  protected readonly wallet       = signal<WalletInfo | null>(null);
+  protected readonly wallet       = signal<WalletBalance | null>(null);
 
   protected readonly pendingAmount = computed(() =>
     this.transactions().reduce((sum, tx) => sum + (tx.amount ?? 0), 0));
 
   ngOnInit(): void {
     forkJoin({
-      transactions: this.http.get<{ content: TransactionSummary[] }>(
+      transactions: this.http.get<{ content: DashboardTransaction[] }>(
         `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED&page=0&size=5`,
         { withCredentials: true },
       ),
@@ -499,7 +477,7 @@ export class DashboardComponent implements OnInit {
         `${environment.apiUrl}/api/disputes?status=OPENED&page=0&size=5`,
         { withCredentials: true },
       ),
-      wallet: this.http.get<WalletInfo>(
+      wallet: this.http.get<WalletBalance>(
         `${environment.apiUrl}/api/wallet`,
         { withCredentials: true },
       ).pipe(catchError(() => of(null))),

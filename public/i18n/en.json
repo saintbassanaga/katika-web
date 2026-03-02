@@ -210,6 +210,15 @@
         "codePh": "Seller's confirmation code",
         "or": "or"
       },
+      "scan": {
+        "title": "Scan QR code",
+        "back": "← Back",
+        "permissionTitle": "Camera access denied",
+        "permissionMessage": "Allow camera access in your browser settings to scan the QR code.",
+        "retry": "Try again",
+        "releasing": "Releasing funds…",
+        "instruction": "Place the seller's QR code inside the frame"
+      },
       "actions": {
         "release": "Release funds",
         "deliver": "I received my order",
@@ -233,9 +242,47 @@
       "resolved": "Resolved"
     },
     "chat": {
+      "title": "Dispute",
       "system": "System",
       "typingOne": "{{name}} is typing…",
-      "placeholder": "Your message…"
+      "typing": "{{name}} is typing…",
+      "placeholder": "Your message…",
+      "messagePh": "Your message…"
+    },
+    "evidence": {
+      "panelTitle": "Add evidence",
+      "descPh": "Description (optional)",
+      "filePh": "Choose a file",
+      "upload": "Send",
+      "verified": "✓ Verified",
+      "rejected": "✗ Rejected",
+      "rejectedPrefix": "Rejected:",
+      "successToast": "Evidence submitted successfully",
+      "errorToast": "Failed to submit evidence",
+      "types": {
+        "SCREENSHOT": "Screenshot",
+        "IMAGE":      "Image / Photo",
+        "DOCUMENT":   "Document",
+        "RECEIPT":    "Receipt",
+        "VIDEO":      "Video",
+        "OTHER":      "Other"
+      }
+    },
+    "resolve": {
+      "button": "Resolve",
+      "title": "Resolve dispute",
+      "subtitle": "Choose how to distribute the funds.",
+      "fullRefundBuyer":        "Full refund to buyer",
+      "fullRefundBuyerDesc":    "The full amount is refunded to the buyer.",
+      "releaseToSeller":        "Release to seller",
+      "releaseToSellerDesc":    "Funds are released to the seller as planned.",
+      "partialRefundBuyer":     "Partial refund",
+      "partialRefundBuyerDesc": "Part of the amount is refunded to the buyer, the rest goes to the seller.",
+      "split5050":              "Split 50/50",
+      "split5050Desc":          "Funds are split equally between both parties.",
+      "noAction":               "No action",
+      "noActionDesc":           "The dispute is closed without redistributing funds.",
+      "successToast":           "Dispute resolved successfully"
     },
     "empty": {
       "title": "No disputes",
@@ -289,7 +336,8 @@
       "motifLabel": "Reason",
       "modify": "Edit",
       "submit": "Submit dispute",
-      "submitting": "Submitting…"
+      "submitting": "Submitting…",
+      "successToast": "Dispute opened successfully"
     }
   },
   "wallet": {

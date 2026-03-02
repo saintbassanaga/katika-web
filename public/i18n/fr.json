@@ -210,6 +210,15 @@
         "codePh": "Code de confirmation du vendeur",
         "or": "ou"
       },
+      "scan": {
+        "title": "Scanner le QR code",
+        "back": "← Retour",
+        "permissionTitle": "Accès caméra refusé",
+        "permissionMessage": "Autorisez l'accès à la caméra dans les paramètres de votre navigateur pour scanner le QR code.",
+        "retry": "Réessayer",
+        "releasing": "Libération en cours…",
+        "instruction": "Placez le QR code du vendeur dans le cadre"
+      },
       "actions": {
         "release": "Libérer les fonds",
         "deliver": "J'ai reçu ma commande",
@@ -233,9 +242,47 @@
       "resolved": "Résolus"
     },
     "chat": {
+      "title": "Litige",
       "system": "Système",
       "typingOne": "{{name}} est en train d'écrire…",
-      "placeholder": "Votre message…"
+      "typing": "{{name}} est en train d'écrire…",
+      "placeholder": "Votre message…",
+      "messagePh": "Votre message…"
+    },
+    "evidence": {
+      "panelTitle": "Ajouter une preuve",
+      "descPh": "Description (optionnelle)",
+      "filePh": "Choisir un fichier",
+      "upload": "Envoyer",
+      "verified": "✓ Vérifiée",
+      "rejected": "✗ Rejetée",
+      "rejectedPrefix": "Rejetée :",
+      "successToast": "Preuve envoyée avec succès",
+      "errorToast": "Échec de l'envoi de la preuve",
+      "types": {
+        "SCREENSHOT": "Capture d'écran",
+        "IMAGE":      "Image / Photo",
+        "DOCUMENT":   "Document",
+        "RECEIPT":    "Reçu",
+        "VIDEO":      "Vidéo",
+        "OTHER":      "Autre"
+      }
+    },
+    "resolve": {
+      "button": "Résoudre",
+      "title": "Résolution du litige",
+      "subtitle": "Choisissez comment distribuer les fonds.",
+      "fullRefundBuyer":        "Remboursement intégral",
+      "fullRefundBuyerDesc":    "L'intégralité du montant est remboursée à l'acheteur.",
+      "releaseToSeller":        "Libérer au vendeur",
+      "releaseToSellerDesc":    "Les fonds sont libérés au vendeur comme prévu.",
+      "partialRefundBuyer":     "Remboursement partiel",
+      "partialRefundBuyerDesc": "Une partie est remboursée à l'acheteur, le reste au vendeur.",
+      "split5050":              "Partage 50/50",
+      "split5050Desc":          "Les fonds sont partagés équitablement entre les deux parties.",
+      "noAction":               "Aucune action",
+      "noActionDesc":           "Le litige est clôturé sans redistribution des fonds.",
+      "successToast":           "Litige résolu avec succès"
     },
     "empty": {
       "title": "Aucun litige",
@@ -289,7 +336,8 @@
       "motifLabel": "Motif",
       "modify": "Modifier",
       "submit": "Soumettre le litige",
-      "submitting": "Envoi…"
+      "submitting": "Envoi…",
+      "successToast": "Litige ouvert avec succès"
     }
   },
   "wallet": {

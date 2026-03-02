@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DisputeService, DisputeSummary } from '../dispute.service';
+import { DisputeService } from '../dispute.service';
+import { DisputeSummary } from '@app/models';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { TranslatePipe } from '@ngx-translate/core';

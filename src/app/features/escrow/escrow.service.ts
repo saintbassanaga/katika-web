@@ -1,66 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
-
-export interface TransactionSummary {
-  id: string;
-  reference: string;
-  buyerId: string;
-  buyerName: string;
-  sellerId: string;
-  sellerName: string;
-  grossAmount: number;
-  platformFee: number;
-  netAmount: number;
-  currency: string;
-  status: string;
-  createdAt: string;
-  lockedAt:    string | null;
-  shippedAt:   string | null;
-  deliveredAt: string | null;
-  releasedAt:  string | null;
-  disputedAt:  string | null;
-  refundedAt:  string | null;
-}
-
-export interface TransactionDetail {
-  id: string;
-  reference: string;
-  buyerId: string;
-  buyerName: string;
-  sellerId: string;
-  sellerName: string;
-  grossAmount: number;
-  platformFee: number;
-  netAmount: number;
-  currency: string;
-  status: string;
-  activeDisputeId: string | null;
-  createdAt: string;
-  lockedAt:    string | null;
-  shippedAt:   string | null;
-  deliveredAt: string | null;
-  releasedAt:  string | null;
-  disputedAt:  string | null;
-  refundedAt:  string | null;
-}
-
-export interface EscrowCreateRequest {
-  buyerPhone: string;
-  grossAmount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
-  description?: string;
-  deliveryDeadline?: string; // ISO 8601
-  idempotencyKey?: string;
-}
-
-export interface Page<T> {
-  content: T[];
-  totalPages: number;
-  totalElements: number;
-  number: number;
-  size: number;
-}
+import {
+  Page,
+  EscrowCreateRequest,
+  TransactionSummary,
+  TransactionDetail,
+  ScanResponse,
+} from '@app/models';
 
 @Injectable({ providedIn: 'root' })
 export class EscrowService extends ApiService {
@@ -96,9 +43,11 @@ export class EscrowService extends ApiService {
     );
   }
 
-  release(id: string, verificationCode: string): Observable<TransactionDetail> {
-    return this.http.post<TransactionDetail>(
-      this.url(`/api/escrow/${id}/release`), { verificationCode }, this.defaultOptions,
+  scanVerificationCode(transactionId: string, code: string): Observable<ScanResponse> {
+    return this.http.post<ScanResponse>(
+      this.url('/api/escrow/verification-code/scan'),
+      { transactionId, code },
+      this.defaultOptions,
     );
   }
 

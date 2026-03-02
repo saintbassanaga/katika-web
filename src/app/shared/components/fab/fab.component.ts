@@ -8,12 +8,7 @@ import { AuthStore } from '@core/auth/auth.store';
 import { EscrowService } from '@features/escrow/escrow.service';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
-
-interface FabConfig {
-  labelKey: string;
-  icon: 'plus' | 'flag';
-  action: 'escrow' | 'dispute';
-}
+import { FabConfig } from '@app/models';
 
 @Component({
   selector: 'app-fab',
@@ -336,11 +331,6 @@ export class FabComponent {
       // Dashboard & escrow list — transaction FAB
       pattern: /^\/(dashboard|escrow)(\/?)(\?.*)?$/,
       config: { labelKey: 'fab.newTransaction', icon: 'plus', action: 'escrow' },
-    },
-    {
-      // Disputes list only — dispute FAB
-      pattern: /^\/disputes(\/?)(\?.*)?$/,
-      config: { labelKey: 'fab.newDispute', icon: 'flag', action: 'dispute' },
     },
   ];
 

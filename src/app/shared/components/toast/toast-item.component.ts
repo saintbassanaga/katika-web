@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Toast } from '@core/notification/toast.service';
+import { Toast } from '@app/models';
 
 const TOAST_STYLES: Record<string, string> = {
   success: 'bg-green-50 border-green-500 text-green-800',

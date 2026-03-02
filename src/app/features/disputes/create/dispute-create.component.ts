@@ -1,8 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DisputeService, DisputeReason } from '../dispute.service';
+import { DisputeService } from '../dispute.service';
+import { DisputeReason } from '@app/models';
 import { ToastService } from '@core/notification/toast.service';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -192,12 +194,13 @@ const REASON_GROUPS: ReasonGroup[] = [
   `,
 })
 export class DisputeCreateComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
+  private readonly route     = inject(ActivatedRoute);
   private readonly disputeService = inject(DisputeService);
-  private readonly toast = inject(ToastService);
-  private readonly router = inject(Router);
-  private readonly fb = inject(FormBuilder);
-  private readonly auth = inject(AuthStore);
+  private readonly toast     = inject(ToastService);
+  private readonly router    = inject(Router);
+  private readonly fb        = inject(FormBuilder);
+  private readonly auth      = inject(AuthStore);
+  private readonly translate = inject(TranslateService);
 
   protected readonly step = signal(1);
   protected readonly loading = signal(false);
@@ -234,8 +237,8 @@ export class DisputeCreateComponent implements OnInit {
       reason:        this.form.value.reason as DisputeReason,
       description:   this.form.value.description!,
     }).subscribe({
-      next: (dispute: any) => {
-        this.toast.success('Litige ouvert avec succès');
+      next: (dispute) => {
+        this.toast.success(this.translate.instant('disputes.create.successToast'));
         this.router.navigate(['/disputes', dispute.id]);
       },
       error: () => this.loading.set(false),

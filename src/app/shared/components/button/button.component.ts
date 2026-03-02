@@ -1,7 +1,5 @@
 import { Component, input, output } from '@angular/core';
-
-type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'secondary';
-type ButtonSize = 'sm' | 'md' | 'lg';
+import { ButtonVariant, ButtonSize } from '@app/models';
 
 @Component({
   selector: 'app-button',

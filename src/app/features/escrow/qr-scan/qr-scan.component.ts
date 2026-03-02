@@ -1,27 +1,29 @@
 import { Component, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EscrowService } from '../escrow.service';
 
 @Component({
   selector: 'app-qr-scan',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     <div class="fixed inset-0 bg-black flex flex-col">
       <!-- Header -->
       <div class="absolute top-0 left-0 right-0 z-10 p-4 pt-12">
         <button (click)="router.navigate(['/escrow', id()])" class="text-white text-sm flex items-center gap-2">
-          ← Retour
+          {{ 'escrow.scan.back' | translate }}
         </button>
-        <h1 class="text-white font-bold text-lg mt-2">Scanner le QR code</h1>
+        <h1 class="text-white font-bold text-lg mt-2">{{ 'escrow.scan.title' | translate }}</h1>
       </div>
 
       @if (permissionDenied()) {
         <div class="flex-1 flex flex-col items-center justify-center px-6 text-center">
           <div class="text-5xl mb-4">📷</div>
-          <h2 class="text-white text-xl font-bold mb-2">Accès caméra refusé</h2>
-          <p class="text-gray-400 text-sm mb-4">Autorisez l'accès à la caméra dans les paramètres de votre navigateur pour scanner le QR code.</p>
+          <h2 class="text-white text-xl font-bold mb-2">{{ 'escrow.scan.permissionTitle' | translate }}</h2>
+          <p class="text-gray-400 text-sm mb-4">{{ 'escrow.scan.permissionMessage' | translate }}</p>
           <button (click)="ngOnInit()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium">
-            Réessayer
+            {{ 'escrow.scan.retry' | translate }}
           </button>
         </div>
       } @else {
@@ -44,11 +46,11 @@ import { EscrowService } from '../escrow.service';
           @if (releasing()) {
             <div class="mt-6 flex items-center gap-3 bg-white/20 px-6 py-3 rounded-full">
               <span class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <span class="text-white font-medium">Libération en cours...</span>
+              <span class="text-white font-medium">{{ 'escrow.scan.releasing' | translate }}</span>
             </div>
           } @else {
             <p class="mt-6 text-white text-sm text-center px-8">
-              Placez le QR code du vendeur dans le cadre
+              {{ 'escrow.scan.instruction' | translate }}
             </p>
           }
         </div>
@@ -79,7 +81,8 @@ export class QrScanComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     try {
-      await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      stream.getTracks().forEach(t => t.stop());
       this.permissionDenied.set(false);
       setTimeout(() => this.startScanning(), 100);
     } catch {
@@ -99,10 +102,10 @@ export class QrScanComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onScanned(verificationCode: string): void {
+  private onScanned(code: string): void {
     this.scanning = false;
     this.releasing.set(true);
-    this.escrowService.release(this.id(), verificationCode).subscribe({
+    this.escrowService.scanVerificationCode(this.id(), code).subscribe({
       next: () => this.router.navigate(['/escrow', this.id()]),
       error: () => {
         this.releasing.set(false);
@@ -113,5 +116,6 @@ export class QrScanComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.scanning = false;
+    this.reader?.reset?.();
   }
 }
