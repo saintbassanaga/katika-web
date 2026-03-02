@@ -2,9 +2,8 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map, startWith } from 'rxjs';
-import { firstValueFrom } from 'rxjs';
-import { TranslatePipe } from '@ngx-translate/core';
+import { filter, firstValueFrom, map, startWith } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { EscrowService } from '@features/escrow/escrow.service';
 import { ToastService } from '@core/notification/toast.service';
@@ -220,7 +219,7 @@ interface FabConfig {
               <label class="label">{{ 'fab.form.buyerPhone' | translate }}</label>
               <app-phone-input formControlName="buyerPhone" />
               @if (txForm.get('buyerPhone')?.invalid && txForm.get('buyerPhone')?.touched) {
-                <p class="err">Numéro requis</p>
+                <p class="err">{{ 'fab.form.phoneError' | translate }}</p>
               }
             </div>
 
@@ -236,10 +235,10 @@ interface FabConfig {
                 <span class="amount-suffix">XAF</span>
               </div>
               @if (txForm.get('grossAmount')?.errors?.['min'] && txForm.get('grossAmount')?.touched) {
-                <p class="err">Minimum 100 XAF</p>
+                <p class="err">{{ 'fab.form.amountMin' | translate }}</p>
               }
               @if (txForm.get('grossAmount')?.errors?.['max'] && txForm.get('grossAmount')?.touched) {
-                <p class="err">Maximum 10 000 000 XAF</p>
+                <p class="err">{{ 'fab.form.amountMax' | translate }}</p>
               }
             </div>
 
@@ -283,10 +282,10 @@ interface FabConfig {
             <div class="field">
               <label class="label">{{ 'fab.form.description' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span></label>
               <textarea formControlName="description"
-                        placeholder="Objet de la transaction…"
+                        [placeholder]="'fab.form.descriptionPh' | translate"
                         class="input" rows="2"
                         style="resize:vertical; min-height:68px"></textarea>
-              <p class="hint">Max. 500 caractères</p>
+              <p class="hint">{{ 'fab.form.maxChars' | translate }}</p>
             </div>
 
             <!-- Deadline -->
@@ -294,7 +293,7 @@ interface FabConfig {
               <label class="label">{{ 'fab.form.deadline' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span></label>
               <input type="datetime-local" formControlName="deliveryDeadline"
                      class="input" />
-              <p class="hint">L'acheteur devra confirmer la réception avant cette date.</p>
+              <p class="hint">{{ 'fab.form.deadlineHint' | translate }}</p>
             </div>
 
             <button type="submit" class="submit-btn"
@@ -320,6 +319,7 @@ export class FabComponent {
   private readonly fb            = inject(FormBuilder);
   private readonly escrowService = inject(EscrowService);
   private readonly toast         = inject(ToastService);
+  private readonly translate     = inject(TranslateService);
   private readonly auth          = inject(AuthStore);
 
   /* ── Route detection ─────────────────────────── */
@@ -363,15 +363,20 @@ export class FabComponent {
   /* ── Transaction form ────────────────────────── */
   protected readonly txForm = this.fb.group({
     buyerPhone:       ['', Validators.required],
-    grossAmount:      [null as number | null, [Validators.required, Validators.min(25), Validators.max(10_000_000)]],
+    grossAmount:      [null as number | null, [Validators.required, Validators.min(100), Validators.max(10_000_000)]],
     provider:         ['CAMPAY' as 'CAMPAY' | 'MONETBIL', Validators.required],
     description:      [''],
     deliveryDeadline: [''],
   });
 
+  // Track form value changes as a signal so computed() stays reactive in zoneless mode
+  private readonly txFormValues = toSignal(
+    this.txForm.valueChanges.pipe(startWith(this.txForm.value)),
+  );
+
   /* ── Fee preview ─────────────────────────────── */
   protected readonly grossAmount = computed(() => {
-    const v = this.txForm.get('grossAmount')?.value;
+    const v = this.txFormValues()?.grossAmount;
     return typeof v === 'number' && v >= 100 ? Math.floor(v) : 0;
   });
   protected readonly platformFee = computed(() => Math.floor(this.grossAmount() * 0.03));
@@ -410,7 +415,7 @@ export class FabComponent {
           : undefined,
         idempotencyKey:   crypto.randomUUID(),
       }));
-      this.toast.success('Transaction créée avec succès.');
+      this.toast.success(this.translate.instant('toast.transactionCreated'));
       this.closeSheet();
       this.router.navigate(['/escrow', tx.id]);
     } catch {

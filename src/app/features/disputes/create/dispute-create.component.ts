@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DisputeService, DisputeReason } from '../dispute.service';
-import { ToastService } from '../../../core/notification/toast.service';
+import { ToastService } from '@core/notification/toast.service';
 import { AuthStore } from '@core/auth/auth.store';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -117,7 +117,7 @@ const REASON_GROUPS: ReasonGroup[] = [
             </div>
             <button type="button" (click)="step.set(2)" [disabled]="!form.get('reason')?.value"
                     class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold text-sm
-                           hover:bg-blue-700 transition-colors disabled:opacity-50 min-h-[44px]">
+                           hover:bg-blue-700 transition-colors disabled:opacity-50 min-h-11">
               {{ 'disputes.create.continue' | translate }}
             </button>
           </div>

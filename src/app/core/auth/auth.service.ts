@@ -157,17 +157,17 @@ export class AuthService extends ApiService {
     );
   }
 
-  forgotPassword(phoneNumber: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      this.url('/api/auth/password/reset-request'),
-      { phoneNumber },
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(
+      this.url('/api/auth/forgot-password'),
+      { email },
       this.defaultOptions,
     );
   }
 
-  resetPassword(req: { phoneNumber: string; code: string; newPassword: string }): Observable<void> {
+  resetPassword(req: { token: string; newPassword: string; confirmPassword: string }): Observable<void> {
     return this.http.post<void>(
-      this.url('/api/auth/password/reset-confirm'),
+      this.url('/api/auth/reset-password'),
       req,
       this.defaultOptions,
     );

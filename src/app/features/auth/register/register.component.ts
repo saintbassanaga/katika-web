@@ -2,9 +2,9 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../../core/auth/auth.service';
-import { ToastService } from '../../../core/notification/toast.service';
-import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
+import { AuthService } from '@core/auth/auth.service';
+import { ToastService } from '@core/notification/toast.service';
+import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.component';
 
 function passwordStrength(p: string): number {
   let s = 0;

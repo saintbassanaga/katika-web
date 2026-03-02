@@ -1,24 +1,25 @@
 import { Component, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
-interface StatusConfig { label: string; bg: string; color: string; dot: string; }
+interface StatusConfig { bg: string; color: string; dot: string; }
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
-  INITIATED:   { label: 'Initié',        bg: '#EDF1F7', color: '#475569', dot: '#94A3B8' },
-  LOCKED:      { label: 'Bloqué',        bg: '#E5EEF8', color: '#154B85', dot: '#3A7BC8' },
-  SHIPPED:     { label: 'Expédié',       bg: '#FFFBEB', color: '#B45309', dot: '#F59E0B' },
-  DELIVERED:   { label: 'Livré',         bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
-  RELEASED:    { label: 'Libéré',        bg: '#F0FDFA', color: '#0F766E', dot: '#14B8A6' },
-  DISPUTED:    { label: 'Litigieux',     bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
-  REFUNDED:    { label: 'Remboursé',     bg: '#FDF4FF', color: '#6B21A8', dot: '#A855F7' },
-  CANCELLED:   { label: 'Annulé',        bg: '#F8FAFC', color: '#64748B', dot: '#CBD5E1' },
-  OPEN:        { label: 'Ouvert',        bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
-  OPENED:      { label: 'Ouvert',        bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
-  IN_PROGRESS: { label: 'En cours',      bg: '#FFFBEB', color: '#B45309', dot: '#F59E0B' },
-  RESOLVED:    { label: 'Résolu',        bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
-  PROCESSING:  { label: 'En traitement', bg: '#E5EEF8', color: '#154B85', dot: '#3A7BC8' },
-  COMPLETED:   { label: 'Complété',      bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
-  FAILED:      { label: 'Échoué',        bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
+  INITIATED:   { bg: '#EDF1F7', color: '#475569', dot: '#94A3B8' },
+  LOCKED:      { bg: '#E5EEF8', color: '#154B85', dot: '#3A7BC8' },
+  SHIPPED:     { bg: '#FFFBEB', color: '#B45309', dot: '#F59E0B' },
+  DELIVERED:   { bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
+  RELEASED:    { bg: '#F0FDFA', color: '#0F766E', dot: '#14B8A6' },
+  DISPUTED:    { bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
+  REFUNDED:    { bg: '#FDF4FF', color: '#6B21A8', dot: '#A855F7' },
+  CANCELLED:   { bg: '#F8FAFC', color: '#64748B', dot: '#CBD5E1' },
+  OPEN:        { bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
+  OPENED:      { bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
+  IN_PROGRESS: { bg: '#FFFBEB', color: '#B45309', dot: '#F59E0B' },
+  RESOLVED:    { bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
+  PROCESSING:  { bg: '#E5EEF8', color: '#154B85', dot: '#3A7BC8' },
+  COMPLETED:   { bg: '#ECFDF5', color: '#065F46', dot: '#10B981' },
+  FAILED:      { bg: '#FEF2F2', color: '#991B1B', dot: '#EF4444' },
+  EXPIRED:     { bg: '#F5F5F4', color: '#57534E', dot: '#A8A29E' },
 };
 
 @Component({

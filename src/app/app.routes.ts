@@ -51,6 +51,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES),
   },
+  // Top-level alias for /reset-password emails (query params preserved with direct load)
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+  },
   {
     path: '403',
     loadComponent: () =>

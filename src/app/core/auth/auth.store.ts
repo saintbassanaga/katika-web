@@ -2,6 +2,7 @@ import { computed, inject } from '@angular/core';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, catchError, EMPTY, firstValueFrom } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthService, UpdateProfileRequest, UserProfile } from './auth.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../notification/toast.service';
@@ -44,7 +45,7 @@ export const AuthStore = signalStore(
     }),
   })),
 
-  withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService)) => ({
+  withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService), translate = inject(TranslateService)) => ({
 
     async init(): Promise<void> {
       try {
@@ -79,7 +80,7 @@ export const AuthStore = signalStore(
         catchError((err) => {
           patchState(store, { loading: false });
           if (err?.status === 401) {
-            toast.error('Numéro de téléphone ou mot de passe incorrect.');
+            toast.error(translate.instant('toast.loginError'));
           }
           return EMPTY;
         }),
@@ -109,7 +110,7 @@ export const AuthStore = signalStore(
         ),
         catchError(() => {
           patchState(store, { loading: false });
-          toast.error('Code MFA invalide. Réessayez.');
+          toast.error(translate.instant('toast.mfaError'));
           return EMPTY;
         }),
       )),
@@ -139,7 +140,7 @@ export const AuthStore = signalStore(
         switchMap(() => svc.getMe().pipe(
           tap(user => {
             patchState(store, { user, loading: false });
-            toast.success('Profil mis à jour avec succès.');
+            toast.success(translate.instant('toast.profileUpdated'));
             router.navigate(['/profile']);
           }),
         )),

@@ -1,10 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { AmountPipe } from '../../shared/pipes/amount.pipe';
-import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
-import { BottomSheetComponent } from '../../shared/components/bottom-sheet/bottom-sheet.component';
+import { environment } from '@env/environment';
+import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
+import { BottomSheetComponent } from '@shared/components/bottom-sheet/bottom-sheet.component';
 import { TranslatePipe } from '@ngx-translate/core';
 
 type MovementType =

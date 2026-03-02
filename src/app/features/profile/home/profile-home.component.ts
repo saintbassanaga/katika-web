@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthStore } from '../../../core/auth/auth.store';
-import { LangSwitcherComponent } from '../../../shared/components/lang-switcher/lang-switcher.component';
+import { AuthStore } from '@core/auth/auth.store';
+import { LangSwitcherComponent } from '@shared/components/lang-switcher/lang-switcher.component';
 
 interface MenuItem { icon: string; label: string; sub?: string; route: string; danger?: boolean; }
 
