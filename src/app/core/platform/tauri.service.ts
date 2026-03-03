@@ -1,13 +1,8 @@
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { TauriPlatformInfo } from '@shared/models/model';
 
-export interface TauriPlatformInfo {
-  os: 'linux' | 'windows' | 'macos' | 'android' | 'ios';
-  arch: string;
-  version: string;
-  is_mobile: boolean;
-  is_desktop: boolean;
-}
+export type { TauriPlatformInfo };
 
 /**
  * Service Tauri — wraps les appels invoke() Rust.

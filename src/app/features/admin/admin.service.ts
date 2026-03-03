@@ -1,50 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
-import { Page } from '@features/escrow/escrow.service';
-import { DisputeResponse, ResolutionType } from '@features/disputes/dispute.service';
-import { TransactionSummary } from '@features/escrow/escrow.service';
+import {
+  AdminDashboardStats,
+  AssignDisputeRequest,
+  DisputeResponse,
+  Page,
+  ResolutionType,
+  TransactionSummary,
+  UpdateDisputeStatusRequest,
+  UserAdminResponse,
+} from '@shared/models/model';
 
-export interface AdminDashboardStats {
-  totalUsers: number;
-  activeUsers: number;
-  totalBuyers: number;
-  totalSellers: number;
-  totalStaff: number;
-  totalTransactions: number;
-  initiatedTransactions: number;
-  lockedTransactions: number;
-  releasedTransactions: number;
-  disputedTransactions: number;
-  cancelledTransactions: number;
-  totalVolumeReleased: string;
-  totalDisputes: number;
-  openDisputes: number;
-  underReviewDisputes: number;
-  referredToArbitrationDisputes: number;
-  resolvedDisputes: number;
-}
-
-export interface UserAdminResponse {
-  id: string;
-  fullName: string;
-  role: 'BUYER' | 'SELLER' | 'BOTH' | 'SUPPORT' | 'SUPERVISOR' | 'ADMIN';
-  verified: boolean;
-  active: boolean;
-  deleted: boolean;
-  createdAt: string;
-  updatedAt: string;
-  lastLoginAt: string | null;
-}
-
-export interface AssignDisputeRequest {
-  agentId: string;
-}
-
-export interface UpdateDisputeStatusRequest {
-  status: 'AWAITING_BUYER' | 'AWAITING_SELLER';
-  note?: string;
-}
+export type {
+  AdminDashboardStats,
+  AssignDisputeRequest,
+  UpdateDisputeStatusRequest,
+  UserAdminResponse,
+};
 
 @Injectable({ providedIn: 'root' })
 export class AdminService extends ApiService {

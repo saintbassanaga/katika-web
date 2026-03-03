@@ -4,11 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DisputeService, DisputeReason } from '../dispute.service';
 import { ToastService } from '@core/notification/toast.service';
 import { TranslatePipe } from '@ngx-translate/core';
-
-interface ReasonGroup {
-  groupKey: string;
-  reasons: { value: DisputeReason; labelKey: string; icon: string }[];
-}
+import { ReasonGroup } from '@shared/models/model';
 
 const REASON_GROUPS: ReasonGroup[] = [
   {

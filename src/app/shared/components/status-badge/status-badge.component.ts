@@ -1,7 +1,6 @@
 import { Component, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-
-interface StatusConfig { bg: string; color: string; dot: string; }
+import { StatusConfig } from '@shared/models/model';
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
   // Escrow statuses

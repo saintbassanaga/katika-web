@@ -3,11 +3,7 @@ import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Observable, Subject, filter, map, share } from 'rxjs';
 import { environment } from '@env/environment';
-
-interface StompMessage<T = unknown> {
-  destination: string;
-  body: T;
-}
+import { StompMessage } from '@shared/models/model';
 
 @Injectable({ providedIn: 'root' })
 export class StompService implements OnDestroy {

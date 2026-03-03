@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
+import { PayoutRequest } from '@shared/models/model';
 
-export interface PayoutRequest {
-  amount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
-  phone: string;
-}
+export type { PayoutRequest };
 
 @Injectable({ providedIn: 'root' })
 export class PayoutService extends ApiService {

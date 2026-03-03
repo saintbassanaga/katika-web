@@ -1,66 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
+import {
+  EscrowCreateRequest,
+  Page,
+  TransactionDetail,
+  TransactionSummary,
+} from '@shared/models/model';
 
-export interface TransactionSummary {
-  id: string;
-  reference: string;
-  buyerId: string;
-  buyerName: string;
-  sellerId: string;
-  sellerName: string;
-  grossAmount: number;
-  platformFee: number;
-  netAmount: number;
-  currency: string;
-  status: string;
-  createdAt: string;
-  lockedAt:    string | null;
-  shippedAt:   string | null;
-  deliveredAt: string | null;
-  releasedAt:  string | null;
-  disputedAt:  string | null;
-  refundedAt:  string | null;
-}
-
-export interface TransactionDetail {
-  id: string;
-  reference: string;
-  buyerId: string;
-  buyerName: string;
-  sellerId: string;
-  sellerName: string;
-  grossAmount: number;
-  platformFee: number;
-  netAmount: number;
-  currency: string;
-  status: string;
-  activeDisputeId: string | null;
-  createdAt: string;
-  lockedAt:    string | null;
-  shippedAt:   string | null;
-  deliveredAt: string | null;
-  releasedAt:  string | null;
-  disputedAt:  string | null;
-  refundedAt:  string | null;
-}
-
-export interface EscrowCreateRequest {
-  buyerPhone: string;
-  grossAmount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
-  description?: string;
-  deliveryDeadline?: string; // ISO 8601
-  idempotencyKey?: string;
-}
-
-export interface Page<T> {
-  content: T[];
-  totalPages: number;
-  totalElements: number;
-  number: number;
-  size: number;
-}
+export type { EscrowCreateRequest, Page, TransactionDetail, TransactionSummary };
 
 @Injectable({ providedIn: 'root' })
 export class EscrowService extends ApiService {

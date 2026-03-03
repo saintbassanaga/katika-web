@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-
-interface NavItem { key: string; route: string; }
+import { NavItem } from '@shared/models/model';
 
 const NAV_ITEMS: NavItem[] = [
   { key: 'home',     route: '/dashboard' },

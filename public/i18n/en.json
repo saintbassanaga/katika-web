@@ -510,7 +510,7 @@
       "submit": "Create transaction",
       "submitting": "Creating…",
       "phoneError": "Phone required",
-      "amountMin": "Minimum 100 XAF",
+      "amountMin": "Minimum 25 XAF",
       "amountMax": "Maximum 10,000,000 XAF",
       "maxChars": "Max. 500 characters",
       "deadlineHint": "The buyer must confirm receipt before this date."

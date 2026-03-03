@@ -6,17 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthService, UpdateProfileRequest, UserProfile } from './auth.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../notification/toast.service';
+import { AuthState } from '@shared/models/model';
 
 const ROLE_KEY = 'katika_role';
-
-interface AuthState {
-  user: UserProfile | null;
-  storedRole: string | null;
-  mfaRequired: boolean;
-  challengeId: string | null;
-  loading: boolean;
-  initialized: boolean;
-}
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -52,12 +44,17 @@ export const AuthStore = signalStore(
   withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService), translate = inject(TranslateService)) => ({
 
     async init(): Promise<void> {
+      if (!sessionStorage.getItem(ROLE_KEY)) {
+        patchState(store, { initialized: true });
+        return;
+      }
       try {
         const user = await firstValueFrom(svc.getMe());
         const storedRole = user.role ?? sessionStorage.getItem(ROLE_KEY);
         if (storedRole) sessionStorage.setItem(ROLE_KEY, storedRole);
         patchState(store, { user, storedRole, initialized: true });
       } catch {
+        sessionStorage.removeItem(ROLE_KEY);
         patchState(store, { initialized: true });
       }
     },

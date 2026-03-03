@@ -6,35 +6,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { BottomSheetComponent } from '@shared/components/bottom-sheet/bottom-sheet.component';
 import { TranslatePipe } from '@ngx-translate/core';
-
-type MovementType =
-  | 'ESCROW_FREEZE'   | 'ESCROW_UNFREEZE'  | 'ESCROW_CREDIT'
-  | 'REFUND_UNFREEZE' | 'REFUND_CREDIT'
-  | 'DISPUTE_FREEZE'  | 'DISPUTE_REFUND_BUYER' | 'DISPUTE_RELEASE_SELLER'
-  | 'DISPUTE_SPLIT_BUYER' | 'DISPUTE_SPLIT_SELLER'
-  | 'PAYOUT_DEBIT'    | 'PAYOUT_REVERSAL'
-  | 'DEPOSIT_CREDIT'  | 'PLATFORM_FEE_CREDIT'
-  | 'FEE_DEBIT'       | 'FEE_CREDIT'
-  | 'ADMIN_CREDIT'    | 'ADMIN_DEBIT';
-
-interface WalletBalance {
-  balance: number;
-  frozenAmount: number;
-  currency: string;
-}
-
-interface WalletMovement {
-  id: string;
-  type: MovementType;
-  amount: number;
-  balanceBefore: number;
-  balanceAfter: number;
-  frozenBefore: number;
-  frozenAfter: number;
-  reference: string;
-  description: string;
-  createdAt: string;
-}
+import { MovementType, WalletBalance, WalletMovement } from '@shared/models/model';
 
 const TYPE_FILTERS: { labelKey: string; types: string }[] = [
   {
