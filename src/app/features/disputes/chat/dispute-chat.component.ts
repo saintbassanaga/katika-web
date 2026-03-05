@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -17,7 +17,6 @@ import { StompSubscription } from '@stomp/stompjs';
 
 import {
   DisputeService,
-  DisputeEvidenceResponse,
   DisputeResponse,
   DisputeMessage,
   DisputeStatusEvent,
@@ -204,24 +203,6 @@ import { TimelineStep } from '@shared/models/model';
         >
           <div class="flex flex-col gap-2.5 min-h-full">
 
-            @for (ev of evidence(); track ev.id) {
-              <div class="flex justify-center px-2">
-                <div class="max-w-[85%] bg-white border border-slate-200 rounded-2xl px-3 py-2.5 shadow-sm flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 text-slate-500">
-                    @if (ev.mimeType.startsWith('image/')) {
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                    } @else {
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    }
-                  </div>
-                  <div class="min-w-0">
-                    <p class="text-xs font-semibold text-slate-800 truncate m-0">{{ ev.originalFileName }}</p>
-                    <p class="text-[10px] text-slate-400 m-0">{{ ev.uploaderName }} · {{ ev.createdAt | timeAgo }}</p>
-                  </div>
-                </div>
-              </div>
-            }
-
             @for (msg of messages(); track msg.id) {
 
               @if (isStaffMessage(msg)) {
@@ -252,7 +233,7 @@ import { TimelineStep } from '@shared/models/model';
                       [class.bg-indigo-50]="msg.messageType !== 'SYSTEM'"
                       [class.border-indigo-200]="msg.messageType !== 'SYSTEM'"
                     >
-                      <p class="text-sm italic wrap-break-word whitespace-pre-wrap m-0"
+                      <p class="text-sm italic break-words whitespace-pre-wrap m-0"
                         [class.text-amber-800]="msg.messageType === 'SYSTEM'"
                         [class.text-indigo-800]="msg.messageType !== 'SYSTEM'"
                       >{{ msg.content }}</p>
@@ -277,7 +258,7 @@ import { TimelineStep } from '@shared/models/model';
                     @if (!isOwnMessage(msg)) {
                       <p class="text-xs font-bold text-primary mb-1 m-0">{{ msg.senderName }}</p>
                     }
-                    <p class="text-sm wrap-break-word whitespace-pre-wrap m-0">{{ msg.content }}</p>
+                    <p class="text-sm break-words whitespace-pre-wrap m-0">{{ msg.content }}</p>
                     <p class="text-[10px] mt-1 text-right opacity-60 m-0">{{ msg.createdAt | timeAgo }}</p>
                   </div>
                 </div>
@@ -290,57 +271,25 @@ import { TimelineStep } from '@shared/models/model';
 
         <!-- ═══════════════════ INPUT ═══════════════════ -->
         @if (!isTerminal() && dispute()?.status !== 'REFERRED_TO_ARBITRATION') {
-          <div class="bg-white border-t border-slate-100 px-3 py-2.5 flex flex-col gap-2 shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
-
-            <!-- Upload progress -->
-            @if (uploading()) {
-              <div class="flex items-center gap-2 text-xs text-slate-500 px-1">
-                <span class="w-3.5 h-3.5 border-2 border-slate-300 border-t-primary rounded-full animate-spin shrink-0"></span>
-                {{ 'disputes.chat.uploading' | translate }}
-              </div>
-            }
-
-            <div class="flex gap-2 items-end">
-              <!-- Hidden file input -->
-              <input
-                #fileInput
-                type="file"
-                class="hidden"
-                accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,text/plain"
-                (change)="onFileSelected($event)"
-              />
-
-              <!-- Attach button -->
-              <button
-                (click)="fileInput.click()"
-                [disabled]="uploading()"
-                title="{{ 'disputes.chat.attach' | translate }}"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 shrink-0 transition-all active:scale-95 disabled:opacity-40 border-2 border-slate-200 hover:border-primary hover:text-primary"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                  <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                </svg>
-              </button>
-
-              <textarea
-                [(ngModel)]="messageText"
-                (input)="onTyping()"
-                (keydown.enter)="$event.preventDefault(); sendMessage()"
-                [placeholder]="'disputes.chat.placeholder' | translate"
-                rows="1"
-                class="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors max-h-28 overflow-y-auto"
-              ></textarea>
-              <button
-                (click)="sendMessage()"
-                [disabled]="!messageText.trim() || sending()"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 transition-all active:scale-95 disabled:opacity-40"
-                style="background: var(--clr-primary)"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                  <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-                </svg>
-              </button>
-            </div>
+          <div class="bg-white border-t border-slate-100 px-3 py-2.5 flex gap-2 items-end shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
+            <textarea
+              [(ngModel)]="messageText"
+              (input)="onTyping()"
+              (keydown.enter)="$event.preventDefault(); sendMessage()"
+              [placeholder]="'disputes.chat.placeholder' | translate"
+              rows="1"
+              class="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors max-h-28 overflow-y-auto"
+            ></textarea>
+            <button
+              (click)="sendMessage()"
+              [disabled]="!messageText.trim() || sending()"
+              class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 transition-all active:scale-95 disabled:opacity-40"
+              style="background: var(--clr-primary)"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+              </svg>
+            </button>
           </div>
         }
 
@@ -349,7 +298,7 @@ import { TimelineStep } from '@shared/models/model';
       <!-- ═══════════════════════════════════════════════════════════
            RIGHT COLUMN — Details + Status timeline (desktop only)
            ══════════════════════════════════════════════════════════ -->
-      <div class="hidden md:flex flex-col w-85 border-l border-slate-100 bg-white shrink-0 overflow-y-auto">
+      <div class="hidden md:flex flex-col w-[340px] border-l border-slate-100 bg-white shrink-0 overflow-y-auto">
 
         <!-- Panel header -->
         <div class="sticky top-0 bg-white z-10 px-4 py-3 border-b border-slate-100">
@@ -458,7 +407,7 @@ import { TimelineStep } from '@shared/models/model';
 
               <!-- Vertical connector (hidden on last item) -->
               @if (!isLast) {
-                <div class="absolute left-2.75 top-6 bottom-0 w-0.5 rounded-full transition-colors"
+                <div class="absolute left-[11px] top-6 bottom-0 w-0.5 rounded-full transition-colors"
                      [class.bg-primary]="step.state === 'completed'"
                      [class.bg-slate-200]="step.state !== 'completed'"></div>
               }
@@ -516,11 +465,9 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   protected readonly disputeId   = signal('');
   protected readonly dispute     = signal<DisputeResponse | null>(null);
   protected readonly messages    = signal<DisputeMessage[]>([]);
-  protected readonly evidence    = signal<DisputeEvidenceResponse[]>([]);
   protected readonly typingUsers = signal<string[]>([]);
   protected readonly sending     = signal(false);
   protected readonly paying      = signal(false);
-  protected readonly uploading   = signal(false);
   protected readonly countdown   = signal('');
 
   protected messageText = '';
@@ -528,7 +475,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   private messageSub?: StompSubscription;
   private statusSub?: StompSubscription;
   private typingSub?: StompSubscription;
-  private evidenceSub?: StompSubscription;
   private typingTimeout?: ReturnType<typeof setTimeout>;
   private countdownInterval?: ReturnType<typeof setInterval>;
   private isNearBottomState = true;
@@ -672,13 +618,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
           );
         });
 
-      this.evidenceSub = this.stomp.subscribe(`/topic/dispute.${id}.evidence`);
-      this.stomp.on<DisputeEvidenceResponse>(`/topic/dispute.${id}.evidence`)
-        .subscribe(ev => {
-          this.evidence.update(list => [...list, ev]);
-          setTimeout(() => { if (this.isNearBottomState) this.scrollToBottom(); }, 50);
-        });
-
     } catch {
       // handled by error interceptor toast
     }
@@ -693,7 +632,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     this.messageSub?.unsubscribe();
     this.statusSub?.unsubscribe();
     this.typingSub?.unsubscribe();
-    this.evidenceSub?.unsubscribe();
   }
 
   // ── Arbitration ───────────────────────────────────────────────
@@ -770,30 +708,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     const el = this.messagesContainer?.nativeElement;
     if (!el) return;
     this.isNearBottomState = (el.scrollTop + el.clientHeight) > (el.scrollHeight - 100);
-  }
-
-  // ── Evidence upload ───────────────────────────────────────────
-
-  protected onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
-    if (!file) return;
-
-    const id = this.disputeId();
-    if (!id || this.uploading()) return;
-    this.uploading.set(true);
-
-    const evidenceType = file.type.startsWith('image/') ? 'PHOTO' as const : 'DOCUMENT' as const;
-
-    this.disputeService.uploadEvidence(id, file, { evidenceType }).subscribe({
-      next: (ev) => {
-        this.evidence.update(list => [...list, ev]);
-        this.uploading.set(false);
-        setTimeout(() => { if (this.isNearBottomState) this.scrollToBottom(); }, 50);
-      },
-      error: () => this.uploading.set(false),
-    });
   }
 
   // ── Helpers ───────────────────────────────────────────────────
