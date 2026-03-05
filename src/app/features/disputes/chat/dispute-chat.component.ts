@@ -35,8 +35,9 @@ type FeedItem =
   | { kind: 'evidence'; data: DisputeEvidenceResponse };
 
 const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string }[] = [
-  { value: 'PHOTO',      label: 'Photo',            icon: '🖼️' },
+  { value: 'IMAGE',      label: 'Image',            icon: '🖼️' },
   { value: 'DOCUMENT',   label: 'Document',         icon: '📄' },
+  { value: 'RECEIPT',    label: 'Reçu',             icon: '🧾' },
   { value: 'SCREENSHOT', label: "Capture d'écran",  icon: '🖥️' },
   { value: 'VIDEO',      label: 'Vidéo',            icon: '🎥' },
   { value: 'OTHER',      label: 'Autre',            icon: '📎' },

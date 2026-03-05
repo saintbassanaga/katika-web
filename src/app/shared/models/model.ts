@@ -242,7 +242,7 @@ export interface DisputeStatusEvent {
   timestamp: string;
 }
 
-export type EvidenceType = 'PHOTO' | 'DOCUMENT' | 'SCREENSHOT' | 'VIDEO' | 'OTHER';
+export type EvidenceType = 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'RECEIPT' | 'SCREENSHOT' | 'OTHER';
 
 export interface DisputeEvidenceRequest {
   evidenceType: EvidenceType;
