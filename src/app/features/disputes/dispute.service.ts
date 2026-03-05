@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
-import { Page } from '@features/escrow/escrow.service';
+import { Page } from '@app/models';
 
 export type DisputeStatus =
   | 'OPENED' | 'UNDER_REVIEW' | 'AWAITING_BUYER' | 'AWAITING_SELLER'

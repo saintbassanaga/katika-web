@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { ToastService } from '@core/notification/toast.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { DisputeService, DisputeResponse } from '@features/disputes/dispute.service';
 
 const RESOLUTIONS = [
   { value: 'FULL_REFUND_BUYER',     label: 'Remboursement total à l\'acheteur' },
@@ -76,11 +77,13 @@ const RESOLUTIONS = [
 export class DisputeResolutionComponent implements OnInit {
   readonly id = input<string>('');
 
-  private readonly http = inject(HttpClient);
-  private readonly toast = inject(ToastService);
-  private readonly fb = inject(FormBuilder);
+  private readonly http          = inject(HttpClient);
+  private readonly toast         = inject(ToastService);
+  private readonly fb            = inject(FormBuilder);
+  private readonly disputeService = inject(DisputeService);
 
-  protected readonly loading = signal(false);
+  protected readonly loading  = signal(false);
+  protected readonly dispute  = signal<DisputeResponse | null>(null);
   protected readonly resolutions = RESOLUTIONS;
 
   protected readonly form = this.fb.group({
@@ -89,7 +92,13 @@ export class DisputeResolutionComponent implements OnInit {
     claimedAmount: [null as number | null],
   });
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const id = this.id();
+    if (!id) return;
+    this.disputeService.getDispute(id).subscribe({
+      next: (d) => this.dispute.set(d),
+    });
+  }
 
   protected onSubmit(): void {
     if (this.form.invalid) return;

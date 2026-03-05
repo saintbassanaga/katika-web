@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
-import { Page } from '@features/escrow/escrow.service';
+import { Page, TransactionSummary } from '@app/models';
 import { DisputeResponse, ResolutionType } from '@features/disputes/dispute.service';
-import { TransactionSummary } from '@features/escrow/escrow.service';
 
 export interface AdminDashboardStats {
   totalUsers: number;

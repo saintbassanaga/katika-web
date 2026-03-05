@@ -1,7 +1,8 @@
 import { Component, inject, signal, OnInit, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { EscrowService, TransactionDetail } from '../escrow.service';
+import { EscrowService } from '../escrow.service';
+import { TransactionDetail } from '@app/models';
 import { AuthStore } from '@core/auth/auth.store';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
@@ -378,7 +379,7 @@ export class TransactionDetailComponent implements OnInit {
     if (!code) return;
     this.actionLoading.set(true);
     this.escrowService.release(this.id(), code).subscribe({
-      next: (tx) => {
+      next: (tx: any) => {
         this.transaction.set(tx);
         this.confirmCode.set('');
         this.actionLoading.set(false);
