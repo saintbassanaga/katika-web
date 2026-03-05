@@ -1,10 +1,12 @@
 import {
   ApplicationConfig,
   inject,
+  isDevMode,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 import {
   provideRouter,
   withComponentInputBinding,
@@ -43,6 +45,10 @@ export const appConfig: ApplicationConfig = {
         errorInterceptor,
       ]),
     ),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
     provideTranslateService({fallbackLang: 'en'}),
     ...provideTranslateHttpLoader({prefix: '/i18n/', useHttpBackend: true}),
     provideAppInitializer(async () => {
