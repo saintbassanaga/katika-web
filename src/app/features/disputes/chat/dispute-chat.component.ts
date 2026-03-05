@@ -17,7 +17,6 @@ import { StompSubscription } from '@stomp/stompjs';
 
 import {
   DisputeService,
-  DisputeEvidenceResponse,
   DisputeResponse,
   DisputeMessage,
   DisputeStatusEvent,
@@ -28,20 +27,7 @@ import { ToastService } from '@core/notification/toast.service';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
-import { EvidenceType, TimelineStep } from '@shared/models/model';
-
-type FeedItem =
-  | { kind: 'message';  data: DisputeMessage }
-  | { kind: 'evidence'; data: DisputeEvidenceResponse };
-
-const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string }[] = [
-  { value: 'IMAGE',      label: 'Image',            icon: '🖼️' },
-  { value: 'DOCUMENT',   label: 'Document',         icon: '📄' },
-  { value: 'RECEIPT',    label: 'Reçu',             icon: '🧾' },
-  { value: 'SCREENSHOT', label: "Capture d'écran",  icon: '🖥️' },
-  { value: 'VIDEO',      label: 'Vidéo',            icon: '🎥' },
-  { value: 'OTHER',      label: 'Autre',            icon: '📎' },
-];
+import { TimelineStep } from '@shared/models/model';
 
 @Component({
   selector: 'app-dispute-chat',
@@ -61,10 +47,11 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
               <path d="M19 12H5M12 5l-7 7 7 7"/>
             </svg>
           </a>
-
           <div class="flex-1 min-w-0">
             @if (dispute()) {
-              <h1 class="text-sm font-bold text-white truncate">{{ dispute()!.reference }}</h1>
+              <h1 class="text-sm font-bold text-white truncate">
+                {{ dispute()!.reference }}
+              </h1>
               @if (typingUsers().length > 0) {
                 <p class="text-xs text-blue-300 truncate">{{ typingUsers()[0] }} {{ 'disputes.chat.typingOne' | translate:{ name: '' } }}</p>
               } @else {
@@ -81,8 +68,7 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
           <app-status-badge [status]="dispute()?.status ?? 'OPENED'" />
         </div>
 
-        <!-- ═══════════════════ CONTEXTUAL BANNER ═══════════════════ -->
-
+        <!-- AWAITING_ARBITRATION_PAYMENT -->
         @if (dispute()?.status === 'AWAITING_ARBITRATION_PAYMENT') {
           <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-orange-400 overflow-hidden animate-fade">
             <div class="px-4 py-3.5">
@@ -152,6 +138,7 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
           </div>
         }
 
+        <!-- REFERRED_TO_ARBITRATION -->
         @if (dispute()?.status === 'REFERRED_TO_ARBITRATION') {
           <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-violet-500 overflow-hidden animate-fade">
             <div class="px-4 py-3.5">
@@ -163,16 +150,22 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
                 </div>
               </div>
               <div class="flex gap-4 mt-2">
-                <div class="flex items-center gap-1.5 text-xs text-success"><span class="text-base">✓</span>{{ 'disputes.arbitration.buyerPaid' | translate }}</div>
-                <div class="flex items-center gap-1.5 text-xs text-success"><span class="text-base">✓</span>{{ 'disputes.arbitration.sellerPaid' | translate }}</div>
+                <div class="flex items-center gap-1.5 text-xs text-success">
+                  <span class="text-base">✓</span>{{ 'disputes.arbitration.buyerPaid' | translate }}
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-success">
+                  <span class="text-base">✓</span>{{ 'disputes.arbitration.sellerPaid' | translate }}
+                </div>
               </div>
               <p class="text-xs text-slate-400 mt-2 m-0">{{ 'disputes.arbitration.referredEmail' | translate }}</p>
             </div>
           </div>
         }
 
+        <!-- TERMINAL outcome banner -->
         @if (isTerminal()) {
-          <div class="shrink-0 mx-3 mt-3 rounded-2xl overflow-hidden animate-fade" [class]="terminalBannerClass()">
+          <div class="shrink-0 mx-3 mt-3 rounded-2xl overflow-hidden animate-fade"
+               [class]="terminalBannerClass()">
             <div class="px-4 py-3">
               <div class="flex items-center gap-2.5">
                 <span class="text-xl">{{ terminalIcon() }}</span>
@@ -190,96 +183,65 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
           </div>
         }
 
-        <!-- ═══════════════════ FEED (messages + evidence) ═══════════════════ -->
-        <div
-          #messagesContainer
-          class="flex-1 overflow-y-auto px-3 py-3 scroll-smooth"
-          (scroll)="onScroll()"
-        >
+        <!-- MESSAGES -->
+        <div #messagesContainer class="flex-1 overflow-y-auto px-3 py-3 scroll-smooth" (scroll)="onScroll()">
           <div class="flex flex-col gap-2.5 min-h-full">
 
-            @for (item of feed(); track item.kind + item.data.id) {
-
-              @if (item.kind === 'evidence') {
-                <!-- Evidence card — centred -->
+            @for (msg of messages(); track msg.id) {
+              @if (isStaffMessage(msg)) {
                 <div class="flex justify-center px-2">
-                  <div class="max-w-[80%] bg-white border border-indigo-100 rounded-2xl px-3 py-2.5 shadow-sm flex items-center gap-3 animate-fade">
-                    <div class="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center text-xl"
-                         [class.bg-blue-50]="item.data.mimeType.startsWith('image/')"
-                         [class.bg-slate-50]="!item.data.mimeType.startsWith('image/')">
-                      {{ evidenceIcon(item.data) }}
+                  <div class="max-w-[80%] flex flex-col items-center gap-1">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
+                      [class.bg-amber-100]="msg.messageType === 'SYSTEM'"
+                      [class.text-amber-700]="msg.messageType === 'SYSTEM'"
+                      [class.bg-indigo-100]="msg.messageType !== 'SYSTEM'"
+                      [class.text-indigo-700]="msg.messageType !== 'SYSTEM'"
+                    >
+                      @if (msg.messageType === 'SYSTEM') {
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        {{ 'disputes.chat.system' | translate }}
+                      } @else {
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        {{ msg.senderRole | titlecase }} · {{ msg.senderName }}
+                      }
+                    </span>
+                    <div class="rounded-2xl px-4 py-2.5 text-center border"
+                      [class.bg-amber-50]="msg.messageType === 'SYSTEM'"
+                      [class.border-amber-200]="msg.messageType === 'SYSTEM'"
+                      [class.bg-indigo-50]="msg.messageType !== 'SYSTEM'"
+                      [class.border-indigo-200]="msg.messageType !== 'SYSTEM'"
+                    >
+                      <p class="text-sm italic wrap-break-word whitespace-pre-wrap m-0"
+                        [class.text-amber-800]="msg.messageType === 'SYSTEM'"
+                        [class.text-indigo-800]="msg.messageType !== 'SYSTEM'"
+                      >{{ msg.content }}</p>
+                      <p class="text-[10px] mt-1 opacity-60 m-0"
+                        [class.text-amber-600]="msg.messageType === 'SYSTEM'"
+                        [class.text-indigo-600]="msg.messageType !== 'SYSTEM'"
+                      >{{ msg.createdAt | timeAgo }}</p>
                     </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="text-xs font-semibold text-slate-800 truncate m-0">{{ item.data.originalFileName }}</p>
-                      <p class="text-[10px] text-slate-400 m-0 mt-0.5">
-                        {{ item.data.uploaderName }} · {{ item.data.evidenceType | titlecase }}
-                        @if (item.data.description) { · {{ item.data.description }} }
-                      </p>
-                      <p class="text-[10px] text-slate-300 m-0">{{ item.data.createdAt | timeAgo }} · {{ formatFileSize(item.data.fileSize) }}</p>
-                    </div>
-                    <span class="text-[10px] font-semibold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full shrink-0">Preuve</span>
                   </div>
                 </div>
-
               } @else {
-                @if (isStaffMessage(item.data)) {
-                  <!-- System / Support / Admin — centred -->
-                  <div class="flex justify-center px-2">
-                    <div class="max-w-[80%] flex flex-col items-center gap-1">
-                      <span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
-                        [class.bg-amber-100]="item.data.messageType === 'SYSTEM'"
-                        [class.text-amber-700]="item.data.messageType === 'SYSTEM'"
-                        [class.bg-indigo-100]="item.data.messageType !== 'SYSTEM'"
-                        [class.text-indigo-700]="item.data.messageType !== 'SYSTEM'"
-                      >
-                        @if (item.data.messageType === 'SYSTEM') {
-                          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                          </svg>
-                          {{ 'disputes.chat.system' | translate }}
-                        } @else {
-                          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                          </svg>
-                          {{ item.data.senderRole | titlecase }} · {{ item.data.senderName }}
-                        }
-                      </span>
-                      <div class="rounded-2xl px-4 py-2.5 text-center border"
-                        [class.bg-amber-50]="item.data.messageType === 'SYSTEM'"
-                        [class.border-amber-200]="item.data.messageType === 'SYSTEM'"
-                        [class.bg-indigo-50]="item.data.messageType !== 'SYSTEM'"
-                        [class.border-indigo-200]="item.data.messageType !== 'SYSTEM'"
-                      >
-                        <p class="text-sm italic wrap-break-word whitespace-pre-wrap m-0"
-                          [class.text-amber-800]="item.data.messageType === 'SYSTEM'"
-                          [class.text-indigo-800]="item.data.messageType !== 'SYSTEM'"
-                        >{{ item.data.content }}</p>
-                        <p class="text-[10px] mt-1 opacity-60 m-0"
-                          [class.text-amber-600]="item.data.messageType === 'SYSTEM'"
-                          [class.text-indigo-600]="item.data.messageType !== 'SYSTEM'"
-                        >{{ item.data.createdAt | timeAgo }}</p>
-                      </div>
-                    </div>
+                <div class="flex w-full" [class.justify-end]="isOwnMessage(msg)">
+                  <div class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,.08)]"
+                    [class.bg-primary]="isOwnMessage(msg)"
+                    [class.text-white]="isOwnMessage(msg)"
+                    [class.rounded-br-md]="isOwnMessage(msg)"
+                    [class.bg-white]="!isOwnMessage(msg)"
+                    [class.rounded-bl-md]="!isOwnMessage(msg)"
+                  >
+                    @if (!isOwnMessage(msg)) {
+                      <p class="text-xs font-bold text-primary mb-1 m-0">{{ msg.senderName }}</p>
+                    }
+                    <p class="text-sm wrap-break-word whitespace-pre-wrap m-0">{{ msg.content }}</p>
+                    <p class="text-[10px] mt-1 text-right opacity-60 m-0">{{ msg.createdAt | timeAgo }}</p>
                   </div>
-
-                } @else {
-                  <!-- User message — left / right -->
-                  <div class="flex w-full" [class.justify-end]="isOwnMessage(item.data)">
-                    <div class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,.08)]"
-                      [class.bg-primary]="isOwnMessage(item.data)"
-                      [class.text-white]="isOwnMessage(item.data)"
-                      [class.rounded-br-md]="isOwnMessage(item.data)"
-                      [class.bg-white]="!isOwnMessage(item.data)"
-                      [class.rounded-bl-md]="!isOwnMessage(item.data)"
-                    >
-                      @if (!isOwnMessage(item.data)) {
-                        <p class="text-xs font-bold text-primary mb-1 m-0">{{ item.data.senderName }}</p>
-                      }
-                      <p class="text-sm wrap-break-word whitespace-pre-wrap m-0">{{ item.data.content }}</p>
-                      <p class="text-[10px] mt-1 text-right opacity-60 m-0">{{ item.data.createdAt | timeAgo }}</p>
-                    </div>
-                  </div>
-                }
+                </div>
               }
             }
 
@@ -287,21 +249,9 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
           </div>
         </div>
 
-        <!-- ═══════════════════ INPUT ═══════════════════ -->
+        <!-- INPUT -->
         @if (!isTerminal() && dispute()?.status !== 'REFERRED_TO_ARBITRATION') {
           <div class="bg-white border-t border-slate-100 px-3 py-2.5 flex gap-2 items-end shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
-
-            <!-- Attach button -->
-            <button
-              (click)="openEvidenceModal()"
-              title="{{ 'disputes.chat.attach' | translate }}"
-              class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 shrink-0 transition-all active:scale-95 border-2 border-slate-200 hover:border-primary hover:text-primary"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-              </svg>
-            </button>
-
             <textarea
               [(ngModel)]="messageText"
               (input)="onTyping()"
@@ -310,7 +260,6 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
               rows="1"
               class="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors max-h-28 overflow-y-auto"
             ></textarea>
-
             <button
               (click)="sendMessage()"
               [disabled]="!messageText.trim() || sending()"
@@ -326,9 +275,7 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
 
       </div><!-- end left column -->
 
-      <!-- ═══════════════════════════════════════════════════════════
-           RIGHT COLUMN — Details + Status timeline (desktop only)
-           ══════════════════════════════════════════════════════════ -->
+      <!-- RIGHT COLUMN -->
       <div class="hidden md:flex flex-col w-85 border-l border-slate-100 bg-white shrink-0 overflow-y-auto">
 
         <div class="sticky top-0 bg-white z-10 px-4 py-3 border-b border-slate-100">
@@ -451,150 +398,6 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string; icon: string 
       </div><!-- end right column -->
 
     </div>
-
-    <!-- ═══════════════════ EVIDENCE MODAL ═══════════════════ -->
-    @if (showEvidenceModal()) {
-      <div
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade"
-        (click)="closeEvidenceModal()"
-      >
-        <div
-          class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
-          (click)="$event.stopPropagation()"
-        >
-
-          <!-- Modal header -->
-          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-base">📎</div>
-              <p class="text-sm font-bold text-slate-900 m-0">Ajouter une preuve</p>
-            </div>
-            <button
-              (click)="closeEvidenceModal()"
-              class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
-                <path d="M18 6 6 18M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Modal body -->
-          <div class="px-5 py-4 space-y-4">
-
-            <!-- Hidden file input -->
-            <input
-              #modalFileInput
-              type="file"
-              class="hidden"
-              accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,text/plain"
-              (change)="onModalFileChange($event)"
-            />
-
-            <!-- File pick zone -->
-            @if (!modalFile) {
-              <div
-                (click)="modalFileInput.click()"
-                class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center gap-2 cursor-pointer hover:border-primary hover:bg-slate-50 transition-all"
-              >
-                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
-                </div>
-                <p class="text-sm font-medium text-slate-600 m-0">Cliquer pour choisir un fichier</p>
-                <p class="text-xs text-slate-400 m-0">JPG, PNG, GIF, WebP, PDF, TXT — max 10 Mo</p>
-              </div>
-            } @else {
-              <!-- Selected file preview -->
-              <div class="bg-slate-50 rounded-xl px-4 py-3 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-lg shrink-0">
-                  {{ evidenceIconFromMime(modalFile.type) }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold text-slate-800 truncate m-0">{{ modalFile.name }}</p>
-                  <p class="text-xs text-slate-400 m-0">{{ formatFileSize(modalFile.size) }}</p>
-                </div>
-                <button
-                  (click)="modalFile = null"
-                  class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-200 transition-colors shrink-0"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
-                    <path d="M18 6 6 18M6 6l12 12"/>
-                  </svg>
-                </button>
-              </div>
-            }
-
-            @if (modalFileError()) {
-              <p class="text-xs text-red-600 m-0 px-1">⚠️ {{ modalFileError() }}</p>
-            }
-
-            <!-- Evidence type -->
-            <div>
-              <label class="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2 block">Type de preuve</label>
-              <div class="grid grid-cols-3 gap-2">
-                @for (opt of evidenceTypeOptions; track opt.value) {
-                  <button
-                    type="button"
-                    (click)="modalEvidenceType = opt.value"
-                    class="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl border-2 text-center transition-all"
-                    [class.border-primary]="modalEvidenceType === opt.value"
-                    [class.bg-blue-50]="modalEvidenceType === opt.value"
-                    [class.border-slate-200]="modalEvidenceType !== opt.value"
-                    [class.bg-white]="modalEvidenceType !== opt.value"
-                  >
-                    <span class="text-xl leading-none">{{ opt.icon }}</span>
-                    <span class="text-[10px] font-semibold leading-tight"
-                          [class.text-primary]="modalEvidenceType === opt.value"
-                          [class.text-slate-500]="modalEvidenceType !== opt.value">{{ opt.label }}</span>
-                  </button>
-                }
-              </div>
-            </div>
-
-            <!-- Description -->
-            <div>
-              <label class="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1.5 block">
-                Description <span class="text-slate-400 normal-case font-normal">(optionnel)</span>
-              </label>
-              <textarea
-                [(ngModel)]="modalDescription"
-                placeholder="Décrivez brièvement cette preuve…"
-                rows="2"
-                maxlength="500"
-                class="w-full px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors"
-              ></textarea>
-            </div>
-
-          </div>
-
-          <!-- Modal footer -->
-          <div class="px-5 py-4 border-t border-slate-100 flex gap-3">
-            <button
-              (click)="closeEvidenceModal()"
-              class="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-            >
-              Annuler
-            </button>
-            <button
-              (click)="submitEvidence()"
-              [disabled]="!modalFile || uploading()"
-              class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              style="background: var(--clr-primary)"
-            >
-              @if (uploading()) {
-                <span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
-                Envoi…
-              } @else {
-                Envoyer la preuve
-              }
-            </button>
-          </div>
-
-        </div>
-      </div>
-    }
   `,
 })
 export class DisputeChatComponent implements OnInit, OnDestroy {
@@ -611,40 +414,19 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   protected readonly disputeId   = signal('');
   protected readonly dispute     = signal<DisputeResponse | null>(null);
   protected readonly messages    = signal<DisputeMessage[]>([]);
-  protected readonly evidenceList = signal<DisputeEvidenceResponse[]>([]);
   protected readonly typingUsers = signal<string[]>([]);
   protected readonly sending     = signal(false);
   protected readonly paying      = signal(false);
-  protected readonly uploading   = signal(false);
   protected readonly countdown   = signal('');
-
-  // ── Evidence modal state ──────────────────────────────────────
-  protected readonly showEvidenceModal = signal(false);
-  protected readonly modalFileError    = signal('');
-  protected modalFile: File | null     = null;
-  protected modalEvidenceType: EvidenceType = 'DOCUMENT';
-  protected modalDescription           = '';
-  protected readonly evidenceTypeOptions = EVIDENCE_TYPE_OPTIONS;
 
   protected messageText = '';
 
   private messageSub?: StompSubscription;
   private statusSub?: StompSubscription;
   private typingSub?: StompSubscription;
-  private evidenceSub?: StompSubscription;
   private typingTimeout?: ReturnType<typeof setTimeout>;
   private countdownInterval?: ReturnType<typeof setInterval>;
   private isNearBottomState = true;
-
-  // ── Combined feed (messages + evidence sorted by createdAt) ───
-
-  protected readonly feed = computed((): FeedItem[] => {
-    const msgs: FeedItem[] = this.messages().map(m => ({ kind: 'message',  data: m }));
-    const evs: FeedItem[]  = this.evidenceList().map(e => ({ kind: 'evidence', data: e }));
-    return [...msgs, ...evs].sort((a, b) => a.data.createdAt.localeCompare(b.data.createdAt));
-  });
-
-  // ── Computed helpers ──────────────────────────────────────────
 
   protected readonly deadlinePassed = computed(() => {
     const d = this.dispute()?.submissionDeadline;
@@ -663,8 +445,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     return s === 'RESOLVED_BUYER' || s === 'RESOLVED_SELLER'
         || s === 'RESOLVED_SPLIT' || s === 'CLOSED_NO_ACTION' || s === 'CANCELLED';
   });
-
-  // ── Status timeline ───────────────────────────────────────────
 
   private readonly TIMELINE_STEPS = [
     { key: 'OPENED',                       labelKey: 'status.OPENED' },
@@ -696,8 +476,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
       state: idx < currentIdx ? 'completed' : idx === currentIdx ? 'current' : 'pending',
     }));
   });
-
-  // ── Terminal banner helpers ───────────────────────────────────
 
   protected terminalBannerClass(): string {
     const d = this.dispute();
@@ -738,11 +516,10 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     return 'disputes.arbitration.resolvedBuyer';
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────────
-
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
+
     this.disputeId.set(id);
 
     try {
@@ -781,13 +558,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
           );
         });
 
-      this.evidenceSub = this.stomp.subscribe(`/topic/dispute.${id}.evidence`);
-      this.stomp.on<DisputeEvidenceResponse>(`/topic/dispute.${id}.evidence`)
-        .subscribe(ev => {
-          this.evidenceList.update(list => [...list, ev]);
-          setTimeout(() => { if (this.isNearBottomState) this.scrollToBottom(); }, 50);
-        });
-
     } catch {
       // handled by error interceptor toast
     }
@@ -802,10 +572,7 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     this.messageSub?.unsubscribe();
     this.statusSub?.unsubscribe();
     this.typingSub?.unsubscribe();
-    this.evidenceSub?.unsubscribe();
   }
-
-  // ── Arbitration ───────────────────────────────────────────────
 
   protected payArbitrationFee(): void {
     const id = this.disputeId();
@@ -822,8 +589,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
       error: () => this.paying.set(false),
     });
   }
-
-  // ── Countdown timer ───────────────────────────────────────────
 
   private startCountdown(): void {
     clearInterval(this.countdownInterval);
@@ -847,8 +612,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     tick();
     this.countdownInterval = setInterval(tick, 1_000);
   }
-
-  // ── Messaging ─────────────────────────────────────────────────
 
   protected sendMessage(): void {
     const content = this.messageText.trim();
@@ -879,75 +642,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     this.isNearBottomState = (el.scrollTop + el.clientHeight) > (el.scrollHeight - 100);
   }
 
-  // ── Evidence modal ────────────────────────────────────────────
-
-  protected openEvidenceModal(): void {
-    this.modalFile = null;
-    this.modalEvidenceType = 'DOCUMENT';
-    this.modalDescription = '';
-    this.modalFileError.set('');
-    this.showEvidenceModal.set(true);
-  }
-
-  protected closeEvidenceModal(): void {
-    if (this.uploading()) return;
-    this.showEvidenceModal.set(false);
-  }
-
-  protected onModalFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    input.value = '';
-    this.modalFileError.set('');
-
-    if (!file) return;
-
-    if (file.size > 10 * 1024 * 1024) {
-      this.modalFileError.set('Le fichier dépasse la limite de 10 Mo.');
-      return;
-    }
-
-    const allowed = ['image/jpeg','image/png','image/gif','image/webp','application/pdf','text/plain'];
-    if (!allowed.includes(file.type)) {
-      this.modalFileError.set('Type de fichier non autorisé (JPG, PNG, GIF, WebP, PDF, TXT).');
-      return;
-    }
-
-    this.modalFile = file;
-
-    // Auto-select evidence type from MIME
-    if (file.type.startsWith('image/')) this.modalEvidenceType = 'PHOTO';
-    else if (file.type === 'application/pdf') this.modalEvidenceType = 'DOCUMENT';
-  }
-
-  protected submitEvidence(): void {
-    if (!this.modalFile || this.uploading()) return;
-    const id = this.disputeId();
-    if (!id) return;
-
-    this.uploading.set(true);
-    this.modalFileError.set('');
-
-    this.disputeService.uploadEvidence(id, this.modalFile, {
-      evidenceType: this.modalEvidenceType,
-      description: this.modalDescription.trim() || undefined,
-    }).subscribe({
-      next: (ev) => {
-        this.evidenceList.update(list => [...list, ev]);
-        this.uploading.set(false);
-        this.showEvidenceModal.set(false);
-        this.toast.success('Preuve ajoutée avec succès.');
-        setTimeout(() => { if (this.isNearBottomState) this.scrollToBottom(); }, 50);
-      },
-      error: () => {
-        this.uploading.set(false);
-        this.modalFileError.set('Échec de l\'envoi. Veuillez réessayer.');
-      },
-    });
-  }
-
-  // ── Helpers ───────────────────────────────────────────────────
-
   protected isBuyer(): boolean {
     const d = this.dispute();
     const uid = this.auth.user()?.userId;
@@ -967,23 +661,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   protected isStaffMessage(msg: DisputeMessage): boolean {
     return msg.messageType === 'SYSTEM'
         || DisputeChatComponent.STAFF_ROLES.has(msg.senderRole?.toUpperCase());
-  }
-
-  protected evidenceIcon(ev: DisputeEvidenceResponse): string {
-    return this.evidenceIconFromMime(ev.mimeType);
-  }
-
-  protected evidenceIconFromMime(mime: string): string {
-    if (mime.startsWith('image/')) return '🖼️';
-    if (mime === 'application/pdf') return '📄';
-    if (mime === 'text/plain') return '📝';
-    return '📎';
-  }
-
-  protected formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
   }
 
   private scrollToBottom(): void {
