@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
 import {
   CreateDisputeRequest,
+  DisputeEvidenceRequest,
+  DisputeEvidenceResponse,
   DisputeMessage,
   DisputeReason,
   DisputeResponse,
@@ -15,6 +17,8 @@ import {
 
 export type {
   CreateDisputeRequest,
+  DisputeEvidenceRequest,
+  DisputeEvidenceResponse,
   DisputeMessage,
   DisputeReason,
   DisputeResponse,
@@ -73,9 +77,18 @@ export class DisputeService extends ApiService {
     );
   }
 
-  uploadEvidence(disputeId: string, files: File[]): Observable<void> {
+  uploadEvidence(
+    disputeId: string,
+    file: File,
+    request: DisputeEvidenceRequest,
+  ): Observable<DisputeEvidenceResponse> {
     const form = new FormData();
-    files.forEach(f => form.append('files', f, f.name));
-    return this.http.post<void>(this.url(`/api/disputes/${disputeId}/evidence`), form, this.defaultOptions);
+    form.append('file', file, file.name);
+    form.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+    return this.http.post<DisputeEvidenceResponse>(
+      this.url(`/api/disputes/${disputeId}/evidence`),
+      form,
+      this.defaultOptions,
+    );
   }
 }
