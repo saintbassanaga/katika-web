@@ -242,6 +242,28 @@ export interface DisputeStatusEvent {
   timestamp: string;
 }
 
+export type EvidenceType = 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'RECEIPT' | 'SCREENSHOT' | 'OTHER';
+
+export interface DisputeEvidenceRequest {
+  evidenceType: EvidenceType;
+  description?: string;
+}
+
+export interface DisputeEvidenceResponse {
+  id: string;
+  disputeId: string;
+  uploaderId: string;
+  uploaderName: string;
+  uploaderRole: string;
+  evidenceType: EvidenceType;
+  originalFileName: string;
+  storagePath: string;
+  mimeType: string;
+  fileSize: number;
+  description: string | null;
+  createdAt: string;
+}
+
 export interface ReasonGroup {
   groupKey: string;
   reasons: { value: DisputeReason; labelKey: string; icon: string }[];
