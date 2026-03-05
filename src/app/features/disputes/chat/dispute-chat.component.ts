@@ -47,6 +47,7 @@ import { TimelineStep } from '@shared/models/model';
               <path d="M19 12H5M12 5l-7 7 7 7"/>
             </svg>
           </a>
+
           <div class="flex-1 min-w-0">
             @if (dispute()) {
               <h1 class="text-sm font-bold text-white truncate">
