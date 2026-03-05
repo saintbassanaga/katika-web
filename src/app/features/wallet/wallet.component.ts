@@ -6,7 +6,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { BottomSheetComponent } from '@shared/components/bottom-sheet/bottom-sheet.component';
 import { TranslatePipe } from '@ngx-translate/core';
-import { MovementType, WalletBalance, WalletMovement } from '@app/models';
+import { MovementType, WalletBalance, WalletMovement } from '@shared/models/model';
 
 const TYPE_FILTERS: { labelKey: string; types: string }[] = [
   {

@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { StatusConfig } from '@app/models';
+import { StatusConfig } from '@shared/models/model';
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
   // Escrow statuses

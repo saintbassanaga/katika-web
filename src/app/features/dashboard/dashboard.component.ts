@@ -9,29 +9,7 @@ import {StatusBadgeComponent} from '@shared/components/status-badge/status-badge
 import {environment} from '@env/environment';
 import {TranslatePipe} from '@ngx-translate/core';
 import {LangSwitcherComponent} from '@shared/components/lang-switcher/lang-switcher.component';
-
-interface TransactionSummary {
-  id: string;
-  reference: string;
-  counterpartName: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-}
-
-interface DisputeSummary {
-  id: string;
-  transactionRef: string;
-  reason: string;
-  status: string;
-  createdAt: string;
-}
-
-interface WalletInfo {
-  available: number;
-  frozen: number;
-  currency: string;
-}
+import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared/models/model';
 
 @Component({
   selector: 'app-dashboard',
@@ -953,7 +931,7 @@ export class DashboardComponent implements OnInit {
 
   protected readonly today = new Date();
   protected readonly loading = signal(true);
-  protected readonly transactions = signal<TransactionSummary[]>([]);
+  protected readonly transactions = signal<DashboardTransactionSummary[]>([]);
   protected readonly disputes = signal<DisputeSummary[]>([]);
   protected readonly wallet = signal<WalletInfo | null>(null);
 
@@ -962,7 +940,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      transactions: this.http.get<{ content: TransactionSummary[] }>(
+      transactions: this.http.get<{ content: DashboardTransactionSummary[] }>(
         `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED&page=0&size=5`,
         {withCredentials: true},
       ),

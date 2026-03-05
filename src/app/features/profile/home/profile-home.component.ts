@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { LangSwitcherComponent } from '@shared/components/lang-switcher/lang-switcher.component';
-import type { ProfileMenuItem } from '@app/models';
+import { MenuItem } from '@shared/models/model';
 
 @Component({
   selector: 'app-profile-home',

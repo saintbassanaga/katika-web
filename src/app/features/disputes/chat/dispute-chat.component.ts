@@ -27,12 +27,7 @@ import { ToastService } from '@core/notification/toast.service';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
-
-interface TimelineStep {
-  key: string;
-  labelKey: string;
-  state: 'completed' | 'current' | 'pending';
-}
+import { TimelineStep } from '@shared/models/model';
 
 @Component({
   selector: 'app-dispute-chat',

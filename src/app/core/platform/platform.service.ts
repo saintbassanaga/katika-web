@@ -1,14 +1,8 @@
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { AppPlatform } from '@shared/models/model';
 
-/**
- * Plateformes détectées par le service.
- * - 'web'     → navigateur standard
- * - 'tauri'   → desktop Tauri 2.0 (Windows / macOS / Linux)
- * - 'android' → Android natif via Tauri Mobile
- * - 'ios'     → iOS natif via Tauri Mobile
- */
-export type AppPlatform = 'web' | 'tauri' | 'android' | 'ios';
+export type { AppPlatform };
 
 function resolvePlatform(): AppPlatform {
   if (typeof window === 'undefined') return 'web';

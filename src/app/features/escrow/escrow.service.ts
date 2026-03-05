@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
 import {
-  Page,
   EscrowCreateRequest,
-  TransactionSummary,
+  Page,
   TransactionDetail,
-  ScanResponse,
-} from '@app/models';
+  TransactionSummary,
+} from '@shared/models/model';
+
+export type { EscrowCreateRequest, Page, TransactionDetail, TransactionSummary };
 
 @Injectable({ providedIn: 'root' })
 export class EscrowService extends ApiService {
@@ -43,11 +44,9 @@ export class EscrowService extends ApiService {
     );
   }
 
-  scanVerificationCode(transactionId: string, code: string): Observable<ScanResponse> {
-    return this.http.post<ScanResponse>(
-      this.url('/api/escrow/verification-code/scan'),
-      { transactionId, code },
-      this.defaultOptions,
+  release(id: string, verificationCode: string): Observable<TransactionDetail> {
+    return this.http.post<TransactionDetail>(
+      this.url(`/api/escrow/${id}/release`), { verificationCode }, this.defaultOptions,
     );
   }
 
@@ -60,12 +59,6 @@ export class EscrowService extends ApiService {
   deliver(id: string): Observable<TransactionDetail> {
     return this.http.post<TransactionDetail>(
       this.url(`/api/escrow/${id}/deliver`), {}, this.defaultOptions,
-    );
-  }
-
-  release(id: string, verificationCode: string): Observable<TransactionDetail> {
-    return this.http.post<TransactionDetail>(
-      this.url(`/api/escrow/${id}/release`), { verificationCode }, this.defaultOptions,
     );
   }
 

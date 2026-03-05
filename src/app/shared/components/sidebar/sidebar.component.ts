@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
-import { SidebarItem } from '@app/models';
+import { SidebarItem } from '@shared/models/model';
 
 const SIDEBAR_ITEMS: SidebarItem[] = [
   { key: 'home',     route: '/dashboard' },

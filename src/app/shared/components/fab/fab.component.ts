@@ -8,11 +8,7 @@ import { AuthStore } from '@core/auth/auth.store';
 import { EscrowService } from '@features/escrow/escrow.service';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
-
-interface FabConfig {
-  labelKey: string;
-  action: 'escrow';
-}
+import { FabConfig } from '@shared/models/model';
 
 @Component({
   selector: 'app-fab',
@@ -74,6 +70,12 @@ interface FabConfig {
         width: 520px; border-radius: 24px;
         bottom: 2rem;
         max-height: 88svh;
+      }
+    }
+    @media (min-width: 960px) {
+      .sheet {
+        /* center within content area, offset by sidebar width (256px) */
+        left: calc(128px + 50vw);
       }
     }
 
@@ -222,7 +224,7 @@ interface FabConfig {
             </div>
 
             <!-- Fee preview -->
-            @if (grossAmount() >= 100) {
+            @if (grossAmount() >= 25) {
               <div class="fee-preview">
                 <div class="fee-row">
                   <span class="fee-label">{{ 'fab.form.grossAmount' | translate }}</span>
@@ -336,7 +338,7 @@ export class FabComponent {
   /* ── Transaction form ────────────────────────── */
   protected readonly txForm = this.fb.group({
     buyerPhone:       ['', Validators.required],
-    grossAmount:      [null as number | null, [Validators.required, Validators.min(100), Validators.max(10_000_000)]],
+    grossAmount:      [null as number | null, [Validators.required, Validators.min(25), Validators.max(10_000_000)]],
     provider:         ['CAMPAY' as 'CAMPAY' | 'MONETBIL', Validators.required],
     description:      [''],
     deliveryDeadline: [''],
@@ -350,7 +352,7 @@ export class FabComponent {
   /* ── Fee preview ─────────────────────────────── */
   protected readonly grossAmount = computed(() => {
     const v = this.txFormValues()?.grossAmount;
-    return typeof v === 'number' && v >= 100 ? Math.floor(v) : 0;
+    return typeof v === 'number' && v >= 25 ? Math.floor(v) : 0;
   });
   protected readonly platformFee = computed(() => Math.floor(this.grossAmount() * 0.03));
   protected readonly netAmount   = computed(() => this.grossAmount() - this.platformFee());
@@ -388,7 +390,6 @@ export class FabComponent {
       this.closeSheet();
       await this.router.navigate(['/escrow', tx.id]);
     } catch {
-      // error interceptor handles toast
     } finally {
       this.loading.set(false);
     }

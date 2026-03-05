@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { ButtonVariant, ButtonSize } from '@app/models';
+import { ButtonSize, ButtonVariant } from '@shared/models/model';
 
 @Component({
   selector: 'app-button',
