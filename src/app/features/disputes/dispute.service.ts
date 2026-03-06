@@ -72,10 +72,4 @@ export class DisputeService extends ApiService {
       this.defaultOptions,
     );
   }
-
-  uploadEvidence(disputeId: string, files: File[]): Observable<void> {
-    const form = new FormData();
-    files.forEach(f => form.append('files', f, f.name));
-    return this.http.post<void>(this.url(`/api/disputes/${disputeId}/evidence`), form, this.defaultOptions);
-  }
 }

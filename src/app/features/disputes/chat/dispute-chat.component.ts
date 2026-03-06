@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TitleCasePipe, DatePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -68,8 +68,6 @@ import { TimelineStep } from '@shared/models/model';
           <app-status-badge [status]="dispute()?.status ?? 'OPENED'" />
         </div>
 
-        <!-- ═══════════════════ CONTEXTUAL BANNER ═══════════════════ -->
-
         <!-- AWAITING_ARBITRATION_PAYMENT -->
         @if (dispute()?.status === 'AWAITING_ARBITRATION_PAYMENT') {
           <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-orange-400 overflow-hidden animate-fade">
@@ -81,8 +79,6 @@ import { TimelineStep } from '@shared/models/model';
                   <p class="text-xs text-slate-500 m-0 mt-0.5">{{ 'disputes.arbitration.subtitle' | translate }}</p>
                 </div>
               </div>
-
-              <!-- Fee + countdown row -->
               <div class="grid grid-cols-2 gap-2 mb-3">
                 <div class="bg-orange-50 rounded-xl px-3 py-2.5">
                   <p class="text-[10px] font-semibold text-orange-600 uppercase tracking-wide m-0">{{ 'disputes.arbitration.fee' | translate }}</p>
@@ -97,8 +93,6 @@ import { TimelineStep } from '@shared/models/model';
                   }
                 </div>
               </div>
-
-              <!-- Party payment indicators -->
               <div class="flex gap-3 mb-3">
                 <div class="flex items-center gap-1.5 text-xs"
                      [class.text-success]="dispute()!.buyerArbitrationFeePaid"
@@ -113,8 +107,6 @@ import { TimelineStep } from '@shared/models/model';
                   {{ 'disputes.arbitration.sellerPaid' | translate }}
                 </div>
               </div>
-
-              <!-- Warning box -->
               @if (!alreadyPaid() && !deadlinePassed()) {
                 <div class="bg-amber-50 rounded-xl px-3 py-2 mb-3 border border-amber-200">
                   <p class="text-xs font-semibold text-amber-700 m-0 mb-1">⚠️ {{ 'disputes.arbitration.warning' | translate }}</p>
@@ -122,15 +114,11 @@ import { TimelineStep } from '@shared/models/model';
                   <p class="text-xs text-amber-600 m-0">• {{ 'disputes.arbitration.warningFundsReleased' | translate }}</p>
                 </div>
               }
-
-              <!-- Paid waiting state -->
               @if (alreadyPaid() && dispute()!.status === 'AWAITING_ARBITRATION_PAYMENT') {
                 <div class="bg-success-lt rounded-xl px-3 py-2 mb-3 border border-green-200">
                   <p class="text-xs font-semibold text-success m-0">✓ {{ 'disputes.arbitration.paid' | translate }}</p>
                 </div>
               }
-
-              <!-- CTA button -->
               @if (!alreadyPaid() && !deadlinePassed()) {
                 <button
                   (click)="payArbitrationFee()"
@@ -195,18 +183,12 @@ import { TimelineStep } from '@shared/models/model';
           </div>
         }
 
-        <!-- ═══════════════════ MESSAGES ═══════════════════ -->
-        <div
-          #messagesContainer
-          class="flex-1 overflow-y-auto px-3 py-3 scroll-smooth"
-          (scroll)="onScroll()"
-        >
+        <!-- MESSAGES -->
+        <div #messagesContainer class="flex-1 overflow-y-auto px-3 py-3 scroll-smooth" (scroll)="onScroll()">
           <div class="flex flex-col gap-2.5 min-h-full">
 
             @for (msg of messages(); track msg.id) {
-
               @if (isStaffMessage(msg)) {
-                <!-- System / Support / Admin — centred -->
                 <div class="flex justify-center px-2">
                   <div class="max-w-[80%] flex flex-col items-center gap-1">
                     <span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
@@ -233,7 +215,7 @@ import { TimelineStep } from '@shared/models/model';
                       [class.bg-indigo-50]="msg.messageType !== 'SYSTEM'"
                       [class.border-indigo-200]="msg.messageType !== 'SYSTEM'"
                     >
-                      <p class="text-sm italic break-words whitespace-pre-wrap m-0"
+                      <p class="text-sm italic wrap-break-word whitespace-pre-wrap m-0"
                         [class.text-amber-800]="msg.messageType === 'SYSTEM'"
                         [class.text-indigo-800]="msg.messageType !== 'SYSTEM'"
                       >{{ msg.content }}</p>
@@ -244,9 +226,7 @@ import { TimelineStep } from '@shared/models/model';
                     </div>
                   </div>
                 </div>
-
               } @else {
-                <!-- User message — left / right -->
                 <div class="flex w-full" [class.justify-end]="isOwnMessage(msg)">
                   <div class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,.08)]"
                     [class.bg-primary]="isOwnMessage(msg)"
@@ -258,7 +238,7 @@ import { TimelineStep } from '@shared/models/model';
                     @if (!isOwnMessage(msg)) {
                       <p class="text-xs font-bold text-primary mb-1 m-0">{{ msg.senderName }}</p>
                     }
-                    <p class="text-sm break-words whitespace-pre-wrap m-0">{{ msg.content }}</p>
+                    <p class="text-sm wrap-break-word whitespace-pre-wrap m-0">{{ msg.content }}</p>
                     <p class="text-[10px] mt-1 text-right opacity-60 m-0">{{ msg.createdAt | timeAgo }}</p>
                   </div>
                 </div>
@@ -269,7 +249,7 @@ import { TimelineStep } from '@shared/models/model';
           </div>
         </div>
 
-        <!-- ═══════════════════ INPUT ═══════════════════ -->
+        <!-- INPUT -->
         @if (!isTerminal() && dispute()?.status !== 'REFERRED_TO_ARBITRATION') {
           <div class="bg-white border-t border-slate-100 px-3 py-2.5 flex gap-2 items-end shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
             <textarea
@@ -295,34 +275,24 @@ import { TimelineStep } from '@shared/models/model';
 
       </div><!-- end left column -->
 
-      <!-- ═══════════════════════════════════════════════════════════
-           RIGHT COLUMN — Details + Status timeline (desktop only)
-           ══════════════════════════════════════════════════════════ -->
-      <div class="hidden md:flex flex-col w-[340px] border-l border-slate-100 bg-white shrink-0 overflow-y-auto">
+      <!-- RIGHT COLUMN -->
+      <div class="hidden md:flex flex-col w-85 border-l border-slate-100 bg-white shrink-0 overflow-y-auto">
 
-        <!-- Panel header -->
         <div class="sticky top-0 bg-white z-10 px-4 py-3 border-b border-slate-100">
           <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 m-0">{{ 'disputes.details.title' | translate }}</p>
         </div>
 
         @if (dispute()) {
           <div class="px-4 py-4 space-y-3">
-
-            <!-- Reference -->
             <div>
               <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.reference' | translate }}</p>
               <p class="text-sm font-bold text-slate-900 font-mono m-0">{{ dispute()!.reference }}</p>
             </div>
-
-            <!-- Current status -->
             <div class="flex items-center gap-2">
               <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0">{{ 'disputes.details.status' | translate }}</p>
               <app-status-badge [status]="dispute()!.status" />
             </div>
-
-            <!-- Parties -->
             <div class="bg-slate-50 rounded-xl p-3 space-y-2.5">
-              <!-- Buyer -->
               <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600 shrink-0">
                   {{ dispute()!.buyerName?.[0]?.toUpperCase() ?? 'A' }}
@@ -335,7 +305,6 @@ import { TimelineStep } from '@shared/models/model';
                   <span class="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-semibold shrink-0">{{ 'disputes.details.you' | translate }}</span>
                 }
               </div>
-              <!-- Seller -->
               <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-600 shrink-0">
                   {{ dispute()!.sellerName?.[0]?.toUpperCase() ?? 'V' }}
@@ -349,8 +318,6 @@ import { TimelineStep } from '@shared/models/model';
                 }
               </div>
             </div>
-
-            <!-- Amounts -->
             <div class="flex gap-2">
               @if (dispute()!.grossAmount) {
                 <div class="flex-1 bg-slate-50 rounded-xl px-3 py-2">
@@ -365,28 +332,20 @@ import { TimelineStep } from '@shared/models/model';
                 </div>
               }
             </div>
-
-            <!-- Transaction ref -->
             <div>
               <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.transaction' | translate }}</p>
               <p class="text-xs font-mono text-slate-600 m-0 break-all">{{ dispute()!.transactionRef }}</p>
             </div>
-
-            <!-- Opened at -->
             <div>
               <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.openedAt' | translate }}</p>
               <p class="text-xs text-slate-600 m-0">{{ dispute()!.createdAt | timeAgo }}</p>
             </div>
-
-            <!-- Reason -->
             <div>
               <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.reason' | translate }}</p>
               <p class="text-xs text-slate-700 m-0">{{ ('disputes.reasons.' + dispute()!.reason) | translate }}</p>
             </div>
-
           </div>
         } @else {
-          <!-- Details skeleton -->
           <div class="px-4 py-4 space-y-3">
             @for (i of [1,2,3,4]; track i) {
               <div class="skeleton-shimmer h-10 rounded-xl"></div>
@@ -394,25 +353,18 @@ import { TimelineStep } from '@shared/models/model';
           </div>
         }
 
-        <!-- ─── Status timeline ─────────────────────────────── -->
         <div class="border-t border-slate-100 mx-4 my-1"></div>
-
         <div class="px-4 py-3">
           <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 m-0">{{ 'disputes.timeline.title' | translate }}</p>
         </div>
-
         <div class="px-4 pb-8">
           @for (step of statusTimeline(); track step.key; let isLast = $last) {
             <div class="relative flex gap-3 pb-4">
-
-              <!-- Vertical connector (hidden on last item) -->
               @if (!isLast) {
-                <div class="absolute left-[11px] top-6 bottom-0 w-0.5 rounded-full transition-colors"
+                <div class="absolute left-2.75 top-6 bottom-0 w-0.5 rounded-full transition-colors"
                      [class.bg-primary]="step.state === 'completed'"
                      [class.bg-slate-200]="step.state !== 'completed'"></div>
               }
-
-              <!-- Step dot -->
               <div class="w-6 h-6 rounded-full shrink-0 z-10 flex items-center justify-center text-[10px] font-bold transition-all"
                    [class.bg-primary]="step.state === 'current'"
                    [class.text-white]="step.state === 'current' || step.state === 'completed'"
@@ -426,8 +378,6 @@ import { TimelineStep } from '@shared/models/model';
                   <span class="w-2 h-2 bg-white rounded-full block"></span>
                 }
               </div>
-
-              <!-- Step label -->
               <div class="flex-1 min-w-0 pt-0.5">
                 <p class="text-xs m-0 leading-tight"
                    [class.font-bold]="step.state === 'current'"
@@ -441,7 +391,6 @@ import { TimelineStep } from '@shared/models/model';
                   <p class="text-[10px] text-slate-400 m-0 mt-0.5">{{ 'disputes.timeline.inProgress' | translate }}</p>
                 }
               </div>
-
             </div>
           }
         </div>
@@ -479,8 +428,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   private countdownInterval?: ReturnType<typeof setInterval>;
   private isNearBottomState = true;
 
-  // ── Computed helpers ──────────────────────────────────────────
-
   protected readonly deadlinePassed = computed(() => {
     const d = this.dispute()?.submissionDeadline;
     if (!d) return false;
@@ -498,8 +445,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     return s === 'RESOLVED_BUYER' || s === 'RESOLVED_SELLER'
         || s === 'RESOLVED_SPLIT' || s === 'CLOSED_NO_ACTION' || s === 'CANCELLED';
   });
-
-  // ── Status timeline ───────────────────────────────────────────
 
   private readonly TIMELINE_STEPS = [
     { key: 'OPENED',                       labelKey: 'status.OPENED' },
@@ -531,8 +476,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
       state: idx < currentIdx ? 'completed' : idx === currentIdx ? 'current' : 'pending',
     }));
   });
-
-  // ── Terminal banner helpers ───────────────────────────────────
 
   protected terminalBannerClass(): string {
     const d = this.dispute();
@@ -573,8 +516,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     return 'disputes.arbitration.resolvedBuyer';
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────────
-
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
@@ -585,7 +526,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
       const detail = await firstValueFrom(this.disputeService.getDispute(id));
       this.dispute.set(detail);
       this.messages.set(detail.messages ?? []);
-
       setTimeout(() => this.scrollToBottom(), 100);
       this.startCountdown();
 
@@ -634,13 +574,10 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     this.typingSub?.unsubscribe();
   }
 
-  // ── Arbitration ───────────────────────────────────────────────
-
   protected payArbitrationFee(): void {
     const id = this.disputeId();
     if (!id || this.paying()) return;
     this.paying.set(true);
-
     this.disputeService.submitArbitrationFee(id).subscribe({
       next: (updated) => {
         this.dispute.set(updated);
@@ -653,13 +590,10 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ── Countdown timer ───────────────────────────────────────────
-
   private startCountdown(): void {
     clearInterval(this.countdownInterval);
     const d = this.dispute();
     if (!d?.submissionDeadline || d.status !== 'AWAITING_ARBITRATION_PAYMENT') return;
-
     const tick = () => {
       const ms = new Date(d.submissionDeadline!).getTime() - Date.now();
       if (ms <= 0) {
@@ -678,8 +612,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     tick();
     this.countdownInterval = setInterval(tick, 1_000);
   }
-
-  // ── Messaging ─────────────────────────────────────────────────
 
   protected sendMessage(): void {
     const content = this.messageText.trim();
@@ -709,8 +641,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     if (!el) return;
     this.isNearBottomState = (el.scrollTop + el.clientHeight) > (el.scrollHeight - 100);
   }
-
-  // ── Helpers ───────────────────────────────────────────────────
 
   protected isBuyer(): boolean {
     const d = this.dispute();
