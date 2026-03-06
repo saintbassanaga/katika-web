@@ -44,10 +44,6 @@ export const AuthStore = signalStore(
   withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService), translate = inject(TranslateService)) => ({
 
     async init(): Promise<void> {
-      if (!sessionStorage.getItem(ROLE_KEY)) {
-        patchState(store, { initialized: true });
-        return;
-      }
       try {
         const user = await firstValueFrom(svc.getMe());
         const storedRole = user.role ?? sessionStorage.getItem(ROLE_KEY);
