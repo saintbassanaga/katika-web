@@ -104,14 +104,6 @@ export class QrScanComponent implements OnInit, OnDestroy {
 
   private onScanned(code: string): void {
     this.scanning = false;
-    this.releasing.set(true);
-    this.escrowService.scanVerificationCode(this.id(), code).subscribe({
-      next: () => this.router.navigate(['/escrow', this.id()]),
-      error: () => {
-        this.releasing.set(false);
-        setTimeout(() => { this.scanning = true; this.startScanning(); }, 1000);
-      },
-    });
   }
 
   ngOnDestroy(): void {

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
 import { Page, TransactionSummary } from '@app/models';
 import { DisputeResponse, ResolutionType } from '@features/disputes/dispute.service';
+import {UserAdminResponse} from '@shared/models/model';
 
 export interface AdminDashboardStats {
   totalUsers: number;
@@ -23,24 +24,6 @@ export interface AdminDashboardStats {
   referredToArbitrationDisputes: number;
   resolvedDisputes: number;
 }
-import {
-  AdminDashboardStats,
-  AssignDisputeRequest,
-  DisputeResponse,
-  Page,
-  ResolutionType,
-  TransactionSummary,
-  UpdateDisputeStatusRequest,
-  UserAdminResponse,
-} from '@shared/models/model';
-
-export type {
-  AdminDashboardStats,
-  AssignDisputeRequest,
-  UpdateDisputeStatusRequest,
-  UserAdminResponse,
-};
-
 @Injectable({ providedIn: 'root' })
 export class AdminService extends ApiService {
 
