@@ -1,0 +1,14 @@
+{
+  "/bff": {
+    "target": "http://194.163.167.167:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api": {
+    "target": "http://194.163.167.167:8080",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  }
+}
