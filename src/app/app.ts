@@ -50,8 +50,14 @@ export class App {
     return NAV_ROUTES.some(r => url.startsWith(r));
   });
 
+  protected readonly shellClass = computed(() =>
+    this.showNav()
+      ? 'h-screen flex overflow-hidden'
+      : 'min-h-screen flex flex-col',
+  );
+
   protected readonly contentClass = computed(() => {
-    if (!this.showNav()) return 'w-full';
-    return this.isMobile() ? 'w-full pb-16' : 'ml-64';
+    if (!this.showNav()) return 'w-full flex-1';
+    return this.isMobile() ? 'w-full pb-16 flex-1 min-h-0 overflow-hidden' : 'ml-64 flex-1 min-h-0 overflow-hidden';
   });
 }

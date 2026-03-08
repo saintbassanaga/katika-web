@@ -24,7 +24,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent, TranslatePipe],
   template: `
-    <div class="min-h-[100svh] bg-dark flex flex-col relative overflow-hidden md:flex-row md:items-stretch">
+    <div class="min-h-[100svh] bg-dark flex flex-col relative overflow-x-hidden md:flex-row md:items-stretch">
 
       <!-- Orbs -->
       <div class="absolute rounded-full pointer-events-none w-[340px] h-[340px] top-[-15%] left-[-14%] bg-[radial-gradient(circle,rgba(27,79,138,.32)_0%,transparent_70%)] orb-1"></div>
@@ -34,12 +34,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
       <!-- Brand panel -->
       <div class="relative z-10 flex items-center gap-3.5 px-6 pt-8 pb-5 animate-fade
                   md:flex-1 md:flex-col md:items-center md:justify-center md:text-center md:px-16 md:py-14 md:gap-4">
-        <div class="w-[46px] h-[46px] rounded-[14px] shrink-0 bg-gradient-to-br from-gold to-[#96650A] flex items-center justify-center shadow-[0_6px_22px_rgba(201,146,13,.42)]
-                    md:w-[58px] md:h-[58px] md:rounded-[18px]">
-          <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-            <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+        <img src="/icons/icon-512-transparent.png" alt="Katika" class="w-[46px] h-[46px] object-contain shrink-0 md:w-[58px] md:h-[58px]" />
         <div class="flex flex-col gap-[.1rem]">
           <span class="text-white text-2xl font-extrabold tracking-[-0.03em] leading-none md:text-[2.5rem]">Katika</span>
           <span class="text-[#F5D48A] text-[.8125rem] font-medium tracking-[.01em] md:text-[.9375rem]">Paiements sécurisés au Cameroun</span>
@@ -76,7 +71,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 
       <!-- Form panel -->
       <div class="relative z-10 bg-white rounded-t-[2rem] flex-1 px-6 pt-7 pb-14 animate-card
-                  md:rounded-none md:flex md:flex-col md:items-center md:justify-start md:px-8 md:py-12 md:min-h-[100svh] md:shadow-[-32px_0_80px_rgba(0,0,0,.15)] md:overflow-y-auto">
+                  md:rounded-none md:flex md:flex-col md:items-center md:justify-start md:px-8 md:py-12 md:shadow-[-32px_0_80px_rgba(0,0,0,.15)]">
         <div class="w-full md:max-w-[460px]">
           <p class="text-[1.375rem] font-bold text-dark m-0 mb-1 tracking-[-0.02em]">{{ 'auth.register.title' | translate }}</p>
           <p class="text-sm text-slate-500 m-0 mb-[1.625rem]">{{ 'auth.register.subtitle' | translate }}</p>

@@ -1,4 +1,4 @@
-<div class="h-screen flex overflow-hidden" style="background:#EDF1F7">
+<div [class]="shellClass()" style="background:#EDF1F7">
 
   @if (showNav()) {
     @if (isMobile()) {
@@ -12,7 +12,6 @@
     id="main-content"
     tabindex="-1"
     [class]="contentClass()"
-    class="flex-1 min-h-0 overflow-hidden"
   >
     <router-outlet />
   </main>

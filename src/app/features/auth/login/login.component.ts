@@ -20,11 +20,7 @@ import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.
       <!-- LEFT: Brand panel -->
       <div class="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-14 pb-8 text-center animate-entry
                   md:px-16 md:py-12">
-        <div class="w-[68px] h-[68px] bg-gradient-to-br from-gold to-[#96650A] rounded-[20px] flex items-center justify-center mb-5 shadow-[0_10px_40px_rgba(201,146,13,.45)]">
-          <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
-            <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+        <img src="/icons/icon-512-transparent.png" alt="Katika" class="w-[68px] h-[68px] object-contain mb-5" />
         <h1 class="text-white text-[2.5rem] font-extrabold tracking-[-0.04em] m-0 mb-2 md:text-5xl">Katika</h1>
         <p class="text-[#F5D48A] text-[.9rem] font-medium m-0 tracking-[.01em] md:text-[.9375rem]">{{ 'auth.login.tagline' | translate }}</p>
 

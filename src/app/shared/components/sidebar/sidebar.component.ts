@@ -23,11 +23,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 
       <!-- Logo -->
       <div class="px-5 pt-6 pb-5 border-b border-white/[.07] flex items-center gap-3">
-        <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-primary to-primary-dk rounded-xl flex items-center justify-center">
-          <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
-            <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+        <img src="/icons/icon-512-transparent.png" alt="Katika" class="w-10 h-10 object-contain shrink-0" />
         <div>
           <div class="text-white text-xl font-extrabold tracking-[-0.02em]">Katika</div>
           <div class="text-slate-400/50 text-[.6875rem]">{{ 'nav.subtitle' | translate }}</div>
