@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -8,6 +8,7 @@ import { ToastContainerComponent } from './shared/components/toast/toast-contain
 import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { FabComponent } from './shared/components/fab/fab.component';
+import { OnboardingComponent } from './shared/components/onboarding/onboarding.component';
 
 /** Routes where the global nav (sidebar / bottom-nav) is visible. */
 const NAV_ROUTES = ['/dashboard', '/escrow', '/disputes', '/payouts', '/wallet', '/admin'];
@@ -20,7 +21,7 @@ const FULL_SCREEN_PATTERNS = [
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastContainerComponent, BottomNavComponent, SidebarComponent, FabComponent],
+  imports: [RouterOutlet, ToastContainerComponent, BottomNavComponent, SidebarComponent, FabComponent, OnboardingComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -28,6 +29,17 @@ export class App {
   protected readonly auth   = inject(AuthStore);
   private  readonly router  = inject(Router);
   private  readonly bp      = inject(BreakpointObserver);
+
+  private readonly _onboardingDismissed = signal(!!localStorage.getItem('katika_onboarded'));
+
+  protected readonly showOnboardingOverlay = computed(() =>
+    this.auth.isAuthenticated() && !this._onboardingDismissed(),
+  );
+
+  protected onOnboardingDone() {
+    localStorage.setItem('katika_onboarded', '1');
+    this._onboardingDismissed.set(true);
+  }
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(

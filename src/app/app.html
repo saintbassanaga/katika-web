@@ -19,4 +19,8 @@
   <app-fab />
   <app-toast-container />
 
+  @if (showOnboardingOverlay()) {
+    <app-onboarding (done)="onOnboardingDone()" />
+  }
+
 </div>
