@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.katika.cm',
-  wsUrl: 'https://api.katika.cm/ws',
+  apiUrl: 'http://194.163.167.167:8080',
+  wsUrl: 'http://194.163.167.167:8080/ws',
   debug: false,
 };
