@@ -1,8 +1,9 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '@core/auth/auth.service';
+import { AuthStore } from '@core/auth/auth.store';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.component';
 
@@ -222,10 +223,10 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   `,
 })
 export class RegisterComponent {
-  private readonly fb     = inject(FormBuilder);
-  private readonly svc    = inject(AuthService);
-  private readonly toast  = inject(ToastService);
-  private readonly router = inject(Router);
+  private readonly fb        = inject(FormBuilder);
+  private readonly svc       = inject(AuthService);
+  private readonly authStore = inject(AuthStore);
+  private readonly toast     = inject(ToastService);
 
   protected readonly showPwd = signal(false);
   protected readonly loading = signal(false);
@@ -250,14 +251,19 @@ export class RegisterComponent {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading.set(true);
     const v = this.form.value;
+    const phone    = v.phone!;
+    const password = v.password!;
     this.svc.register({
       fullName: `${v.firstName!} ${v.lastName!}`.trim(),
-      phoneNumber: v.phone!,
-      password: v.password!,
+      phoneNumber: phone,
+      password,
       email: v.email || undefined,
       role: v.role as 'BUYER' | 'SELLER',
     }).subscribe({
-      next:     () => { this.toast.success('Compte créé ! Connectez-vous.'); this.router.navigate(['/auth/login']); },
+      next: () => {
+        this.toast.success('Compte créé avec succès !');
+        this.authStore.login({ phoneNumber: phone, password });
+      },
       error:    () => this.loading.set(false),
       complete: () => this.loading.set(false),
     });

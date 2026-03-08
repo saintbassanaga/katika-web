@@ -8,7 +8,7 @@ import { ToastItemComponent } from './toast-item.component';
   imports: [ToastItemComponent],
   template: `
     <div
-      class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full"
+      class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full"
       role="region"
       aria-label="Notifications"
       aria-live="polite"
