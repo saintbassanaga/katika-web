@@ -284,7 +284,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
               </button>
             }
 
-            @if (transaction()!.status === 'DISPUTED' && transaction()!.activeDisputeId) {
+            @if (transaction()!.activeDisputeId) {
               <!-- Litige en cours — accès direct au chat -->
               <a
                 [routerLink]="['/disputes', transaction()!.activeDisputeId]"
@@ -297,15 +297,14 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
                 {{ 'escrow.detail.actions.viewDispute' | translate }}
               </a>
             } @else if (['LOCKED', 'SHIPPED', 'DELIVERED'].includes(transaction()!.status)) {
-              <!-- Pas encore de litige — proposer d'en ouvrir un -->
-              <a
-                [routerLink]="['/disputes/new']"
-                [queryParams]="{ transactionId: transaction()!.id }"
+              <!-- Pas encore de litige — ouvrir le formulaire de création -->
+              <button
+                (click)="openDispute()"
                 class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
                 style="border: 1.5px solid var(--clr-error); color: var(--clr-error)"
               >
-                ⚠ {{ 'escrow.detail.actions.dispute' | translate }}
-              </a>
+                ⚠ {{ 'escrow.detail.actions.openDispute' | translate }}
+              </button>
             }
 
             @if (['INITIATED', 'LOCKED'].includes(transaction()!.status)) {
@@ -386,6 +385,11 @@ export class TransactionDetailComponent implements OnInit {
       },
       error: () => this.actionLoading.set(false),
     });
+  }
+
+  protected openDispute(): void {
+    const tx = this.transaction();
+    if (tx) this.router.navigate(['/disputes/new'], { queryParams: { transactionId: tx.id } });
   }
 
   protected cancel(): void {

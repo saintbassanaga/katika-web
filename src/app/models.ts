@@ -74,7 +74,6 @@ export interface MfaSetupResponse {
 export interface EscrowCreateRequest {
   buyerPhone: string;
   grossAmount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
   description?: string;
   deliveryDeadline?: string;
   idempotencyKey?: string;
