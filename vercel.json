@@ -9,6 +9,10 @@
       "destination": "http://194.163.167.167:8080/api/:path*"
     },
     {
+      "source": "/ws/:path*",
+      "destination": "http://194.163.167.167:8080/ws/:path*"
+    },
+    {
       "source": "/((?!.*\\.[a-zA-Z0-9]+$).*)",
       "destination": "/index.html"
     }
