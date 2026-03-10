@@ -264,7 +264,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           <!-- Actions -->
           <div class="space-y-2">
 
-            @if (isSeller() && ['LOCKED', 'SHIPPED', 'DELIVERED'].includes(transaction()!.status)) {
+            @if (isSeller() && ['LOCKED', 'DELIVERED'].includes(transaction()!.status)) {
               <a
                 [routerLink]="['/escrow', transaction()!.id, 'qr']"
                 class="flex items-center justify-center gap-2 w-full py-3 text-white
@@ -273,6 +273,8 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
               >
                 🔲 {{ 'escrow.detail.actions.generateQr' | translate }}
               </a>
+            }
+            @if (isSeller() && transaction()!.status === 'LOCKED') {
               <button
                 (click)="ship()"
                 [disabled]="actionLoading()"

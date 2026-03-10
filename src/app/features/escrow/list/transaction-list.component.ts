@@ -21,7 +21,7 @@ const FILTERS = [
   standalone: true,
   imports: [RouterLink, AmountPipe, StatusBadgeComponent, LoadingSkeletonComponent, EmptyStateComponent, TimeAgoPipe, TranslatePipe],
   template: `
-    <div class="animate-fade px-4 py-6 max-w-lg mx-auto">
+    <div class="animate-fade px-4 py-6 pb-24 max-w-lg mx-auto">
       <h1 class="text-xl font-bold text-gray-900 mb-4">{{ 'escrow.title' | translate }}</h1>
 
       <!-- Filter chips -->

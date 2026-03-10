@@ -19,7 +19,7 @@ const RESOLUTIONS = [
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <div class="px-4 py-6 max-w-lg mx-auto">
+    <div class="px-4 py-6 pb-24 max-w-lg mx-auto">
       <a routerLink="/admin" class="flex items-center gap-2 text-sm text-gray-500 mb-4">← Administration</a>
       <h1 class="text-xl font-bold text-gray-900 mb-6">Résolution de litige</h1>
 

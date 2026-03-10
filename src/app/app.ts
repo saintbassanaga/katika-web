@@ -70,6 +70,6 @@ export class App {
 
   protected readonly contentClass = computed(() => {
     if (!this.showNav()) return 'w-full flex-1';
-    return this.isMobile() ? 'w-full pb-16 flex-1 min-h-0 overflow-hidden' : 'ml-64 flex-1 min-h-0 overflow-hidden';
+    return this.isMobile() ? 'w-full pb-16 flex-1 min-h-0 overflow-y-auto' : 'ml-64 flex-1 min-h-0 overflow-y-auto';
   });
 }

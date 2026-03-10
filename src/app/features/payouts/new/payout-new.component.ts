@@ -19,7 +19,7 @@ const PROVIDERS = [
   standalone: true,
   imports: [ReactiveFormsModule, AmountPipe, PhoneInputComponent, TranslatePipe],
   template: `
-    <div class="animate-fade px-4 py-6 max-w-sm mx-auto">
+    <div class="animate-fade px-4 py-6 pb-24 max-w-sm mx-auto">
       <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.title' | translate }}</h1>
 
       @if (balance() !== null) {
