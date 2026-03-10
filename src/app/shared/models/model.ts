@@ -147,7 +147,6 @@ export interface TransactionDetail {
 export interface EscrowCreateRequest {
   buyerPhone: string;
   grossAmount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
   description?: string;
   deliveryDeadline?: string; // ISO 8601
   idempotencyKey?: string;
@@ -225,6 +224,8 @@ export interface DisputeResponse {
 
 export interface CreateDisputeRequest {
   transactionId: string;
+  initiatorId: string;
+  initiatorRole: 'BUYER' | 'SELLER';
   reason: DisputeReason;
   description: string;
   claimedAmount?: number;

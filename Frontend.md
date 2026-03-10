@@ -1085,7 +1085,7 @@ export class QrDisplayComponent implements OnInit {
 
 ### 10.1 Dispute Creation
 
-**Route:** `/disputes/new?transactionId=KT-2025-000123`
+**Route:** `/disputes/transactionId=KT-2025-000123`
 **Backend:** `POST /disputes`
 
 ```typescript

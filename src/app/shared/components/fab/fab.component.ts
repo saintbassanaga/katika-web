@@ -242,23 +242,6 @@ import { FabConfig } from '@shared/models/model';
               </div>
             }
 
-            <!-- Provider -->
-            <div class="field">
-              <label class="label">{{ 'fab.form.provider' | translate }}</label>
-              <div style="display:flex; gap:.75rem;">
-                @for (p of providers; track p.value) {
-                  <button
-                    type="button"
-                    (click)="txForm.get('provider')!.setValue(p.value)"
-                    style="flex:1; padding:.75rem; border-radius:12px; border:2px solid; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .15s; font-family:inherit;"
-                    [style.border-color]="txForm.get('provider')?.value === p.value ? '#1B4F8A' : '#E2E8F0'"
-                    [style.background]="txForm.get('provider')?.value === p.value ? '#EBF4FF' : '#F8FAFC'"
-                    [style.color]="txForm.get('provider')?.value === p.value ? '#1B4F8A' : '#64748B'"
-                  >{{ p.label }}</button>
-                }
-              </div>
-            </div>
-
             <!-- Description -->
             <div class="field">
               <label class="label">{{ 'fab.form.description' | translate }} <span class="label-opt">{{ 'common.optional' | translate }}</span></label>
@@ -330,16 +313,10 @@ export class FabComponent {
   protected readonly sheetOpen = signal(false);
   protected readonly loading   = signal(false);
 
-  protected readonly providers = [
-    { value: 'CAMPAY'   as const, label: 'CamPay' },
-    { value: 'MONETBIL' as const, label: 'MonetBil' },
-  ];
-
   /* ── Transaction form ────────────────────────── */
   protected readonly txForm = this.fb.group({
     buyerPhone:       ['', Validators.required],
     grossAmount:      [null as number | null, [Validators.required, Validators.min(25), Validators.max(10_000_000)]],
-    provider:         ['CAMPAY' as 'CAMPAY' | 'MONETBIL', Validators.required],
     description:      [''],
     deliveryDeadline: [''],
   });
@@ -379,7 +356,6 @@ export class FabComponent {
       const tx = await firstValueFrom(this.escrowService.createTransaction({
         buyerPhone:       v.buyerPhone!,
         grossAmount:      Math.floor(v.grossAmount!),
-        provider:         v.provider!,
         description:      v.description || undefined,
         deliveryDeadline: v.deliveryDeadline
           ? new Date(v.deliveryDeadline).toISOString()

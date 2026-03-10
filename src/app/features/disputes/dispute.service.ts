@@ -61,6 +61,16 @@ export class DisputeService extends ApiService {
     );
   }
 
+  uploadEvidence(disputeId: string, file: File, evidenceType: string): Observable<unknown> {
+    const formData = new FormData();
+    formData.append(
+      'request',
+      new Blob([JSON.stringify({ evidenceType, description: file.name })], { type: 'application/json' }),
+    );
+    formData.append('file', file);
+    return this.http.post(this.url(`/api/disputes/${disputeId}/evidence`), formData, { withCredentials: true });
+  }
+
   getMessages(disputeId: string): Observable<DisputeMessage[]> {
     return this.http.get<DisputeMessage[]>(this.url(`/api/disputes/${disputeId}/messages`), this.defaultOptions);
   }

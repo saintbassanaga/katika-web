@@ -85,17 +85,17 @@ const TYPE_ICONS: Record<MovementType, string> = {
       </div>
 
       @if ((wallet()?.frozenAmount ?? 0) > 0) {
-        <div class="inline-flex items-center gap-[5px] bg-[rgba(201,146,13,.1)] border border-[rgba(201,146,13,.28)] rounded-full px-3 py-1 mb-6 text-xs font-semibold text-[#D4A330]">
+        <div class="inline-flex items-center gap-1.25 bg-[rgba(201,146,13,.1)] border border-[rgba(201,146,13,.28)] rounded-full px-3 py-1 mb-6 text-xs font-semibold text-[#D4A330]">
           🔒 {{ 'wallet.frozen' | translate }}: {{ wallet()?.frozenAmount | amount }}
         </div>
       }
 
       <div class="grid grid-cols-2 gap-2.5">
         <a routerLink="/payouts/new"
-           class="py-[.8125rem] rounded-xl bg-primary border-none text-white text-sm font-bold font-[inherit] cursor-pointer text-center no-underline block transition-opacity hover:opacity-[.88]">
+           class="py-3.25 rounded-xl bg-primary border-none text-white text-sm font-bold font-[inherit] cursor-pointer text-center no-underline block transition-opacity hover:opacity-[.88]">
           {{ 'wallet.withdrawBtn' | translate }}
         </a>
-        <button class="py-[.8125rem] rounded-xl bg-white/[.07] border border-white/10 text-white/55 text-sm font-semibold font-[inherit] cursor-pointer transition-colors hover:bg-white/[.12] hover:text-white/80"
+        <button class="py-3.25 rounded-xl bg-white/[.07] border border-white/10 text-white/55 text-sm font-semibold font-[inherit] cursor-pointer transition-colors hover:bg-white/[.12] hover:text-white/80"
                 (click)="refresh()">
           {{ 'wallet.refreshBtn' | translate }}
         </button>
@@ -110,7 +110,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
       <div class="flex gap-2 overflow-x-auto pb-3.5 scrollbar-hide">
         @for (f of typeFilters; track f.types) {
           <button
-            class="shrink-0 px-4 py-[5px] rounded-full text-[.8125rem] font-semibold cursor-pointer border-[1.5px] font-[inherit] transition-all whitespace-nowrap"
+            class="shrink-0 px-4 py-1.25 rounded-full text-[.8125rem] font-semibold cursor-pointer border-[1.5px] font-[inherit] transition-all whitespace-nowrap"
             [class]="activeTypeFilter() === f.types
               ? 'bg-primary border-primary text-white'
               : 'bg-white border-slate-200 text-slate-500'"
