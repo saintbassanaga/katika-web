@@ -1,21 +1,22 @@
 import { Component, ElementRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom, interval, takeWhile } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { EscrowService } from '../escrow.service';
 
 @Component({
   selector: 'app-qr-display',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
-    <div class="px-4 py-6 max-w-sm mx-auto text-center">
+    <div class="px-4 py-6 pb-24 max-w-sm mx-auto text-center">
       <a [routerLink]="['/escrow', id()]" class="flex items-center gap-2 text-sm text-gray-500 mb-6 hover:text-gray-700">
-        ← Retour
+        {{ 'escrow.qr.back' | translate }}
       </a>
 
-      <h1 class="text-xl font-bold text-gray-900 mb-2">Mon QR code de livraison</h1>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'escrow.qr.title' | translate }}</h1>
       <p class="text-sm text-gray-500 mb-6">
-        Montrez ce QR code à l'acheteur pour confirmer la livraison
+        {{ 'escrow.qr.subtitle' | translate }}
       </p>
 
       @if (loading()) {
@@ -27,7 +28,7 @@ import { EscrowService } from '../escrow.service';
 
         @if (ttl() > 0) {
           <p class="text-sm text-gray-500 mt-4">
-            Expire dans <span class="font-semibold text-blue-600">{{ formatTtl() }}</span>
+            {{ 'escrow.qr.expiry' | translate }} <span class="font-semibold text-blue-600">{{ formatTtl() }}</span>
           </p>
         }
 
@@ -36,7 +37,7 @@ import { EscrowService } from '../escrow.service';
           class="mt-4 px-6 py-3 border border-gray-200 rounded-xl text-sm
                  text-gray-600 hover:bg-gray-50 transition-colors"
         >
-          🔄 Actualiser le code
+          🔄 {{ 'escrow.qr.refresh' | translate }}
         </button>
       }
     </div>

@@ -173,6 +173,13 @@
     },
     "loadMore": "Charger plus",
     "loading": "Chargement…",
+    "qr": {
+      "back": "← Retour",
+      "title": "Mon QR code de livraison",
+      "subtitle": "Montrez ce QR code à l'acheteur pour confirmer la livraison",
+      "expiry": "Expire dans",
+      "refresh": "Actualiser le code"
+    },
     "detail": {
       "title": "Détail de la transaction",
       "back": "Retour",
@@ -227,6 +234,7 @@
         "ship": "Marquer comme expédié",
         "cancel": "Annuler la transaction",
         "dispute": "Ouvrir un litige",
+        "openDispute": "Ouvrir un litige",
         "viewDispute": "Voir le litige en cours",
         "confirmReception": "Confirmer et libérer le paiement"
       }
@@ -371,6 +379,10 @@
     },
     "create": {
       "pageTitle": "Ouvrir un litige",
+      "txCard": "Transaction concernée",
+      "stepReason": "Motif",
+      "stepDesc": "Détails",
+      "stepSummary": "Résumé",
       "reasonTitle": "Motif du litige",
       "reasons": {
         "notReceived": "Article non reçu",
@@ -382,6 +394,14 @@
       "back": "Retour",
       "descTitle": "Description du problème",
       "descPh": "Décrivez le problème en détail (minimum 20 caractères)...",
+      "evidenceTitle": "Preuves",
+      "evidenceOpt": "(optionnel)",
+      "evidenceLimit": "Max. 5 fichiers · 10 Mo chacun · Images, PDF, TXT",
+      "evidenceBtn": "Ajouter des fichiers",
+      "filesAttached": "Fichiers joints",
+      "noFiles": "Aucun fichier joint",
+      "fileTooLarge": "Fichier trop volumineux (max 10 Mo)",
+      "fileTypeNotAllowed": "Type de fichier non autorisé",
       "summaryTitle": "Récapitulatif",
       "transactionLabel": "Transaction",
       "motifLabel": "Motif",

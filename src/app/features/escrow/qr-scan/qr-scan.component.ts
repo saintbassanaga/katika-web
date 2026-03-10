@@ -12,18 +12,18 @@ import { EscrowService } from '../escrow.service';
       <!-- Header -->
       <div class="absolute top-0 left-0 right-0 z-10 p-4 pt-12">
         <button (click)="router.navigate(['/escrow', id()])" class="text-white text-sm flex items-center gap-2">
-          {{ 'escrow.scan.back' | translate }}
+          {{ 'escrow.detail.scan.back' | translate }}
         </button>
-        <h1 class="text-white font-bold text-lg mt-2">{{ 'escrow.scan.title' | translate }}</h1>
+        <h1 class="text-white font-bold text-lg mt-2">{{ 'escrow.detail.scan.title' | translate }}</h1>
       </div>
 
       @if (permissionDenied()) {
         <div class="flex-1 flex flex-col items-center justify-center px-6 text-center">
           <div class="text-5xl mb-4">📷</div>
-          <h2 class="text-white text-xl font-bold mb-2">{{ 'escrow.scan.permissionTitle' | translate }}</h2>
-          <p class="text-gray-400 text-sm mb-4">{{ 'escrow.scan.permissionMessage' | translate }}</p>
+          <h2 class="text-white text-xl font-bold mb-2">{{ 'escrow.detail.scan.permissionTitle' | translate }}</h2>
+          <p class="text-gray-400 text-sm mb-4">{{ 'escrow.detail.scan.permissionMessage' | translate }}</p>
           <button (click)="ngOnInit()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium">
-            {{ 'escrow.scan.retry' | translate }}
+            {{ 'escrow.detail.scan.retry' | translate }}
           </button>
         </div>
       } @else {
@@ -46,11 +46,11 @@ import { EscrowService } from '../escrow.service';
           @if (releasing()) {
             <div class="mt-6 flex items-center gap-3 bg-white/20 px-6 py-3 rounded-full">
               <span class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <span class="text-white font-medium">{{ 'escrow.scan.releasing' | translate }}</span>
+              <span class="text-white font-medium">{{ 'escrow.detail.scan.releasing' | translate }}</span>
             </div>
           } @else {
             <p class="mt-6 text-white text-sm text-center px-8">
-              {{ 'escrow.scan.instruction' | translate }}
+              {{ 'escrow.detail.scan.instruction' | translate }}
             </p>
           }
         </div>

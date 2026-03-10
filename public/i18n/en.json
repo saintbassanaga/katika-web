@@ -173,6 +173,13 @@
     },
     "loadMore": "Load more",
     "loading": "Loading…",
+    "qr": {
+      "back": "← Back",
+      "title": "My delivery QR code",
+      "subtitle": "Show this QR code to the buyer to confirm delivery",
+      "expiry": "Expires in",
+      "refresh": "Refresh code"
+    },
     "detail": {
       "title": "Transaction detail",
       "back": "Back",
@@ -227,6 +234,7 @@
         "ship": "Mark as shipped",
         "cancel": "Cancel transaction",
         "dispute": "Open a dispute",
+        "openDispute": "Open a dispute",
         "viewDispute": "View ongoing dispute",
         "confirmReception": "Confirm & release payment"
       }
@@ -371,6 +379,10 @@
     },
     "create": {
       "pageTitle": "Open a dispute",
+      "txCard": "Related transaction",
+      "stepReason": "Reason",
+      "stepDesc": "Details",
+      "stepSummary": "Summary",
       "reasonTitle": "Dispute reason",
       "reasons": {
         "notReceived": "Item not received",
@@ -382,6 +394,14 @@
       "back": "Back",
       "descTitle": "Problem description",
       "descPh": "Describe the problem in detail (minimum 20 characters)...",
+      "evidenceTitle": "Evidence",
+      "evidenceOpt": "(optional)",
+      "evidenceLimit": "Max. 5 files · 10 MB each · Images, PDF, TXT",
+      "evidenceBtn": "Add files",
+      "filesAttached": "Attached files",
+      "noFiles": "No files attached",
+      "fileTooLarge": "File too large (max 10 MB)",
+      "fileTypeNotAllowed": "File type not allowed",
       "summaryTitle": "Summary",
       "transactionLabel": "Transaction",
       "motifLabel": "Reason",

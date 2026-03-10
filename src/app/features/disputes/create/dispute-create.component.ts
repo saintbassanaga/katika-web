@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { DisputeService, DisputeReason } from '../dispute.service';
 import { EscrowService } from '@features/escrow/escrow.service';
 import { ToastService } from '@core/notification/toast.service';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ReasonGroup } from '@shared/models/model';
 import { AuthStore } from '@core/auth/auth.store';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
@@ -382,6 +382,7 @@ export class DisputeCreateComponent implements OnInit {
   private readonly router         = inject(Router);
   private readonly fb             = inject(FormBuilder);
   private readonly auth           = inject(AuthStore);
+  private readonly translate      = inject(TranslateService);
 
   protected readonly step          = signal(1);
   protected readonly loading       = signal(false);
@@ -440,9 +441,9 @@ export class DisputeCreateComponent implements OnInit {
     const added: SelectedFile[] = files.slice(0, slots).map(file => {
       let error: string | undefined;
       if (file.size > MAX_FILE_BYTES) {
-        error = 'Fichier trop volumineux (max 10 Mo)';
+        error = this.translate.instant('disputes.create.fileTooLarge');
       } else if (!ALLOWED_TYPES.has(file.type)) {
-        error = 'Type de fichier non autorisé';
+        error = this.translate.instant('disputes.create.fileTypeNotAllowed');
       }
       return {
         file,

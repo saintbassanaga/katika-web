@@ -16,7 +16,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
   standalone: true,
   imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe],
   template: `
-    <div class="animate-fade px-4 py-6 max-w-lg mx-auto">
+    <div class="animate-fade px-4 py-6 pb-24 max-w-lg mx-auto">
 
       <!-- Back -->
       <a routerLink="/escrow" class="flex items-center gap-2 text-sm text-gray-500 mb-4 hover:text-gray-700">
@@ -264,7 +264,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
           <!-- Actions -->
           <div class="space-y-2">
 
-            @if (isSeller() && transaction()!.status === 'LOCKED') {
+            @if (isSeller() && ['LOCKED', 'SHIPPED', 'DELIVERED'].includes(transaction()!.status)) {
               <a
                 [routerLink]="['/escrow', transaction()!.id, 'qr']"
                 class="flex items-center justify-center gap-2 w-full py-3 text-white
