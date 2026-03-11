@@ -8,13 +8,14 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToastService } from '@core/notification/toast.service';
+import {LoadingSkeletonComponent} from '@shared/components/loading-skeleton/loading-skeleton.component';
 
 const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED'];
 
 @Component({
   selector: 'app-transaction-detail',
   standalone: true,
-  imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe],
+  imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe, LoadingSkeletonComponent],
   template: `
     <div class="animate-fade px-4 py-6 pb-24 max-w-lg mx-auto">
 
@@ -24,6 +25,7 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
       </a>
 
       @if (loading()) {
+        <app-loading-skeleton></app-loading-skeleton>
         <div class="animate-pulse space-y-4">
           <div class="h-8 bg-gray-200 rounded w-1/2"></div>
           <div class="h-32 bg-gray-200 rounded-2xl"></div>
@@ -43,15 +45,15 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
               <!-- Role context line -->
               @if (isBuyer()) {
                 <p class="text-sm font-medium mt-1.5" style="color: var(--clr-primary)">
-                  🛒 {{ 'escrow.detail.contextBuyer' | translate:{ name: transaction()!.sellerName } }}
+                  🛒 {{ 'escrow.detail.contextBuyer' | translate:{name: transaction()!.sellerName} }}
                 </p>
               } @else if (isSeller()) {
                 <p class="text-sm font-medium mt-1.5" style="color: var(--clr-success)">
-                  🏪 {{ 'escrow.detail.contextSeller' | translate:{ name: transaction()!.buyerName } }}
+                  🏪 {{ 'escrow.detail.contextSeller' | translate:{name: transaction()!.buyerName} }}
                 </p>
               }
             </div>
-            <app-status-badge [status]="transaction()!.status" />
+            <app-status-badge [status]="transaction()!.status"/>
           </div>
 
           <!-- Status timeline -->
@@ -293,7 +295,8 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
                 class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
                 style="background: #FEF2F2; border: 1.5px solid var(--clr-error); color: var(--clr-error)"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
                 {{ 'escrow.detail.actions.viewDispute' | translate }}
