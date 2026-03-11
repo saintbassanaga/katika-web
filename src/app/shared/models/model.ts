@@ -300,7 +300,7 @@ export interface DashboardTransactionSummary {
   id: string;
   reference: string;
   buyerName: string;
-  grossAmount: number;
+  netAmount: number;
   status: string;
   createdAt: string;
 }

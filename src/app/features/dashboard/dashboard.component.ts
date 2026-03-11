@@ -648,7 +648,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                 <div class="text-xs text-slate-400 truncate mt-0.5">{{ tx.buyerName }}</div>
               </div>
               <div class="text-right shrink-0">
-                <div class="text-[.9375rem] font-bold text-dark whitespace-nowrap">{{ tx.grossAmount | amount }}</div>
+                <div class="text-[.9375rem] font-bold text-dark whitespace-nowrap">{{ tx.netAmount | amount }}</div>
                 <app-status-badge [status]="tx.status"/>
               </div>
             </a>
@@ -828,7 +828,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                           {{ tx.buyerName }}
                         </div>
                       </td>
-                      <td class="d-tx-amt">{{ tx.grossAmount | amount }}</td>
+                      <td class="d-tx-amt">{{ tx.netAmount | amount }}</td>
                       <td>
                         <app-status-badge [status]="tx.status"/>
                       </td>
@@ -936,7 +936,7 @@ export class DashboardComponent implements OnInit {
   protected readonly wallet = signal<WalletInfo | null>(null);
 
   protected readonly pendingAmount = computed(() =>
-    this.transactions().reduce((sum, tx) => sum + (tx.grossAmount ?? 0), 0));
+    this.transactions().reduce((sum, tx) => sum + (tx.netAmount ?? 0), 0));
 
   ngOnInit(): void {
     forkJoin({
