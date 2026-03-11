@@ -1,5 +1,73 @@
-import { Component, forwardRef, input, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, forwardRef, inject, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  PhoneNumberUtil,
+  PhoneNumberFormat,
+  AsYouTypeFormatter,
+} from 'google-libphonenumber';
+
+const phoneUtil  = PhoneNumberUtil.getInstance();
+
+interface Country { code: string; name: string; dial: string; flag: string; }
+
+const COUNTRIES: Country[] = [
+  { code: 'CM', name: 'Cameroun',           dial: '237', flag: '🇨🇲' },
+  { code: 'NG', name: 'Nigeria',            dial: '234', flag: '🇳🇬' },
+  { code: 'GH', name: 'Ghana',              dial: '233', flag: '🇬🇭' },
+  { code: 'SN', name: 'Sénégal',            dial: '221', flag: '🇸🇳' },
+  { code: 'CI', name: "Côte d'Ivoire",      dial: '225', flag: '🇨🇮' },
+  { code: 'CD', name: 'Congo (RDC)',         dial: '243', flag: '🇨🇩' },
+  { code: 'CG', name: 'Congo-Brazzaville',  dial: '242', flag: '🇨🇬' },
+  { code: 'GA', name: 'Gabon',              dial: '241', flag: '🇬🇦' },
+  { code: 'TD', name: 'Tchad',              dial: '235', flag: '🇹🇩' },
+  { code: 'CF', name: 'Centrafrique',       dial: '236', flag: '🇨🇫' },
+  { code: 'GQ', name: 'Guinée équatoriale', dial: '240', flag: '🇬🇶' },
+  { code: 'FR', name: 'France',             dial: '33',  flag: '🇫🇷' },
+  { code: 'BE', name: 'Belgique',           dial: '32',  flag: '🇧🇪' },
+  { code: 'GB', name: 'Royaume-Uni',        dial: '44',  flag: '🇬🇧' },
+  { code: 'US', name: 'États-Unis',         dial: '1',   flag: '🇺🇸' },
+];
+
+const TZ_MAP: Record<string, string> = {
+  'Africa/Douala': 'CM', 'Africa/Lagos': 'NG', 'Africa/Accra': 'GH',
+  'Africa/Dakar': 'SN', 'Africa/Abidjan': 'CI', 'Africa/Kinshasa': 'CD',
+  'Africa/Lubumbashi': 'CD', 'Africa/Brazzaville': 'CG', 'Africa/Libreville': 'GA',
+  'Africa/Ndjamena': 'TD', 'Africa/Bangui': 'CF', 'Africa/Malabo': 'GQ',
+  'Europe/Paris': 'FR', 'Europe/Brussels': 'BE', 'Europe/London': 'GB',
+  'America/New_York': 'US', 'America/Chicago': 'US', 'America/Los_Angeles': 'US',
+};
+
+function detectCountry(): Country {
+  try {
+    const tz   = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const code = TZ_MAP[tz];
+    return COUNTRIES.find(c => c.code === code) ?? COUNTRIES[0];
+  } catch {
+    return COUNTRIES[0];
+  }
+}
+
+/** Get a national example number as placeholder (e.g. "677 123 456" for CM). */
+function getPlaceholder(regionCode: string): string {
+  try {
+    const example = phoneUtil.getExampleNumber(regionCode);
+    return phoneUtil.format(example, PhoneNumberFormat.NATIONAL)
+      .replace(/^\+?\d+\s*/, '') // strip country code if present
+      .trim();
+  } catch {
+    return '';
+  }
+}
+
+/** Format digits as-you-type using AsYouTypeFormatter. */
+function formatAsYouType(digits: string, regionCode: string): string {
+  const formatter = new AsYouTypeFormatter(regionCode);
+  let result = '';
+  for (const d of digits) result = formatter.inputDigit(d);
+  // Return only the national part (strip leading dial code + space)
+  const dialCode = phoneUtil.getCountryCodeForRegion(regionCode).toString();
+  return result.replace(new RegExp(`^\\+?${dialCode}\\s*`), '').trim();
+}
 
 @Component({
   selector: 'app-phone-input',
@@ -9,6 +77,8 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PhoneInputComponent), multi: true },
   ],
   styles: [`
+    :host { display: block; position: relative; }
+
     .wrap {
       display: flex; align-items: center;
       border: 2px solid #E2E8F0; border-radius: 12px;
@@ -16,60 +86,170 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
       transition: border-color .2s, box-shadow .2s;
     }
     .wrap:focus-within {
-      border-color: #1B4F8A;
-      background: #fff;
+      border-color: #1B4F8A; background: #fff;
       box-shadow: 0 0 0 4px rgba(27,79,138,.08);
     }
-    .wrap.disabled { opacity: .5; }
-    .prefix {
-      padding: .8125rem .875rem .8125rem 1rem;
+    .wrap.disabled { opacity: .5; pointer-events: none; }
+
+    .flag-btn {
+      display: flex; align-items: center; gap: .35rem;
+      padding: .8125rem .75rem .8125rem 1rem;
+      background: none; border: none; border-right: 2px solid #E2E8F0;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
       font-size: .9375rem; font-weight: 600; color: #334155;
-      border-right: 2px solid #E2E8F0;
-      white-space: nowrap; flex-shrink: 0;
-      user-select: none;
+      border-radius: 10px 0 0 10px;
+      transition: background .15s;
     }
+    .flag-btn:hover { background: rgba(0,0,0,.03); }
+
+    .chevron { color: #94A3B8; transition: transform .2s; flex-shrink: 0; }
+    .chevron.open { transform: rotate(180deg); }
+
     .input {
       flex: 1; padding: .8125rem .875rem;
       background: transparent; border: none; outline: none;
       font-size: .9375rem; color: #0F172A; font-family: inherit;
+      letter-spacing: .03em;
     }
     .input::placeholder { color: #CBD5E1; }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 6px); left: 0;
+      min-width: 230px;
+      background: #fff;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1);
+      padding: .375rem 0;
+      z-index: 100;
+      max-height: 260px;
+      overflow-y: auto;
+      list-style: none;
+      margin: 0;
+    }
+
+    .option {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .625rem 1rem;
+      cursor: pointer; font-size: .875rem; color: #0F172A;
+      transition: background .12s;
+    }
+    .option:hover { background: #F1F5F9; }
+    .option.selected { background: #EBF4FF; font-weight: 600; }
+
+    .option-name { flex: 1; }
+    .option-dial { color: #64748B; font-size: .8125rem; }
   `],
   template: `
     <div class="wrap" [class.disabled]="isDisabled()">
-      <span class="prefix">🇨🇲 +237</span>
+
+      <button type="button" class="flag-btn"
+              (click)="toggleDropdown()"
+              [attr.aria-expanded]="open()"
+              [disabled]="isDisabled()">
+        <span>{{ country().flag }}</span>
+        <span>+{{ country().dial }}</span>
+        <svg class="chevron" [class.open]="open()"
+             width="12" height="12" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      @if (open()) {
+        <ul class="dropdown" role="listbox">
+          @for (c of countries; track c.code) {
+            <li class="option" [class.selected]="c.code === country().code"
+                role="option" (click)="select(c)">
+              <span>{{ c.flag }}</span>
+              <span class="option-name">{{ c.name }}</span>
+              <span class="option-dial">+{{ c.dial }}</span>
+            </li>
+          }
+        </ul>
+      }
+
       <input
         type="tel"
         inputmode="tel"
-        [placeholder]="placeholder()"
+        [placeholder]="resolvedPlaceholder()"
         [disabled]="isDisabled()"
-        [ngModel]="localValue()"
+        [ngModel]="displayValue()"
         (ngModelChange)="onInput($event)"
         (blur)="onTouched()"
         class="input"
-        maxlength="15"
+        maxlength="20"
       />
     </div>
   `,
 })
 export class PhoneInputComponent implements ControlValueAccessor {
-  readonly placeholder = input<string>('6XX XXX XXX');
+  readonly placeholder      = input<string | undefined>(undefined);
+  readonly withCountryCode  = input<boolean>(true);
 
-  protected readonly localValue = signal('');
+  protected readonly countries  = COUNTRIES;
+  protected readonly country    = signal<Country>(detectCountry());
+  protected readonly rawDigits  = signal('');
   protected readonly isDisabled = signal(false);
+  protected readonly open       = signal(false);
 
+  /** Placeholder: use input override or auto-generate from libphonenumber example. */
+  protected readonly resolvedPlaceholder = computed(() =>
+    this.placeholder() ?? getPlaceholder(this.country().code)
+  );
+
+  /** Formatted display value via AsYouTypeFormatter. */
+  protected readonly displayValue = computed(() =>
+    formatAsYouType(this.rawDigits(), this.country().code)
+  );
+
+  private readonly el = inject(ElementRef);
   private onChange: (val: string) => void = () => {};
   protected onTouched: () => void = () => {};
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.el.nativeElement.contains(event.target as Node)) this.open.set(false);
+  }
+
+  protected toggleDropdown(): void { this.open.update(v => !v); }
+
+  protected select(c: Country): void {
+    this.country.set(c);
+    this.rawDigits.set('');
+    this.open.set(false);
+    this.onChange('');
+  }
+
   protected onInput(value: string): void {
     const digits = value.replace(/\D/g, '');
-    this.localValue.set(digits);
-    this.onChange(digits);
+    this.rawDigits.set(digits);
+    if (!this.withCountryCode()) {
+      this.onChange(digits);
+      return;
+    }
+    try {
+      const parsed = phoneUtil.parseAndKeepRawInput(digits, this.country().code);
+      this.onChange(phoneUtil.format(parsed, PhoneNumberFormat.E164));
+    } catch {
+      this.onChange(`+${this.country().dial}${digits}`);
+    }
   }
 
   writeValue(value: string): void {
-    const digits = (value ?? '').replace(/^\+237/, '').replace(/\D/g, '');
-    this.localValue.set(digits);
+    if (!value) { this.rawDigits.set(''); return; }
+    try {
+      const parsed  = phoneUtil.parseAndKeepRawInput(value, this.country().code);
+      const region  = phoneUtil.getRegionCodeForNumber(parsed);
+      const country = COUNTRIES.find(c => c.code === region);
+      if (country) this.country.set(country);
+      const national = phoneUtil.format(parsed, PhoneNumberFormat.NATIONAL);
+      this.rawDigits.set(national.replace(/\D/g, ''));
+    } catch {
+      this.rawDigits.set(value.replace(/\D/g, ''));
+    }
   }
 
   registerOnChange(fn: (val: string) => void): void { this.onChange = fn; }

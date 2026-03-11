@@ -16,7 +16,7 @@
     <router-outlet />
   </main>
 
-  @if (!showOnboardingOverlay()) {
+  @if (showNav() && !showOnboardingOverlay()) {
     <app-fab />
   }
   <app-toast-container />

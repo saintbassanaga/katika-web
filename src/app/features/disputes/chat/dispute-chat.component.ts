@@ -33,7 +33,232 @@ import { TimelineStep } from '@shared/models/model';
   selector: 'app-dispute-chat',
   standalone: true,
   imports: [FormsModule, RouterLink, StatusBadgeComponent, TimeAgoPipe, TitleCasePipe, TranslatePipe, AmountPipe],
-  styles: [':host { display: block; height: 100vh; overflow: hidden; }'],
+  styles: [`
+    :host { display: block; height: 100vh; overflow: hidden; }
+
+    /* ── DETAILS SIDEBAR ──────────────────────────── */
+    .ds-panel {
+      display: none;
+      flex-direction: column;
+      width: 300px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      background: linear-gradient(170deg, #F4F7FB 0%, #EBF0F8 100%);
+      position: relative;
+    }
+
+    .ds-panel::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #1B4F8A 0%, #C9920D 50%, #1B4F8A 100%);
+      z-index: 2;
+    }
+
+    @media (min-width: 768px) {
+      .ds-panel { display: flex; }
+    }
+
+    .ds-header {
+      position: sticky;
+      top: 0; z-index: 10;
+      background: #0F2240;
+      padding: 0.875rem 1.125rem;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      flex-shrink: 0;
+    }
+
+    .ds-header-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ds-header-accent {
+      width: 3px; height: 14px;
+      background: #C9920D;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .ds-header-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,.45);
+      margin: 0;
+    }
+
+    .ds-body {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .ds-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 0.875rem;
+      border: 1px solid rgba(226,232,240,.9);
+      box-shadow: 0 1px 4px rgba(15,23,42,.05);
+    }
+
+    .ds-section-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94A3B8;
+      margin: 0 0 0.625rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .ds-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #C9920D;
+      flex-shrink: 0;
+    }
+
+    .ds-kv { margin-bottom: 0.5rem; }
+    .ds-kv:last-child { margin-bottom: 0; }
+
+    .ds-key {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #94A3B8;
+      margin: 0 0 0.2rem;
+    }
+
+    .ds-val {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #0F172A;
+      margin: 0;
+    }
+
+    .ds-val-mono {
+      font-size: 0.8125rem;
+      font-family: 'Courier New', monospace;
+      color: #334155;
+      margin: 0;
+      word-break: break-all;
+    }
+
+    .ds-party {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0;
+    }
+
+    .ds-party + .ds-party { border-top: 1px solid #F1F5F9; }
+
+    .ds-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .ds-party-info { flex: 1; min-width: 0; }
+    .ds-party-name { font-size: 0.8125rem; font-weight: 700; color: #0F172A; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ds-party-role { font-size: 0.6875rem; color: #94A3B8; margin: 0; }
+
+    .ds-you {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 0.125rem 0.5rem;
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+
+    .ds-amounts { display: flex; gap: 0.5rem; }
+    .ds-amount-box { flex: 1; border-radius: 10px; padding: 0.625rem 0.75rem; }
+
+    /* ── TIMELINE ──────────────────────────────────── */
+    .tl-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .tl-line-h {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #E2E8F0, transparent);
+    }
+
+    .tl-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #94A3B8;
+    }
+
+    .tl-steps { padding: 0.5rem 0.75rem 2rem; }
+
+    .tl-step {
+      display: flex;
+      gap: 0.75rem;
+      padding-bottom: 1rem;
+      position: relative;
+    }
+
+    .tl-step:last-child { padding-bottom: 0; }
+
+    .tl-stem {
+      position: absolute;
+      left: 9px;
+      top: 22px; bottom: 0;
+      width: 2px;
+      border-radius: 1px;
+    }
+
+    .tl-dot {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5625rem;
+      font-weight: 800;
+      position: relative;
+    }
+
+    .tl-dot-done { background: #10B981; color: #fff; }
+    .tl-dot-now  { background: #1B4F8A; color: #fff; box-shadow: 0 0 0 4px rgba(27,79,138,.15); }
+    .tl-dot-next { background: #E2E8F0; color: #94A3B8; }
+
+    .tl-dot-inner {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .tl-text { flex: 1; min-width: 0; padding-top: 0.125rem; }
+    .tl-text-done  { font-size: 0.8125rem; font-weight: 500; color: #059669; margin: 0; line-height: 1.3; }
+    .tl-text-now   { font-size: 0.8125rem; font-weight: 700; color: #1B4F8A; margin: 0; line-height: 1.3; }
+    .tl-text-next  { font-size: 0.8125rem; font-weight: 400; color: #94A3B8; margin: 0; line-height: 1.3; }
+    .tl-sub        { font-size: 0.6875rem; color: #C9920D; margin: 0.125rem 0 0; font-weight: 500; }
+  `],
   template: `
     <div class="animate-fade flex flex-col h-screen bg-page md:flex-row">
 

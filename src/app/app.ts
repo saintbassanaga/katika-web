@@ -62,14 +62,22 @@ export class App {
     return NAV_ROUTES.some(r => url.startsWith(r));
   });
 
-  protected readonly shellClass = computed(() =>
-    this.showNav()
-      ? 'h-screen flex overflow-hidden'
-      : 'min-h-screen flex flex-col',
-  );
+  /** True for authenticated full-screen routes (e.g. dispute chat). */
+  protected readonly isFullScreen = computed(() => {
+    if (!this.auth.isAuthenticated()) return false;
+    const url = this.currentUrl() ?? '';
+    return FULL_SCREEN_PATTERNS.some(p => p.test(url));
+  });
+
+  protected readonly shellClass = computed(() => {
+    if (this.showNav())      return 'h-screen flex overflow-hidden';
+    if (this.isFullScreen()) return 'h-screen flex flex-col overflow-hidden';
+    return 'min-h-screen flex flex-col';
+  });
 
   protected readonly contentClass = computed(() => {
-    if (!this.showNav()) return 'w-full flex-1';
+    if (this.isFullScreen()) return 'w-full flex-1 min-h-0 overflow-y-auto';
+    if (!this.showNav())     return 'w-full flex-1';
     return this.isMobile() ? 'w-full pb-16 flex-1 min-h-0 overflow-y-auto' : 'ml-64 flex-1 min-h-0 overflow-y-auto';
   });
 }
