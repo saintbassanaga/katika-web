@@ -537,7 +537,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             <div class="text-[.75rem] text-slate-500 font-medium mb-1">{{ 'dashboard.balance' | translate }}</div>
             <div class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">
               @if (wallet()) {
-                {{ wallet()!.available | amount }}
+                {{ wallet()!.amount | amount }}
               } @else {
                 —
               }
@@ -641,14 +641,14 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             <a [routerLink]="['/escrow', tx.id]"
                class="animate-entry stagger-item flex items-center gap-3 bg-white rounded-[18px] p-4 mb-2 shadow-[0_1px_4px_rgba(15,23,42,.06),0_4px_12px_rgba(15,23,42,.04)] no-underline transition-all hover:shadow-[0_4px_16px_rgba(15,23,42,.1)] hover:-translate-y-px">
               <div
-                class="w-11 h-11 shrink-0 rounded-[14px] bg-linear-to-br from-primary-lt to-[#C8DCF2] flex items-center justify-center text-primary text-base font-bold">{{ (tx.counterpartName || '?')[0].toUpperCase() }}
+                class="w-11 h-11 shrink-0 rounded-[14px] bg-linear-to-br from-primary-lt to-[#C8DCF2] flex items-center justify-center text-primary text-base font-bold">{{ (tx.buyerName || '?')[0].toUpperCase() }}
               </div>
               <div class="flex-1 min-w-0">
                 <div class="text-sm font-semibold text-dark truncate">{{ tx.reference }}</div>
-                <div class="text-xs text-slate-400 truncate mt-0.5">{{ tx.counterpartName }}</div>
+                <div class="text-xs text-slate-400 truncate mt-0.5">{{ tx.buyerName }}</div>
               </div>
               <div class="text-right shrink-0">
-                <div class="text-[.9375rem] font-bold text-dark whitespace-nowrap">{{ tx.amount | amount }}</div>
+                <div class="text-[.9375rem] font-bold text-dark whitespace-nowrap">{{ tx.grossAmount | amount }}</div>
                 <app-status-badge [status]="tx.status"/>
               </div>
             </a>
@@ -714,7 +714,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             </div>
             <div class="d-kpi-label">{{ 'dashboard.balance' | translate }}</div>
             <div class="d-kpi-value">@if (wallet()) {
-              {{ wallet()!.available | amount }}
+              {{ wallet()!.amount | amount }}
             } @else {
               —
             }</div>
@@ -824,11 +824,11 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                       <td class="d-tx-ref">{{ tx.reference }}</td>
                       <td>
                         <div class="d-tx-counterpart">
-                          <div class="d-tx-av">{{ (tx.counterpartName || '?')[0].toUpperCase() }}</div>
-                          {{ tx.counterpartName }}
+                          <div class="d-tx-av">{{ (tx.buyerName || '?')[0].toUpperCase() }}</div>
+                          {{ tx.buyerName }}
                         </div>
                       </td>
-                      <td class="d-tx-amt">{{ tx.amount | amount }}</td>
+                      <td class="d-tx-amt">{{ tx.grossAmount | amount }}</td>
                       <td>
                         <app-status-badge [status]="tx.status"/>
                       </td>
@@ -936,12 +936,12 @@ export class DashboardComponent implements OnInit {
   protected readonly wallet = signal<WalletInfo | null>(null);
 
   protected readonly pendingAmount = computed(() =>
-    this.transactions().reduce((sum, tx) => sum + (tx.amount ?? 0), 0));
+    this.transactions().reduce((sum, tx) => sum + (tx.grossAmount ?? 0), 0));
 
   ngOnInit(): void {
     forkJoin({
       transactions: this.http.get<{ content: DashboardTransactionSummary[] }>(
-        `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED&page=0&size=5`,
+        `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED,RELEASED&page=0&size=5`,
         {withCredentials: true},
       ),
       disputes: this.http.get<{ content: DisputeSummary[] }>(

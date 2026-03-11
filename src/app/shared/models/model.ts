@@ -299,8 +299,8 @@ export interface WalletMovement {
 export interface DashboardTransactionSummary {
   id: string;
   reference: string;
-  counterpartName: string;
-  amount: number;
+  buyerName: string;
+  grossAmount: number;
   status: string;
   createdAt: string;
 }
@@ -314,7 +314,7 @@ export interface DisputeSummary {
 }
 
 export interface WalletInfo {
-  available: number;
+  amount: number;
   frozen: number;
   currency: string;
 }

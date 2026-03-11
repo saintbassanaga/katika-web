@@ -57,18 +57,18 @@ const TYPE_ICONS: Record<MovementType, string> = {
     <div class="animate-fade">
     <!-- ── Hero ─────────────────────────────────────── -->
     <div class="relative overflow-hidden bg-dark px-6 pt-11 pb-8">
-      <div class="absolute rounded-full pointer-events-none blur-[72px] w-[260px] h-[260px] top-[-80px] right-[-60px] bg-[radial-gradient(circle,rgba(201,146,13,.22)_0%,transparent_70%)] orb-1"></div>
-      <div class="absolute rounded-full pointer-events-none blur-[72px] w-[200px] h-[200px] bottom-[-50px] left-[-50px] bg-[radial-gradient(circle,rgba(27,79,138,.25)_0%,transparent_70%)] orb-2"></div>
+      <div class="absolute rounded-full pointer-events-none blur-[72px] w-65 h-65 -top-20 -right-15 bg-[radial-gradient(circle,rgba(201,146,13,.22)_0%,transparent_70%)] orb-1"></div>
+      <div class="absolute rounded-full pointer-events-none blur-[72px] w-50 h-50 -bottom-12.5 -left-12.5 bg-[radial-gradient(circle,rgba(27,79,138,.25)_0%,transparent_70%)] orb-2"></div>
 
-      <p class="text-[.6875rem] font-bold tracking-[.14em] uppercase text-white/[.38] mb-4">{{ 'wallet.balance' | translate }}</p>
+      <p class="text-[.6875rem] font-bold tracking-[.14em] uppercase text-white/38 mb-4">{{ 'wallet.balance' | translate }}</p>
 
       <div class="flex items-start justify-between gap-2 mb-2.5">
         @if (balanceVisible()) {
           <div class="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-[-0.04em] leading-none text-white">{{ wallet()?.balance | amount }}</div>
         } @else {
-          <div class="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-[.08em] leading-none text-white/[.18]">••••••</div>
+          <div class="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-[.08em] leading-none text-white/18">••••••</div>
         }
-        <button class="shrink-0 w-9 h-9 rounded-[10px] bg-white/[.07] border border-white/10 text-white/45 cursor-pointer flex items-center justify-center mt-1 transition-colors hover:bg-white/[.12] hover:text-white/75" (click)="balanceVisible.set(!balanceVisible())">
+        <button class="shrink-0 w-9 h-9 rounded-[10px] bg-white/[.07] border border-white/10 text-white/45 cursor-pointer flex items-center justify-center mt-1 transition-colors hover:bg-white/12 hover:text-white/75" (click)="balanceVisible.set(!balanceVisible())">
           @if (balanceVisible()) {
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
@@ -95,7 +95,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
            class="py-3.25 rounded-xl bg-primary border-none text-white text-sm font-bold font-[inherit] cursor-pointer text-center no-underline block transition-opacity hover:opacity-[.88]">
           {{ 'wallet.withdrawBtn' | translate }}
         </a>
-        <button class="py-3.25 rounded-xl bg-white/[.07] border border-white/10 text-white/55 text-sm font-semibold font-[inherit] cursor-pointer transition-colors hover:bg-white/[.12] hover:text-white/80"
+        <button class="py-3.25 rounded-xl bg-white/[.07] border border-white/10 text-white/55 text-sm font-semibold font-[inherit] cursor-pointer transition-colors hover:bg-white/12 hover:text-white/80"
                 (click)="refresh()">
           {{ 'wallet.refreshBtn' | translate }}
         </button>
