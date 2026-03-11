@@ -1,4 +1,6 @@
 {
+  "installCommand": "yarn install",
+  "buildCommand": "yarn build",
   "rewrites": [
     {
       "source": "/bff/:path*",
