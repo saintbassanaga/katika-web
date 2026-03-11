@@ -1,34 +1,28 @@
 import { Component, ElementRef, HostListener, computed, forwardRef, inject, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {
-  PhoneNumberUtil,
-  PhoneNumberFormat,
-  AsYouTypeFormatter,
-} from 'google-libphonenumber';
+import { AsYouType, parsePhoneNumber, CountryCode } from 'libphonenumber-js/min';
 
-const phoneUtil  = PhoneNumberUtil.getInstance();
-
-interface Country { code: string; name: string; dial: string; flag: string; }
+interface Country { code: CountryCode; name: string; dial: string; flag: string; placeholder: string; }
 
 const COUNTRIES: Country[] = [
-  { code: 'CM', name: 'Cameroun',           dial: '237', flag: '🇨🇲' },
-  { code: 'NG', name: 'Nigeria',            dial: '234', flag: '🇳🇬' },
-  { code: 'GH', name: 'Ghana',              dial: '233', flag: '🇬🇭' },
-  { code: 'SN', name: 'Sénégal',            dial: '221', flag: '🇸🇳' },
-  { code: 'CI', name: "Côte d'Ivoire",      dial: '225', flag: '🇨🇮' },
-  { code: 'CD', name: 'Congo (RDC)',         dial: '243', flag: '🇨🇩' },
-  { code: 'CG', name: 'Congo-Brazzaville',  dial: '242', flag: '🇨🇬' },
-  { code: 'GA', name: 'Gabon',              dial: '241', flag: '🇬🇦' },
-  { code: 'TD', name: 'Tchad',              dial: '235', flag: '🇹🇩' },
-  { code: 'CF', name: 'Centrafrique',       dial: '236', flag: '🇨🇫' },
-  { code: 'GQ', name: 'Guinée équatoriale', dial: '240', flag: '🇬🇶' },
-  { code: 'FR', name: 'France',             dial: '33',  flag: '🇫🇷' },
-  { code: 'BE', name: 'Belgique',           dial: '32',  flag: '🇧🇪' },
-  { code: 'GB', name: 'Royaume-Uni',        dial: '44',  flag: '🇬🇧' },
-  { code: 'US', name: 'États-Unis',         dial: '1',   flag: '🇺🇸' },
+  { code: 'CM', name: 'Cameroun',           dial: '237', flag: '🇨🇲', placeholder: '677 123 456'    },
+  { code: 'NG', name: 'Nigeria',            dial: '234', flag: '🇳🇬', placeholder: '0802 123 4567'  },
+  { code: 'GH', name: 'Ghana',              dial: '233', flag: '🇬🇭', placeholder: '023 123 4567'   },
+  { code: 'SN', name: 'Sénégal',            dial: '221', flag: '🇸🇳', placeholder: '70 123 45 67'   },
+  { code: 'CI', name: "Côte d'Ivoire",      dial: '225', flag: '🇨🇮', placeholder: '01 23 45 67 89' },
+  { code: 'CD', name: 'Congo (RDC)',         dial: '243', flag: '🇨🇩', placeholder: '099 123 4567'   },
+  { code: 'CG', name: 'Congo-Brazzaville',  dial: '242', flag: '🇨🇬', placeholder: '06 123 4567'    },
+  { code: 'GA', name: 'Gabon',              dial: '241', flag: '🇬🇦', placeholder: '06 03 12 34'    },
+  { code: 'TD', name: 'Tchad',              dial: '235', flag: '🇹🇩', placeholder: '63 01 23 45'    },
+  { code: 'CF', name: 'Centrafrique',       dial: '236', flag: '🇨🇫', placeholder: '70 01 23 45'    },
+  { code: 'GQ', name: 'Guinée équatoriale', dial: '240', flag: '🇬🇶', placeholder: '222 123 456'    },
+  { code: 'FR', name: 'France',             dial: '33',  flag: '🇫🇷', placeholder: '06 12 34 56 78' },
+  { code: 'BE', name: 'Belgique',           dial: '32',  flag: '🇧🇪', placeholder: '0470 12 34 56'  },
+  { code: 'GB', name: 'Royaume-Uni',        dial: '44',  flag: '🇬🇧', placeholder: '07400 123456'   },
+  { code: 'US', name: 'États-Unis',         dial: '1',   flag: '🇺🇸', placeholder: '(201) 555-0123' },
 ];
 
-const TZ_MAP: Record<string, string> = {
+const TZ_MAP: Record<string, CountryCode> = {
   'Africa/Douala': 'CM', 'Africa/Lagos': 'NG', 'Africa/Accra': 'GH',
   'Africa/Dakar': 'SN', 'Africa/Abidjan': 'CI', 'Africa/Kinshasa': 'CD',
   'Africa/Lubumbashi': 'CD', 'Africa/Brazzaville': 'CG', 'Africa/Libreville': 'GA',
@@ -45,28 +39,6 @@ function detectCountry(): Country {
   } catch {
     return COUNTRIES[0];
   }
-}
-
-/** Get a national example number as placeholder (e.g. "677 123 456" for CM). */
-function getPlaceholder(regionCode: string): string {
-  try {
-    const example = phoneUtil.getExampleNumber(regionCode);
-    return phoneUtil.format(example, PhoneNumberFormat.NATIONAL)
-      .replace(/^\+?\d+\s*/, '') // strip country code if present
-      .trim();
-  } catch {
-    return '';
-  }
-}
-
-/** Format digits as-you-type using AsYouTypeFormatter. */
-function formatAsYouType(digits: string, regionCode: string): string {
-  const formatter = new AsYouTypeFormatter(regionCode);
-  let result = '';
-  for (const d of digits) result = formatter.inputDigit(d);
-  // Return only the national part (strip leading dial code + space)
-  const dialCode = phoneUtil.getCountryCodeForRegion(regionCode).toString();
-  return result.replace(new RegExp(`^\\+?${dialCode}\\s*`), '').trim();
 }
 
 @Component({
@@ -186,8 +158,8 @@ function formatAsYouType(digits: string, regionCode: string): string {
   `,
 })
 export class PhoneInputComponent implements ControlValueAccessor {
-  readonly placeholder      = input<string | undefined>(undefined);
-  readonly withCountryCode  = input<boolean>(true);
+  readonly placeholder     = input<string | undefined>(undefined);
+  readonly withCountryCode = input<boolean>(true);
 
   protected readonly countries  = COUNTRIES;
   protected readonly country    = signal<Country>(detectCountry());
@@ -195,15 +167,16 @@ export class PhoneInputComponent implements ControlValueAccessor {
   protected readonly isDisabled = signal(false);
   protected readonly open       = signal(false);
 
-  /** Placeholder: use input override or auto-generate from libphonenumber example. */
   protected readonly resolvedPlaceholder = computed(() =>
-    this.placeholder() ?? getPlaceholder(this.country().code)
+    this.placeholder() ?? this.country().placeholder
   );
 
-  /** Formatted display value via AsYouTypeFormatter. */
-  protected readonly displayValue = computed(() =>
-    formatAsYouType(this.rawDigits(), this.country().code)
-  );
+  /** AsYouType formatted display value. */
+  protected readonly displayValue = computed(() => {
+    const digits = this.rawDigits();
+    if (!digits) return '';
+    return new AsYouType(this.country().code).input(digits);
+  });
 
   private readonly el = inject(ElementRef);
   private onChange: (val: string) => void = () => {};
@@ -231,8 +204,8 @@ export class PhoneInputComponent implements ControlValueAccessor {
       return;
     }
     try {
-      const parsed = phoneUtil.parseAndKeepRawInput(digits, this.country().code);
-      this.onChange(phoneUtil.format(parsed, PhoneNumberFormat.E164));
+      const parsed = parsePhoneNumber(digits, this.country().code);
+      this.onChange(parsed.format('E.164'));
     } catch {
       this.onChange(`+${this.country().dial}${digits}`);
     }
@@ -241,12 +214,11 @@ export class PhoneInputComponent implements ControlValueAccessor {
   writeValue(value: string): void {
     if (!value) { this.rawDigits.set(''); return; }
     try {
-      const parsed  = phoneUtil.parseAndKeepRawInput(value, this.country().code);
-      const region  = phoneUtil.getRegionCodeForNumber(parsed);
-      const country = COUNTRIES.find(c => c.code === region);
+      const parsed  = parsePhoneNumber(value);
+      const code    = parsed.country;
+      const country = code ? COUNTRIES.find(c => c.code === code) : undefined;
       if (country) this.country.set(country);
-      const national = phoneUtil.format(parsed, PhoneNumberFormat.NATIONAL);
-      this.rawDigits.set(national.replace(/\D/g, ''));
+      this.rawDigits.set(parsed.nationalNumber as string);
     } catch {
       this.rawDigits.set(value.replace(/\D/g, ''));
     }
