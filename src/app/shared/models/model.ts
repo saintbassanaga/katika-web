@@ -259,8 +259,8 @@ export interface TimelineStep {
 
 export interface PayoutRequest {
   amount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
-  phone: string;
+  provider: 'CAMPAY' | 'MONETBIL'|'PAWAPAY';
+  destinationPhone: string;
 }
 
 // ── Wallet ───────────────────────────────────────────────────

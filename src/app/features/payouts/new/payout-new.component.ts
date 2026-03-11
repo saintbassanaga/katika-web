@@ -109,7 +109,7 @@ const PROVIDERS = [
           type="submit"
           [disabled]="form.invalid || loading()"
           class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold text-sm
-                 hover:bg-blue-700 transition-colors disabled:opacity-50 min-h-[44px]
+                 hover:bg-blue-700 transition-colors disabled:opacity-50 min-h-11
                  flex items-center justify-center gap-2"
         >
           @if (loading()) {
@@ -165,8 +165,8 @@ export class PayoutNewComponent implements OnInit {
     const v = this.form.value;
     this.payoutService.create({
       amount: v.amount!,
-      provider: v.provider as 'CAMPAY' | 'MONETBIL',
-      phone: v.phone!,
+      provider: v.provider as 'CAMPAY' | 'MONETBIL' | 'PAWAPAY',
+      destinationPhone: v.phone!,
     }).subscribe({
       next: ({ payoutId }) => {
         this.payoutService.requestOtp(payoutId).subscribe({
