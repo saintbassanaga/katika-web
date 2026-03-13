@@ -3,13 +3,33 @@
 export interface UserProfile {
   userId: string;
   fullName: string;
-  role?: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  role?: 'BUYER' | 'SELLER' | 'BOTH' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
   email?: string;
-  cniNumber?: string;
   mfaEnabled: boolean;
-  verified: boolean;
+  verified?: boolean;
+  cniNumber?: string;
   issuedAt: string;
   expiresAt: string;
+}
+
+export interface UserProfileResponse {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string | null;
+  emailVerified: boolean;
+  cniProvided: boolean;
+  role: 'BUYER' | 'SELLER' | 'BOTH' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  verified: boolean;
+  mfaEnabled: boolean;
+  addressStreet: string | null;
+  addressCity: string | null;
+  addressRegion: string | null;
+  addressCountry: string | null;
+  addressPostalCode: string | null;
+  profileComplete: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LoginRequest {
@@ -49,9 +69,14 @@ export interface ChangePasswordRequest {
 }
 
 export interface UpdateProfileRequest {
-  fullName: string;
+  fullName?: string;
   email?: string;
   cniNumber?: string;
+  addressStreet?: string;
+  addressCity?: string;
+  addressRegion?: string;
+  addressCountry?: string;
+  addressPostalCode?: string;
 }
 
 export interface MfaSetupResponse {
@@ -78,6 +103,26 @@ export interface Toast {
   id: string;
   type: ToastType;
   message: string;
+}
+
+// ── App Notifications ─────────────────────────────────────────
+
+export type NotificationType =
+  | 'ESCROW_LOCKED' | 'ESCROW_SHIPPED' | 'ESCROW_DELIVERED'
+  | 'ESCROW_RELEASED' | 'ESCROW_DISPUTED' | 'ESCROW_CANCELLED' | 'ESCROW_REFUNDED'
+  | 'PAYOUT_COMPLETED' | 'PAYOUT_FAILED'
+  | 'VERIFICATION_APPROVED' | 'VERIFICATION_REJECTED';
+
+export interface AppNotificationResponse {
+  id: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  entityId: string | null;
+  entityReference: string | null;
+  read: boolean;
+  createdAt: string;
+  readAt: string | null;
 }
 
 // ── Platform ─────────────────────────────────────────────────
@@ -154,10 +199,12 @@ export interface EscrowCreateRequest {
 
 export interface Page<T> {
   content: T[];
-  totalPages: number;
-  totalElements: number;
-  number: number;
+  page: number;
   size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
 }
 
 // ── Disputes ─────────────────────────────────────────────────
@@ -179,7 +226,7 @@ export type DisputeReason =
 
 export type ResolutionType =
   | 'FULL_REFUND_BUYER' | 'PARTIAL_REFUND_BUYER' | 'RELEASE_TO_SELLER'
-  | 'SPLIT_50_50' | 'NO_ACTION' | 'DEFAULT_WIN_BUYER' | 'DEFAULT_WIN_SELLER';
+  | 'SPLIT_50_50' | 'CUSTOM_RATIO' | 'NO_ACTION';
 
 export interface DisputeMessage {
   id: string;
@@ -233,6 +280,8 @@ export interface CreateDisputeRequest {
 
 export interface ResolveDisputeRequest {
   resolutionType: ResolutionType;
+  actorId?: string;
+  sellerPercent?: number;
 }
 
 export interface DisputeStatusEvent {
@@ -257,39 +306,73 @@ export interface TimelineStep {
 
 // ── Payouts ──────────────────────────────────────────────────
 
+export type PayoutStatus =
+  | 'PENDING' | 'OTP_SENT' | 'OTP_VALIDATED' | 'PROCESSING'
+  | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+
 export interface PayoutRequest {
-  amount: number;
-  provider: 'CAMPAY' | 'MONETBIL'|'PAWAPAY';
   destinationPhone: string;
+  amount: number;
+  userId?: string;
+}
+
+export interface PayoutRequestResponse {
+  id: string;
+  reference: string;
+  userId: string;
+  destinationPhone: string;
+  operator: string;
+  amount: string;
+  platformFee: string;
+  providerFee: string;
+  fee: string;
+  netAmount: string;
+  actualProviderFee: string | null;
+  currency: string;
+  status: PayoutStatus;
+  failureReason: string | null;
+  createdAt: string;
+  otpSentAt: string | null;
+  otpValidatedAt: string | null;
+  submittedAt: string | null;
+  completedAt: string | null;
+  failedAt: string | null;
 }
 
 // ── Wallet ───────────────────────────────────────────────────
+
+export type TransactionStatus =
+  | 'INITIATED' | 'LOCKED' | 'SHIPPED' | 'DELIVERED' | 'RELEASED'
+  | 'DISPUTED' | 'REFUNDED' | 'CANCELLED' | 'EXPIRED';
 
 export type MovementType =
   | 'ESCROW_FREEZE' | 'ESCROW_UNFREEZE' | 'ESCROW_CREDIT'
   | 'REFUND_UNFREEZE' | 'REFUND_CREDIT'
   | 'DISPUTE_FREEZE' | 'DISPUTE_REFUND_BUYER' | 'DISPUTE_RELEASE_SELLER'
   | 'DISPUTE_SPLIT_BUYER' | 'DISPUTE_SPLIT_SELLER'
-  | 'PAYOUT_DEBIT' | 'PAYOUT_REVERSAL'
-  | 'DEPOSIT_CREDIT' | 'PLATFORM_FEE_CREDIT'
-  | 'FEE_DEBIT' | 'FEE_CREDIT'
-  | 'ADMIN_CREDIT' | 'ADMIN_DEBIT';
+  | 'PAYOUT_DEBIT' | 'PAYOUT_REVERSAL' | 'PAYOUT_FAILED_REFUND'
+  | 'DEPOSIT_CREDIT' | 'PLATFORM_FEE_CREDIT';
 
 export interface WalletBalance {
+  id: string;
+  userId: string;
   balance: number;
   frozenAmount: number;
+  totalAmount: number;
   currency: string;
+  updatedAt: string;
 }
 
 export interface WalletMovement {
   id: string;
-  type: MovementType;
+  movementType: MovementType;
   amount: number;
   balanceBefore: number;
   balanceAfter: number;
   frozenBefore: number;
   frozenAfter: number;
-  reference: string;
+  relatedTransactionId: string | null;
+  relatedTransactionType: string | null;
   description: string;
   createdAt: string;
 }

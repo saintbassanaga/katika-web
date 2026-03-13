@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { StompSubscription } from '@stomp/stompjs';
@@ -453,19 +453,62 @@ import { TimelineStep } from '@shared/models/model';
                 </div>
               } @else {
                 <div class="flex w-full" [class.justify-end]="isOwnMessage(msg)">
-                  <div class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,.08)]"
-                    [class.bg-primary]="isOwnMessage(msg)"
-                    [class.text-white]="isOwnMessage(msg)"
-                    [class.rounded-br-md]="isOwnMessage(msg)"
-                    [class.bg-white]="!isOwnMessage(msg)"
-                    [class.rounded-bl-md]="!isOwnMessage(msg)"
-                  >
-                    @if (!isOwnMessage(msg)) {
-                      <p class="text-xs font-bold text-primary mb-1 m-0">{{ msg.senderName }}</p>
-                    }
-                    <p class="text-sm wrap-break-word whitespace-pre-wrap m-0">{{ msg.content }}</p>
-                    <p class="text-[10px] mt-1 text-right opacity-60 m-0">{{ msg.createdAt | timeAgo }}</p>
-                  </div>
+
+                  @if (msg.messageType === 'FILE') {
+                    <!-- File attachment bubble -->
+                    @let meta = parseFileContent(msg.content);
+                    <div class="max-w-[72%] flex flex-col gap-1"
+                         [class.items-end]="isOwnMessage(msg)">
+                      @if (!isOwnMessage(msg)) {
+                        <p class="text-xs font-bold text-primary m-0 px-1">{{ msg.senderName }}</p>
+                      }
+                      <button type="button"
+                              (click)="downloadFile(msg)"
+                              [title]="('disputes.evidence.download' | translate) + ' ' + (meta?.name ?? '')"
+                              class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl border transition-all active:scale-[.98] text-left w-full"
+                              [class.bg-primary]="isOwnMessage(msg)"
+                              [class.border-blue-400]="isOwnMessage(msg)"
+                              [class.text-white]="isOwnMessage(msg)"
+                              [class.rounded-br-md]="isOwnMessage(msg)"
+                              [class.bg-white]="!isOwnMessage(msg)"
+                              [class.border-slate-200]="!isOwnMessage(msg)"
+                              [class.rounded-bl-md]="!isOwnMessage(msg)"
+                              [class.shadow-\[0_1px_4px_rgba(15\,23\,42\,\.08\)\]]="!isOwnMessage(msg)">
+                        <span class="text-[1.375rem] leading-none shrink-0">{{ fileIcon(meta?.mimeType ?? '') }}</span>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-[.8125rem] font-semibold truncate m-0"
+                             [class.text-white]="isOwnMessage(msg)"
+                             [class.text-slate-800]="!isOwnMessage(msg)">{{ meta?.name ?? ('disputes.evidence.fileDefault' | translate) }}</p>
+                          <p class="text-[.6875rem] m-0 mt-0.5"
+                             [class.text-white/70]="isOwnMessage(msg)"
+                             [class.text-slate-400]="!isOwnMessage(msg)">{{ formatFileSize(meta?.size ?? 0) }}</p>
+                        </div>
+                        <!-- download arrow -->
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 opacity-60">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                      </button>
+                      <p class="text-[10px] opacity-50 m-0 px-1">{{ msg.createdAt | timeAgo }}</p>
+                    </div>
+
+                  } @else {
+                    <!-- Text bubble -->
+                    <div class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,.08)]"
+                      [class.bg-primary]="isOwnMessage(msg)"
+                      [class.text-white]="isOwnMessage(msg)"
+                      [class.rounded-br-md]="isOwnMessage(msg)"
+                      [class.bg-white]="!isOwnMessage(msg)"
+                      [class.rounded-bl-md]="!isOwnMessage(msg)"
+                    >
+                      @if (!isOwnMessage(msg)) {
+                        <p class="text-xs font-bold text-primary mb-1 m-0">{{ msg.senderName }}</p>
+                      }
+                      <p class="text-sm wrap-break-word whitespace-pre-wrap m-0">{{ msg.content }}</p>
+                      <p class="text-[10px] mt-1 text-right opacity-60 m-0">{{ msg.createdAt | timeAgo }}</p>
+                    </div>
+                  }
+
                 </div>
               }
             }
@@ -477,6 +520,117 @@ import { TimelineStep } from '@shared/models/model';
         <!-- INPUT -->
         @if (!isTerminal() && dispute()?.status !== 'REFERRED_TO_ARBITRATION') {
           <div class="bg-white border-t border-slate-100 px-3 py-2.5 flex gap-2 items-end shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
+
+            <!-- Attach button + popover anchor -->
+            <div class="relative shrink-0">
+
+              <!-- Hidden file input -->
+              <input #fileInput type="file" class="sr-only"
+                     accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm,application/pdf"
+                     (change)="onFileSelected($event)" />
+
+              <!-- Trigger -->
+              <button type="button"
+                      (click)="openEvidenceDialog()"
+                      [disabled]="uploadingFile()"
+                      class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-500 transition-all active:scale-95 disabled:opacity-40 hover:bg-slate-200">
+                @if (uploadingFile()) {
+                  <span class="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span>
+                } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                  </svg>
+                }
+              </button>
+
+              <!-- Popover -->
+              @if (evidenceDialogOpen()) {
+                <div class="absolute bottom-[calc(100%+8px)] left-0 z-50 w-72 bg-white rounded-2xl shadow-[0_8px_32px_rgba(15,23,42,.18)] border border-slate-200 overflow-hidden">
+
+                  <!-- Header -->
+                  <div class="flex items-center justify-between px-3.5 pt-3 pb-2.5 border-b border-slate-100">
+                    <p class="text-[.8125rem] font-bold text-slate-800 m-0">{{ 'disputes.evidence.panelTitle' | translate }}</p>
+                    <button type="button" (click)="cancelEvidence()"
+                            class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 shrink-0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="px-3.5 py-3 space-y-3">
+
+                    <!-- Type chips -->
+                    <div>
+                      <p class="text-[.6875rem] font-bold uppercase tracking-wide text-slate-400 mb-1.5 m-0">{{ 'disputes.evidence.typeLabel' | translate }}</p>
+                      <div class="flex flex-wrap gap-1.5">
+                        @for (opt of evidenceTypeOptions; track opt.value) {
+                          <button type="button"
+                                  (click)="evidenceType.set(opt.value)"
+                                  class="flex items-center gap-1 px-2.5 py-1 rounded-full text-[.75rem] font-semibold border transition-all"
+                                  [class.bg-primary]="evidenceType() === opt.value"
+                                  [class.border-primary]="evidenceType() === opt.value"
+                                  [class.text-white]="evidenceType() === opt.value"
+                                  [class.bg-white]="evidenceType() !== opt.value"
+                                  [class.border-slate-200]="evidenceType() !== opt.value"
+                                  [class.text-slate-600]="evidenceType() !== opt.value">
+                            <span class="text-sm leading-none">{{ opt.icon }}</span>{{ opt.labelKey | translate }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Description -->
+                    <input type="text"
+                           [value]="evidenceDesc()"
+                           (input)="evidenceDesc.set($any($event.target).value)"
+                           [placeholder]="'disputes.evidence.descPh' | translate"
+                           maxlength="200"
+                           class="w-full px-3 py-2 border border-slate-200 rounded-xl text-[.8125rem] outline-none focus:border-primary transition-colors bg-slate-50 focus:bg-white font-[inherit]" />
+
+                    <!-- File pick / preview -->
+                    @if (pendingFile(); as f) {
+                      <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                        <span class="text-base leading-none shrink-0">{{ fileIcon(f.type) }}</span>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-[.75rem] font-semibold text-slate-700 truncate m-0">{{ f.name }}</p>
+                          <p class="text-[.6875rem] text-slate-400 m-0">{{ formatFileSize(f.size) }}</p>
+                        </div>
+                        <button type="button" (click)="fileInput.click()"
+                                class="text-[.6875rem] font-semibold text-primary shrink-0 hover:underline">
+                          {{ 'disputes.evidence.changeFile' | translate }}
+                        </button>
+                      </div>
+                    } @else {
+                      <button type="button" (click)="fileInput.click()"
+                              class="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-[.8125rem] font-semibold text-slate-500 hover:border-primary hover:text-primary transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        {{ 'disputes.evidence.filePh' | translate }}
+                      </button>
+                    }
+
+                    <!-- Submit -->
+                    <button type="button"
+                            (click)="submitEvidence()"
+                            [disabled]="!pendingFile() || uploadingFile()"
+                            class="w-full py-2.5 rounded-xl text-[.8125rem] font-bold text-white flex items-center justify-center gap-1.5 transition-all disabled:opacity-40"
+                            style="background: var(--clr-primary)">
+                      @if (uploadingFile()) {
+                        <span class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+                        {{ 'disputes.evidence.sending' | translate }}
+                      } @else {
+                        {{ 'disputes.evidence.upload' | translate }}
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+
+            </div><!-- end popover anchor -->
+
             <textarea
               [(ngModel)]="messageText"
               (input)="onTyping()"
@@ -485,6 +639,7 @@ import { TimelineStep } from '@shared/models/model';
               rows="1"
               class="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors max-h-28 overflow-y-auto"
             ></textarea>
+
             <button
               (click)="sendMessage()"
               [disabled]="!messageText.trim() || sending()"
@@ -623,28 +778,44 @@ import { TimelineStep } from '@shared/models/model';
       </div><!-- end right column -->
 
     </div>
+
   `,
 })
 export class DisputeChatComponent implements OnInit, OnDestroy {
+
+  protected readonly evidenceTypeOptions = [
+    { value: 'IMAGE'      as const, icon: '🖼️', labelKey: 'disputes.evidence.types.IMAGE'      },
+    { value: 'VIDEO'      as const, icon: '🎬', labelKey: 'disputes.evidence.types.VIDEO'      },
+    { value: 'DOCUMENT'   as const, icon: '📄', labelKey: 'disputes.evidence.types.DOCUMENT'   },
+    { value: 'SCREENSHOT' as const, icon: '📸', labelKey: 'disputes.evidence.types.SCREENSHOT' },
+  ];
 
   private readonly route          = inject(ActivatedRoute);
   private readonly disputeService = inject(DisputeService);
   private readonly stomp          = inject(StompService);
   private readonly auth           = inject(AuthStore);
   private readonly toast          = inject(ToastService);
+  private readonly translate      = inject(TranslateService);
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
   @ViewChild('scrollAnchor') scrollAnchor!: ElementRef<HTMLElement>;
 
-  protected readonly disputeId   = signal('');
-  protected readonly dispute     = signal<DisputeResponse | null>(null);
-  protected readonly messages    = signal<DisputeMessage[]>([]);
-  protected readonly typingUsers = signal<string[]>([]);
-  protected readonly sending     = signal(false);
-  protected readonly paying      = signal(false);
-  protected readonly countdown   = signal('');
+  protected readonly disputeId          = signal('');
+  protected readonly dispute            = signal<DisputeResponse | null>(null);
+  protected readonly messages           = signal<DisputeMessage[]>([]);
+  protected readonly typingUsers        = signal<string[]>([]);
+  protected readonly sending            = signal(false);
+  protected readonly paying             = signal(false);
+  protected readonly uploadingFile      = signal(false);
+  protected readonly countdown          = signal('');
+  protected readonly evidenceDialogOpen = signal(false);
+  protected readonly pendingFile        = signal<File | null>(null);
+  protected readonly evidenceType       = signal<'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'SCREENSHOT'>('IMAGE');
+  protected readonly evidenceDesc       = signal('');
 
   protected messageText = '';
+
+  private readonly localFileMap = new Map<string, File>();
 
   private messageSub?: StompSubscription;
   private statusSub?: StompSubscription;
@@ -706,9 +877,7 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     const d = this.dispute();
     if (!d) return '';
     const rt = d.resolutionType;
-    const iWon = (rt === 'DEFAULT_WIN_BUYER' && this.isBuyer())
-              || (rt === 'DEFAULT_WIN_SELLER' && !this.isBuyer())
-              || (rt === 'FULL_REFUND_BUYER' && this.isBuyer())
+    const iWon = (rt === 'FULL_REFUND_BUYER' && this.isBuyer())
               || (rt === 'PARTIAL_REFUND_BUYER' && this.isBuyer())
               || (rt === 'RELEASE_TO_SELLER' && !this.isBuyer());
     if (d.status === 'CLOSED_NO_ACTION') return 'bg-slate-100 text-slate-700 border border-slate-200';
@@ -721,9 +890,7 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     if (!d) return '';
     if (d.status === 'CLOSED_NO_ACTION') return '📁';
     if (d.status === 'RESOLVED_SPLIT') return '⚖️';
-    const iWon = (d.resolutionType === 'DEFAULT_WIN_BUYER' && this.isBuyer())
-              || (d.resolutionType === 'DEFAULT_WIN_SELLER' && !this.isBuyer())
-              || (['FULL_REFUND_BUYER', 'PARTIAL_REFUND_BUYER'].includes(d.resolutionType ?? '') && this.isBuyer())
+    const iWon = (['FULL_REFUND_BUYER', 'PARTIAL_REFUND_BUYER'].includes(d.resolutionType ?? '') && this.isBuyer())
               || (d.resolutionType === 'RELEASE_TO_SELLER' && !this.isBuyer());
     return iWon ? '🎉' : '😔';
   }
@@ -734,8 +901,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     const rt = d.resolutionType;
     if (d.status === 'CLOSED_NO_ACTION') return 'disputes.arbitration.closedNoAction';
     if (d.status === 'RESOLVED_SPLIT') return 'disputes.arbitration.resolvedSplit';
-    if (rt === 'DEFAULT_WIN_BUYER') return this.isBuyer() ? 'disputes.arbitration.winByDefault' : 'disputes.arbitration.loseByDefault';
-    if (rt === 'DEFAULT_WIN_SELLER') return this.isBuyer() ? 'disputes.arbitration.loseByDefault' : 'disputes.arbitration.winByDefault';
     if (d.status === 'RESOLVED_BUYER') return 'disputes.arbitration.resolvedBuyer';
     if (d.status === 'RESOLVED_SELLER') return 'disputes.arbitration.resolvedSeller';
     return 'disputes.arbitration.resolvedBuyer';
@@ -808,7 +973,7 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
         this.dispute.set(updated);
         this.paying.set(false);
         if (updated.status === 'REFERRED_TO_ARBITRATION') {
-          this.toast.success('Dossier transmis au tribunal arbitral !');
+          this.toast.success(this.translate.instant('disputes.arbitration.referredToast'));
         }
       },
       error: () => this.paying.set(false),
@@ -886,6 +1051,105 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   protected isStaffMessage(msg: DisputeMessage): boolean {
     return msg.messageType === 'SYSTEM'
         || DisputeChatComponent.STAFF_ROLES.has(msg.senderRole?.toUpperCase());
+  }
+
+  protected openEvidenceDialog(): void {
+    this.pendingFile.set(null);
+    this.evidenceType.set('IMAGE');
+    this.evidenceDesc.set('');
+    this.evidenceDialogOpen.set(true);
+  }
+
+  protected onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.toast.error(this.translate.instant('disputes.evidence.fileTooLarge'));
+      return;
+    }
+
+    const auto: 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'SCREENSHOT' =
+      file.type.startsWith('image/') ? 'IMAGE' :
+      file.type.startsWith('video/') ? 'VIDEO' : 'DOCUMENT';
+
+    this.pendingFile.set(file);
+    this.evidenceType.set(auto);
+    // keep the dialog open (already visible); description stays as-is
+  }
+
+  protected cancelEvidence(): void {
+    this.evidenceDialogOpen.set(false);
+    this.pendingFile.set(null);
+    this.evidenceDesc.set('');
+  }
+
+  protected submitEvidence(): void {
+    const file = this.pendingFile();
+    if (!file || this.uploadingFile()) return;
+
+    this.uploadingFile.set(true);
+    this.disputeService.uploadEvidence(
+      this.disputeId(), file, this.evidenceType(), this.evidenceDesc() || undefined,
+    ).subscribe({
+      next: () => {
+        const msgId = `local-${Date.now()}`;
+        this.localFileMap.set(msgId, file);
+        this.messages.update(m => [...m, {
+          id: msgId,
+          disputeId: this.disputeId(),
+          content: JSON.stringify({ name: file.name, size: file.size, mimeType: file.type }),
+          senderId: this.auth.user()?.userId ?? '',
+          senderName: this.auth.user()?.fullName ?? '',
+          senderRole: 'USER',
+          messageType: 'FILE',
+          internalOnly: false,
+          attachmentCount: 1,
+          attachmentIds: null,
+          createdAt: new Date().toISOString(),
+        }]);
+        setTimeout(() => this.scrollToBottom(), 50);
+        this.toast.success(this.translate.instant('disputes.evidence.successToast'));
+        this.uploadingFile.set(false);
+        this.evidenceDialogOpen.set(false);
+        this.pendingFile.set(null);
+        this.evidenceDesc.set('');
+      },
+      error: () => {
+        this.toast.error(this.translate.instant('disputes.evidence.errorToast'));
+        this.uploadingFile.set(false);
+      },
+    });
+  }
+
+  protected parseFileContent(content: string): { name: string; size: number; mimeType: string } | null {
+    try { return JSON.parse(content); } catch { return null; }
+  }
+
+  protected downloadFile(msg: DisputeMessage): void {
+    const file = this.localFileMap.get(msg.id);
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  protected fileIcon(mimeType: string): string {
+    if (mimeType.startsWith('image/')) return '🖼️';
+    if (mimeType.startsWith('video/')) return '🎬';
+    if (mimeType === 'application/pdf') return '📄';
+    return '📎';
+  }
+
+  protected formatFileSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} o`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
   }
 
   private scrollToBottom(): void {

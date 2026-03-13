@@ -40,12 +40,9 @@ const TYPE_ICONS: Record<MovementType, string> = {
   DISPUTE_SPLIT_SELLER:   '⚖',
   PAYOUT_DEBIT:           '↗',
   PAYOUT_REVERSAL:        '↩',
+  PAYOUT_FAILED_REFUND:   '↩',
   DEPOSIT_CREDIT:         '↙',
   PLATFORM_FEE_CREDIT:    '✦',
-  FEE_DEBIT:              '−',
-  FEE_CREDIT:             '+',
-  ADMIN_CREDIT:           '+',
-  ADMIN_DEBIT:            '−',
 };
 
 @Component({
@@ -84,7 +81,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
         </button>
       </div>
 
-      @if ((wallet()?.frozenAmount ?? 0) > 0) {
+      @if (+( wallet()?.frozenAmount ?? 0) > 0) {
         <div class="inline-flex items-center gap-1.25 bg-[rgba(201,146,13,.1)] border border-[rgba(201,146,13,.28)] rounded-full px-3 py-1 mb-6 text-xs font-semibold text-[#D4A330]">
           🔒 {{ 'wallet.frozen' | translate }}: {{ wallet()?.frozenAmount | amount }}
         </div>
@@ -146,11 +143,11 @@ const TYPE_ICONS: Record<MovementType, string> = {
                 class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center text-[.9375rem]"
                 [class.bg-success-lt]="isCredit(mov)"
                 [class.bg-error-lt]="!isCredit(mov)"
-              >{{ typeIcon(mov.type) }}</div>
+              >{{ typeIcon(mov.movementType) }}</div>
 
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis m-0">{{ mov.description }}</p>
-                <p class="text-[.6875rem] text-slate-400 mt-0.5 m-0">{{ mov.reference }} · {{ mov.createdAt | timeAgo }}</p>
+                <p class="text-[.6875rem] text-slate-400 mt-0.5 m-0">{{ mov.relatedTransactionId ?? '—' }} · {{ mov.createdAt | timeAgo }}</p>
               </div>
 
               <p class="text-[.9375rem] font-extrabold shrink-0 tracking-[-0.01em] m-0"
@@ -193,7 +190,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
 
           <div class="flex justify-between items-baseline py-2.5 border-b border-slate-100 text-sm last:border-b-0">
             <span class="text-slate-400">{{ 'wallet.detail.reference' | translate }}</span>
-            <span class="font-semibold text-slate-700 font-mono text-[.8125rem]">{{ mov.reference }}</span>
+            <span class="font-semibold text-slate-700 font-mono text-[.8125rem]">{{ mov.relatedTransactionId ?? '—' }}</span>
           </div>
           <div class="flex justify-between items-baseline py-2.5 border-b border-slate-100 text-sm">
             <span class="text-slate-400">{{ 'wallet.detail.balanceBefore' | translate }}</span>
@@ -230,7 +227,7 @@ export class WalletComponent implements OnInit {
   protected readonly loading          = signal(true);
   protected readonly loadingMore      = signal(false);
   protected readonly hasMore          = signal(false);
-  protected readonly balanceVisible   = signal(false);
+  protected readonly balanceVisible   = signal(true);
   protected readonly sheetOpen        = signal(false);
   protected readonly selectedMovement = signal<WalletMovement | null>(null);
   protected readonly activeTypeFilter = signal('');
@@ -291,10 +288,10 @@ export class WalletComponent implements OnInit {
   }
 
   protected isCredit(mov: WalletMovement): boolean {
-    return mov.balanceAfter >= mov.balanceBefore;
+    return +mov.balanceAfter >= +mov.balanceBefore;
   }
 
-  protected typeIcon(type: MovementType): string {
-    return TYPE_ICONS[type] ?? '·';
+  protected typeIcon(movementType: MovementType): string {
+    return TYPE_ICONS[movementType] ?? '·';
   }
 }

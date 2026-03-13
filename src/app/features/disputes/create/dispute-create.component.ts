@@ -15,7 +15,9 @@ import { TransactionDetail } from '@app/models';
 const MAX_FILES      = 5;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const ALLOWED_TYPES  = new Set([
-  'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'text/plain',
+  'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+  'video/mp4', 'video/quicktime', 'video/webm',
+  'application/pdf', 'text/plain',
 ]);
 
 interface SelectedFile {
@@ -220,7 +222,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                   style="border-color: var(--clr-border)">
                   <input type="file" class="sr-only"
                          multiple
-                         accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,text/plain"
+                         accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm,application/pdf,text/plain"
                          (change)="onFilesChange($event)" />
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -447,7 +449,9 @@ export class DisputeCreateComponent implements OnInit {
       }
       return {
         file,
-        evidenceType: file.type.startsWith('image/') ? 'IMAGE' : 'DOCUMENT',
+        evidenceType: file.type.startsWith('image/') ? 'IMAGE'
+                    : file.type.startsWith('video/') ? 'VIDEO'
+                    : 'DOCUMENT',
         error,
       };
     });
@@ -462,6 +466,7 @@ export class DisputeCreateComponent implements OnInit {
 
   protected fileIcon(mimeType: string): string {
     if (mimeType.startsWith('image/')) return '🖼️';
+    if (mimeType.startsWith('video/')) return '🎬';
     if (mimeType === 'application/pdf') return '📄';
     return '📎';
   }

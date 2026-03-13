@@ -9,10 +9,6 @@ import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.
 import { TranslatePipe } from '@ngx-translate/core';
 
 const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
-const PROVIDERS = [
-  { value: 'CAMPAY',   label: 'Campay',   color: 'bg-orange-100 text-orange-700' },
-  { value: 'MONETBIL', label: 'Monetbil', color: 'bg-green-100 text-green-700'   },
-];
 
 @Component({
   selector: 'app-payout-new',
@@ -67,24 +63,6 @@ const PROVIDERS = [
           />
         </div>
 
-        <!-- Provider -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'payouts.operator' | translate }}</label>
-          <div class="grid grid-cols-2 gap-2">
-            @for (p of providers; track p.value) {
-              <label
-                class="flex items-center justify-center py-3 border-2 rounded-xl cursor-pointer font-semibold text-sm transition-colors"
-                [class.border-blue-600]="form.get('provider')?.value === p.value"
-                [class.bg-blue-50]="form.get('provider')?.value === p.value"
-                [class.border-gray-200]="form.get('provider')?.value !== p.value"
-              >
-                <input type="radio" formControlName="provider" [value]="p.value" class="sr-only" />
-                {{ p.label }}
-              </label>
-            }
-          </div>
-        </div>
-
         <!-- Phone -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'payouts.receiptNumber' | translate }}</label>
@@ -130,11 +108,9 @@ export class PayoutNewComponent implements OnInit {
   protected readonly balance = signal<number | null>(null);
   protected readonly loading = signal(false);
   protected readonly quickAmounts = QUICK_AMOUNTS;
-  protected readonly providers = PROVIDERS;
 
   protected readonly form = this.fb.group({
     amount: [null as number | null, [Validators.required, Validators.min(500)]],
-    provider: ['CAMPAY', Validators.required],
     phone: ['', Validators.required],
   });
 
@@ -165,15 +141,9 @@ export class PayoutNewComponent implements OnInit {
     const v = this.form.value;
     this.payoutService.create({
       amount: v.amount!,
-      provider: v.provider as 'CAMPAY' | 'MONETBIL' | 'PAWAPAY',
       destinationPhone: v.phone!,
     }).subscribe({
-      next: ({ payoutId }) => {
-        this.payoutService.requestOtp(payoutId).subscribe({
-          next: () => this.router.navigate(['/payouts', payoutId, 'otp']),
-          error: () => this.loading.set(false),
-        });
-      },
+      next: (res) => this.router.navigate(['/payouts', res.id, 'otp']),
       error: () => this.loading.set(false),
     });
   }

@@ -2,10 +2,12 @@
 
 export interface Page<T> {
   content: T[];
-  totalPages: number;
-  totalElements: number;
-  number: number;
+  page: number;
   size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -13,10 +15,11 @@ export interface Page<T> {
 export interface UserProfile {
   userId: string;
   fullName: string;
-  role: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
+  role?: 'BUYER' | 'SELLER' | 'BOTH' | 'ADMIN' | 'SUPPORT' | 'SUPERVISOR';
   email?: string;
   mfaEnabled: boolean;
-  verified: boolean;
+  verified?: boolean;
+  cniNumber?: string;
   issuedAt: string;
   expiresAt: string;
 }
@@ -57,9 +60,14 @@ export interface ChangePasswordRequest {
 }
 
 export interface UpdateProfileRequest {
-  fullName: string;
+  fullName?: string;
   email?: string;
   cniNumber?: string;
+  addressStreet?: string;
+  addressCity?: string;
+  addressRegion?: string;
+  addressCountry?: string;
+  addressPostalCode?: string;
 }
 
 export interface MfaSetupResponse {
@@ -131,30 +139,33 @@ export interface ScanResponse {
 // ─── Wallet ───────────────────────────────────────────────────────────────────
 
 export type MovementType =
-  | 'ESCROW_FREEZE'   | 'ESCROW_UNFREEZE'  | 'ESCROW_CREDIT'
+  | 'ESCROW_FREEZE' | 'ESCROW_UNFREEZE' | 'ESCROW_CREDIT'
   | 'REFUND_UNFREEZE' | 'REFUND_CREDIT'
-  | 'DISPUTE_FREEZE'  | 'DISPUTE_REFUND_BUYER' | 'DISPUTE_RELEASE_SELLER'
+  | 'DISPUTE_FREEZE' | 'DISPUTE_REFUND_BUYER' | 'DISPUTE_RELEASE_SELLER'
   | 'DISPUTE_SPLIT_BUYER' | 'DISPUTE_SPLIT_SELLER'
-  | 'PAYOUT_DEBIT'    | 'PAYOUT_REVERSAL'
-  | 'DEPOSIT_CREDIT'  | 'PLATFORM_FEE_CREDIT'
-  | 'FEE_DEBIT'       | 'FEE_CREDIT'
-  | 'ADMIN_CREDIT'    | 'ADMIN_DEBIT';
+  | 'PAYOUT_DEBIT' | 'PAYOUT_REVERSAL' | 'PAYOUT_FAILED_REFUND'
+  | 'DEPOSIT_CREDIT' | 'PLATFORM_FEE_CREDIT';
 
 export interface WalletBalance {
+  id: string;
+  userId: string;
   balance: number;
   frozenAmount: number;
+  totalAmount: number;
   currency: string;
+  updatedAt: string;
 }
 
 export interface WalletMovement {
   id: string;
-  type: MovementType;
+  movementType: MovementType;
   amount: number;
   balanceBefore: number;
   balanceAfter: number;
   frozenBefore: number;
   frozenAfter: number;
-  reference: string;
+  relatedTransactionId: string | null;
+  relatedTransactionType: string | null;
   description: string;
   createdAt: string;
 }
@@ -170,14 +181,11 @@ export type DisputeReason =
   | 'SUSPECTED_FRAUD' | 'UNAUTHORIZED_TRANSACTION'
   | 'OTHER';
 
-export type EvidenceType = 'SCREENSHOT' | 'IMAGE' | 'DOCUMENT' | 'RECEIPT' | 'VIDEO' | 'OTHER';
+export type EvidenceType = 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'SCREENSHOT';
 
 export type ResolutionType =
-  | 'FULL_REFUND_BUYER'
-  | 'RELEASE_TO_SELLER'
-  | 'PARTIAL_REFUND_BUYER'
-  | 'SPLIT_50_50'
-  | 'NO_ACTION';
+  | 'FULL_REFUND_BUYER' | 'PARTIAL_REFUND_BUYER' | 'RELEASE_TO_SELLER'
+  | 'SPLIT_50_50' | 'CUSTOM_RATIO' | 'NO_ACTION';
 
 export interface DisputeSummary {
   id: string;
@@ -253,10 +261,37 @@ export interface CreateDisputeRequest {
 
 // ─── Payouts ──────────────────────────────────────────────────────────────────
 
+export type PayoutStatus =
+  | 'PENDING' | 'OTP_SENT' | 'OTP_VALIDATED' | 'PROCESSING'
+  | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+
 export interface PayoutRequest {
+  destinationPhone: string;
   amount: number;
-  provider: 'CAMPAY' | 'MONETBIL';
-  phone: string;
+  userId?: string;
+}
+
+export interface PayoutRequestResponse {
+  id: string;
+  reference: string;
+  userId: string;
+  destinationPhone: string;
+  operator: string;
+  amount: string;
+  platformFee: string;
+  providerFee: string;
+  fee: string;
+  netAmount: string;
+  actualProviderFee: string | null;
+  currency: string;
+  status: PayoutStatus;
+  failureReason: string | null;
+  createdAt: string;
+  otpSentAt: string | null;
+  otpValidatedAt: string | null;
+  submittedAt: string | null;
+  completedAt: string | null;
+  failedAt: string | null;
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────

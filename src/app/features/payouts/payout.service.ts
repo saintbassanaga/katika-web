@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
-import { PayoutRequest } from '@shared/models/model';
+import { PayoutRequest, PayoutRequestResponse } from '@shared/models/model';
 
-export type { PayoutRequest };
+export type { PayoutRequest, PayoutRequestResponse };
 
 @Injectable({ providedIn: 'root' })
 export class PayoutService extends ApiService {
-  create(req: PayoutRequest): Observable<{ payoutId: string }> {
-    return this.http.post<{ payoutId: string }>(this.url('/api/payouts'), req, this.defaultOptions);
+  create(req: PayoutRequest): Observable<PayoutRequestResponse> {
+    return this.http.post<PayoutRequestResponse>(this.url('/api/payouts'), req, this.defaultOptions);
   }
 
-  requestOtp(payoutId: string): Observable<{ expiresAt: string }> {
-    return this.http.post<{ expiresAt: string }>(this.url(`/api/payouts/${payoutId}/otp`), {}, this.defaultOptions);
+  validateOtp(payoutId: string, code: string): Observable<PayoutRequestResponse> {
+    return this.http.post<PayoutRequestResponse>(this.url(`/api/payouts/${payoutId}/otp`), { code }, this.defaultOptions);
   }
 
-  submit(payoutId: string, otp: string): Observable<{ status: string }> {
-    return this.http.post<{ status: string }>(this.url(`/api/payouts/${payoutId}/submit`), { otp }, this.defaultOptions);
+  submit(payoutId: string): Observable<PayoutRequestResponse> {
+    return this.http.post<PayoutRequestResponse>(this.url(`/api/payouts/${payoutId}/submit`), {}, this.defaultOptions);
   }
 
   getBalance(): Observable<{ balance: number; frozenAmount: number }> {

@@ -67,10 +67,18 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
   protected onCode(code: string): void {
     this.error.set('');
     this.loading.set(true);
-    this.payoutService.submit(this.id(), code).subscribe({
+    this.payoutService.validateOtp(this.id(), code).subscribe({
       next: () => {
-        this.toast.success('Retrait en cours de traitement');
-        this.router.navigate(['/wallet']);
+        this.payoutService.submit(this.id()).subscribe({
+          next: () => {
+            this.toast.success('Retrait en cours de traitement');
+            this.router.navigate(['/wallet']);
+          },
+          error: () => {
+            this.loading.set(false);
+            this.error.set('Erreur lors de la soumission. Réessayez.');
+          },
+        });
       },
       error: () => {
         this.loading.set(false);
@@ -80,13 +88,9 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
   }
 
   protected resendOtp(): void {
-    this.payoutService.requestOtp(this.id()).subscribe({
-      next: () => {
-        this.toast.success('Code renvoyé par SMS');
-        this.resendCountdown.set(60);
-        this.startCountdown();
-      },
-    });
+    this.resendCountdown.set(60);
+    this.startCountdown();
+    this.toast.success('Veuillez patienter, un nouveau code sera envoyé automatiquement.');
   }
 
   private startCountdown(): void {
