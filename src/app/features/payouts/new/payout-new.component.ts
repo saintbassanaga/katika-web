@@ -143,7 +143,15 @@ export class PayoutNewComponent implements OnInit {
       amount: v.amount!,
       destinationPhone: v.phone!,
     }).subscribe({
-      next: (res) => this.router.navigate(['/payouts', res.id, 'otp']),
+      next: (res) => {
+        const payoutId = res?.id;
+        if (!payoutId) {
+          console.error('Payout create response missing id:', res);
+          this.loading.set(false);
+          return;
+        }
+        this.router.navigate(['/payouts', payoutId, 'otp']);
+      },
       error: () => this.loading.set(false),
     });
   }

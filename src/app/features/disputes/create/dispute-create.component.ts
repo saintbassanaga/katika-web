@@ -110,7 +110,7 @@ const REASON_GROUPS: ReasonGroup[] = [
               @if (step() > i + 1) { ✓ } @else { {{ i + 1 }} }
             </div>
             <p class="text-[10px] mt-1 text-center font-medium w-16 leading-tight"
-               style="color: var(--clr-muted)">{{ label }}</p>
+               style="color: var(--clr-muted)">{{ label | translate }}</p>
           </div>
           @if (!last) {
             <div class="flex-1 h-0.5 mx-1 mb-4 transition-colors"
@@ -503,7 +503,7 @@ export class DisputeCreateComponent implements OnInit {
     ).subscribe({
       next: (dispute) => {
         this.loading.set(false);
-        this.toast.success('disputes.create.successToast');
+        this.toast.success(this.translate.instant('disputes.create.successToast'));
         this.router.navigate(['/disputes', dispute.id]);
       },
       error: () => this.loading.set(false),
