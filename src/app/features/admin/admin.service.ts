@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '@core/http/api.service';
 import { Page, TransactionSummary } from '@app/models';
 import { DisputeResponse, ResolutionType } from '@features/disputes/dispute.service';
-import {UserAdminResponse} from '@shared/models/model';
+import { UserAdminResponse, CreateStaffRequest } from '@shared/models/model';
 
 export interface AdminDashboardStats {
   totalUsers: number;
@@ -111,6 +111,10 @@ export class AdminService extends ApiService {
     query.set('page', String(params?.page ?? 0));
     query.set('size', String(params?.size ?? 20));
     return this.http.get<Page<UserAdminResponse>>(this.url(`/api/admin/users?${query}`), this.defaultOptions);
+  }
+
+  createStaff(payload: CreateStaffRequest): Observable<UserAdminResponse> {
+    return this.http.post<UserAdminResponse>(this.url('/api/admin/users/staff'), payload, this.defaultOptions);
   }
 
   activateUser(userId: string): Observable<UserAdminResponse> {

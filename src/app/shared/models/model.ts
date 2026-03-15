@@ -436,6 +436,14 @@ export interface UserAdminResponse {
   lastLoginAt: string | null;
 }
 
+export interface CreateStaffRequest {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  role: 'SUPPORT' | 'SUPERVISOR';
+  password: string;
+}
+
 export interface AssignDisputeRequest {
   agentId: string;
 }

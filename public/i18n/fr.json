@@ -665,6 +665,26 @@
         "supervisors": "Superviseurs"
       }
     },
+    "staff": {
+      "newButton": "Nouveau staff",
+      "createTitle": "Créer un compte staff",
+      "fullName": "Nom complet",
+      "fullNamePh": "Jean Dupont",
+      "fullNameError": "Nom requis (min. 3 caractères)",
+      "phone": "Téléphone",
+      "email": "Email",
+      "emailPh": "jean@exemple.com",
+      "emailError": "Email valide requis",
+      "role": "Rôle",
+      "roleSupport": "Support",
+      "roleSupervisor": "Superviseur",
+      "password": "Mot de passe temporaire",
+      "passwordError": "Min. 8 car., 1 maj., 1 chiffre, 1 spécial",
+      "confirmPassword": "Confirmer le mot de passe",
+      "mismatchError": "Les mots de passe ne correspondent pas",
+      "submit": "Créer le compte",
+      "createdToast": "Compte staff créé pour {{name}}"
+    },
     "transactions": {
       "title": "Toutes les transactions",
       "totalSuffix": "transaction(s)",

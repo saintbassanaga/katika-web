@@ -665,6 +665,26 @@
         "supervisors": "Supervisors"
       }
     },
+    "staff": {
+      "newButton": "New staff",
+      "createTitle": "Create staff account",
+      "fullName": "Full name",
+      "fullNamePh": "John Doe",
+      "fullNameError": "Name required (min. 3 characters)",
+      "phone": "Phone",
+      "email": "Email",
+      "emailPh": "john@example.com",
+      "emailError": "Valid email required",
+      "role": "Role",
+      "roleSupport": "Support",
+      "roleSupervisor": "Supervisor",
+      "password": "Temporary password",
+      "passwordError": "Min. 8 chars, 1 uppercase, 1 digit, 1 special",
+      "confirmPassword": "Confirm password",
+      "mismatchError": "Passwords do not match",
+      "submit": "Create account",
+      "createdToast": "Staff account created for {{name}}"
+    },
     "transactions": {
       "title": "All transactions",
       "totalSuffix": "transaction(s)",

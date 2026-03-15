@@ -6,6 +6,7 @@ import { UserAdminResponse } from '@shared/models/model';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { ToastService } from '@core/notification/toast.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AdminCreateStaffComponent } from '../staff/admin-create-staff.component';
 
 const ROLE_FILTERS = [
   { value: '',           labelKey: 'admin.users.filters.all' },
@@ -19,7 +20,7 @@ const ROLE_FILTERS = [
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [RouterLink, TimeAgoPipe, TranslatePipe],
+  imports: [RouterLink, TimeAgoPipe, TranslatePipe, AdminCreateStaffComponent],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
@@ -38,6 +39,13 @@ const ROLE_FILTERS = [
             <p class="text-xs text-white/50 m-0">{{ totalElements() }} {{ 'admin.users.totalSuffix' | translate }}</p>
           }
         </div>
+        <button (click)="showCreateModal.set(true)"
+          class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          {{ 'admin.staff.newButton' | translate }}
+        </button>
       </div>
 
       <!-- Filter chips -->
@@ -147,6 +155,13 @@ const ROLE_FILTERS = [
         }
       </div>
     </div>
+
+    @if (showCreateModal()) {
+      <app-admin-create-staff
+        (created)="onStaffCreated($event)"
+        (cancel)="showCreateModal.set(false)"
+      />
+    }
   `,
 })
 export class AdminUsersComponent implements OnInit {
@@ -154,13 +169,14 @@ export class AdminUsersComponent implements OnInit {
   private readonly toast        = inject(ToastService);
   private readonly translate    = inject(TranslateService);
 
-  protected readonly users        = signal<UserAdminResponse[]>([]);
-  protected readonly loading      = signal(true);
-  protected readonly loadingMore  = signal(false);
-  protected readonly hasMore      = signal(false);
-  protected readonly totalElements = signal(0);
-  protected readonly activeRole   = signal('');
-  protected readonly actionId     = signal<string | null>(null);
+  protected readonly users          = signal<UserAdminResponse[]>([]);
+  protected readonly loading        = signal(true);
+  protected readonly loadingMore    = signal(false);
+  protected readonly hasMore        = signal(false);
+  protected readonly totalElements  = signal(0);
+  protected readonly activeRole     = signal('');
+  protected readonly actionId       = signal<string | null>(null);
+  protected readonly showCreateModal = signal(false);
 
   protected readonly roleFilters = ROLE_FILTERS;
 
@@ -201,6 +217,12 @@ export class AdminUsersComponent implements OnInit {
       },
       error: () => { this.loading.set(false); this.loadingMore.set(false); },
     });
+  }
+
+  protected onStaffCreated(user: UserAdminResponse): void {
+    this.showCreateModal.set(false);
+    this.users.update(list => [user, ...list]);
+    this.totalElements.update(n => n + 1);
   }
 
   protected toggleUser(user: UserAdminResponse): void {
