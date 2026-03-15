@@ -1,6 +1,7 @@
 {
   "installCommand": "yarn install",
   "buildCommand": "yarn build",
+  "outputDirectory": "dist/katika/browser",
   "rewrites": [
     {
       "source": "/bff/:path*",
