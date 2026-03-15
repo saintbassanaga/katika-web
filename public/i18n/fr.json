@@ -14,7 +14,8 @@
     "adminHome": "Tableau de bord",
     "adminDisputes": "Litiges",
     "adminUsers": "Utilisateurs",
-    "adminTransactions": "Transactions"
+    "adminTransactions": "Transactions",
+    "notifications": "Notifications"
   },
   "common": {
     "loading": "Chargement…",
@@ -196,6 +197,8 @@
         "DELIVERED": "Livré",
         "RELEASED": "Libéré"
       },
+      "live": "En direct",
+      "liveUpdate": "Statut mis à jour : {{status}}",
       "contextBuyer": "Achat auprès de {{name}}",
       "contextSeller": "Vente à {{name}}",
       "you": "vous",
@@ -731,6 +734,14 @@
       "buyerFeePaid": "Acheteur a payé",
       "sellerFeePaid": "Vendeur a payé"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadSuffix": "non lue(s)",
+    "markAllRead": "Tout marquer comme lu",
+    "allReadToast": "Toutes les notifications marquées comme lues",
+    "empty": "Aucune notification",
+    "emptySub": "Vous êtes à jour !"
   },
   "errors": {
     "notFound": {

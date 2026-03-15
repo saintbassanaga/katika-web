@@ -14,7 +14,8 @@
     "adminHome": "Dashboard",
     "adminDisputes": "Disputes",
     "adminUsers": "Users",
-    "adminTransactions": "Transactions"
+    "adminTransactions": "Transactions",
+    "notifications": "Notifications"
   },
   "common": {
     "loading": "Loading…",
@@ -196,6 +197,8 @@
         "DELIVERED": "Delivered",
         "RELEASED": "Released"
       },
+      "live": "Live",
+      "liveUpdate": "Status updated: {{status}}",
       "contextBuyer": "Buying from {{name}}",
       "contextSeller": "Selling to {{name}}",
       "you": "you",
@@ -731,6 +734,14 @@
       "buyerFeePaid": "Buyer paid",
       "sellerFeePaid": "Seller paid"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadSuffix": "unread",
+    "markAllRead": "Mark all as read",
+    "allReadToast": "All notifications marked as read",
+    "empty": "No notifications",
+    "emptySub": "You're all caught up!"
   },
   "errors": {
     "notFound": {

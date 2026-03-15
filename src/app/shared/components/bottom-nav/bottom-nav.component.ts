@@ -1,22 +1,23 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
+import { NotificationStore } from '@features/notifications/notification.store';
 import { NavItem } from '@shared/models/model';
 
 const USER_NAV: NavItem[] = [
-  { key: 'home',     route: '/dashboard' },
-  { key: 'escrow',   route: '/escrow'    },
-  { key: 'disputes', route: '/disputes'  },
-  { key: 'payouts',  route: '/payouts'   },
-  { key: 'profile',  route: '/profile'   },
+  { key: 'home',          route: '/dashboard'     },
+  { key: 'escrow',        route: '/escrow'        },
+  { key: 'disputes',      route: '/disputes'      },
+  { key: 'payouts',       route: '/payouts'       },
+  { key: 'notifications', route: '/notifications' },
 ];
 
 const ADMIN_NAV: NavItem[] = [
   { key: 'adminHome',     route: '/admin/dashboard' },
   { key: 'adminDisputes', route: '/admin/disputes'  },
   { key: 'adminUsers',    route: '/admin/users'     },
-  { key: 'profile',       route: '/profile'         },
+  { key: 'notifications', route: '/notifications'   },
 ];
 
 const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
@@ -76,6 +77,18 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
                     <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
                   </svg>
                 }
+                @case ('notifications') {
+                  <div class="relative">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+                    </svg>
+                    @if (notifStore.unreadCount() > 0) {
+                      <span class="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                        {{ notifStore.unreadCount() > 9 ? '9+' : notifStore.unreadCount() }}
+                      </span>
+                    }
+                  </div>
+                }
               }
             </div>
             <span class="text-[.625rem] font-semibold tracking-[.02em]">{{ 'nav.' + item.key | translate }}</span>
@@ -85,8 +98,13 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
     </nav>
   `,
 })
-export class BottomNavComponent {
-  private readonly auth = inject(AuthStore);
+export class BottomNavComponent implements OnInit {
+  private readonly auth       = inject(AuthStore);
+  protected readonly notifStore = inject(NotificationStore);
+
+  ngOnInit(): void {
+    this.notifStore.loadUnreadCount();
+  }
 
   protected navItems() {
     return STAFF_ROLES.has(this.auth.role() ?? '') ? ADMIN_NAV : USER_NAV;

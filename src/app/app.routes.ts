@@ -41,6 +41,12 @@ export const routes: Routes = [
       import('./features/wallet/wallet.component').then(m => m.WalletComponent),
   },
   {
+    path: 'notifications',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/notifications/notifications.component').then(m => m.NotificationsComponent),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadChildren: () =>

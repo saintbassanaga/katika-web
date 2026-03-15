@@ -1,16 +1,18 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
+import { NotificationStore } from '@features/notifications/notification.store';
 import { SidebarItem } from '@shared/models/model';
 
 const USER_ITEMS: SidebarItem[] = [
-  { key: 'home',     route: '/dashboard' },
-  { key: 'escrow',   route: '/escrow'    },
-  { key: 'disputes', route: '/disputes'  },
-  { key: 'wallet',   route: '/wallet'    },
-  { key: 'payouts',  route: '/payouts'   },
-  { key: 'profile',  route: '/profile'   },
+  { key: 'home',          route: '/dashboard'     },
+  { key: 'escrow',        route: '/escrow'        },
+  { key: 'disputes',      route: '/disputes'      },
+  { key: 'wallet',        route: '/wallet'        },
+  { key: 'payouts',       route: '/payouts'       },
+  { key: 'notifications', route: '/notifications' },
+  { key: 'profile',       route: '/profile'       },
 ];
 
 const ADMIN_ITEMS: SidebarItem[] = [
@@ -18,6 +20,7 @@ const ADMIN_ITEMS: SidebarItem[] = [
   { key: 'adminDisputes',     route: '/admin/disputes'                                     },
   { key: 'adminUsers',        route: '/admin/users',        roles: ['ADMIN', 'SUPERVISOR'] },
   { key: 'adminTransactions', route: '/admin/transactions', roles: ['ADMIN', 'SUPERVISOR'] },
+  { key: 'notifications',     route: '/notifications'                                      },
   { key: 'profile',           route: '/profile'                                            },
 ];
 
@@ -99,9 +102,19 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
                     <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
                   </svg>
                 }
+                @case ('notifications') {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+                  </svg>
+                }
               }
             </span>
-            {{ 'nav.' + item.key | translate }}
+            <span class="flex-1">{{ 'nav.' + item.key | translate }}</span>
+            @if (item.key === 'notifications' && notifStore.unreadCount() > 0) {
+              <span class="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                {{ notifStore.unreadCount() > 99 ? '99+' : notifStore.unreadCount() }}
+              </span>
+            }
           </a>
         }
       </nav>
@@ -119,8 +132,13 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
     </aside>
   `,
 })
-export class SidebarComponent {
-  protected readonly auth = inject(AuthStore);
+export class SidebarComponent implements OnInit {
+  protected readonly auth       = inject(AuthStore);
+  protected readonly notifStore = inject(NotificationStore);
+
+  ngOnInit(): void {
+    this.notifStore.loadUnreadCount();
+  }
 
   protected isStaff() {
     return STAFF_ROLES.has(this.auth.role() ?? '');

@@ -1,14 +1,31 @@
-import { Component, inject, signal, OnInit, input } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { EscrowService } from '../escrow.service';
 import { TransactionDetail } from '@app/models';
 import { AuthStore } from '@core/auth/auth.store';
+import { StompService } from '@core/websocket/stomp.service';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@core/notification/toast.service';
-import {LoadingSkeletonComponent} from '@shared/components/loading-skeleton/loading-skeleton.component';
+import { LoadingSkeletonComponent } from '@shared/components/loading-skeleton/loading-skeleton.component';
+import { StompSubscription } from '@stomp/stompjs';
+
+interface EscrowStatusUpdate {
+  transactionId: string;
+  reference: string;
+  status: string;
+  occurredAt: string;
+}
+
+const STATUS_TIMESTAMP: Partial<Record<string, keyof TransactionDetail>> = {
+  LOCKED:    'lockedAt',
+  SHIPPED:   'shippedAt',
+  DELIVERED: 'deliveredAt',
+  RELEASED:  'releasedAt',
+  CANCELLED: 'releasedAt', // no dedicated field; won't break display
+};
 
 const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED'];
 
@@ -53,7 +70,16 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
                 </p>
               }
             </div>
-            <app-status-badge [status]="transaction()!.status"/>
+            <div class="flex flex-col items-end gap-2">
+              <app-status-badge [status]="transaction()!.status"/>
+              <!-- Live indicator -->
+              @if (liveConnected()) {
+                <span class="flex items-center gap-1 text-[10px] font-semibold text-success">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                  {{ 'escrow.detail.live' | translate }}
+                </span>
+              }
+            </div>
           </div>
 
           <!-- Status timeline -->
@@ -329,19 +355,24 @@ const STATUS_STEPS = ['INITIATED', 'LOCKED', 'SHIPPED', 'DELIVERED', 'RELEASED']
     </div>
   `,
 })
-export class TransactionDetailComponent implements OnInit {
+export class TransactionDetailComponent implements OnInit, OnDestroy {
   readonly id = input.required<string>();
 
   private readonly escrowService = inject(EscrowService);
   private readonly auth          = inject(AuthStore);
   private readonly router        = inject(Router);
   private readonly toast         = inject(ToastService);
+  private readonly stomp         = inject(StompService);
+  private readonly translate     = inject(TranslateService);
 
-  protected readonly loading       = signal(true);
-  protected readonly actionLoading = signal(false);
-  protected readonly transaction   = signal<TransactionDetail | null>(null);
-  protected readonly statusSteps   = STATUS_STEPS;
-  protected readonly confirmCode   = signal('');
+  protected readonly loading        = signal(true);
+  protected readonly actionLoading  = signal(false);
+  protected readonly transaction    = signal<TransactionDetail | null>(null);
+  protected readonly liveConnected  = signal(false);
+  protected readonly statusSteps    = STATUS_STEPS;
+  protected readonly confirmCode    = signal('');
+
+  private stompSub: StompSubscription | null = null;
 
   /** True when the logged-in user is the buyer of THIS transaction */
   protected isBuyer(): boolean {
@@ -357,9 +388,42 @@ export class TransactionDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.escrowService.getTransaction(this.id()).subscribe({
-      next: (tx) => { this.transaction.set(tx); this.loading.set(false); },
+      next: (tx) => {
+        this.transaction.set(tx);
+        this.loading.set(false);
+        this.connectLive(tx.id);
+      },
       error: () => this.loading.set(false),
     });
+  }
+
+  private connectLive(txId: string): void {
+    this.stomp.connect().then(() => {
+      this.stompSub = this.stomp.subscribe(`/topic/escrow.${txId}`);
+      this.liveConnected.set(true);
+
+      this.stomp.on<EscrowStatusUpdate>(`/topic/escrow.${txId}`).subscribe(update => {
+        this.transaction.update(tx => {
+          if (!tx) return tx;
+          const tsField = STATUS_TIMESTAMP[update.status];
+          return {
+            ...tx,
+            status: update.status,
+            ...(tsField ? { [tsField]: update.occurredAt } : {}),
+          };
+        });
+        this.toast.success(
+          this.translate.instant('escrow.detail.liveUpdate', { status: update.status }),
+        );
+      });
+    }).catch(() => {
+      // WebSocket unavailable — silent fail, REST state is still accurate
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.stompSub?.unsubscribe();
+    this.liveConnected.set(false);
   }
 
   protected deliver(): void {
