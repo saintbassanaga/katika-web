@@ -11,7 +11,7 @@ import { FabComponent } from './shared/components/fab/fab.component';
 import { OnboardingComponent } from './shared/components/onboarding/onboarding.component';
 
 /** Routes where the global nav (sidebar / bottom-nav) is visible. */
-const NAV_ROUTES = ['/dashboard', '/escrow', '/disputes', '/payouts', '/wallet', '/admin'];
+const NAV_ROUTES = ['/dashboard', '/escrow', '/disputes', '/payouts', '/wallet', '/admin', '/profile'];
 
 /** Full-screen routes that suppress the nav (e.g. dispute chat room). */
 const FULL_SCREEN_PATTERNS = [

@@ -9,7 +9,12 @@
     "profile": "Profile",
     "home": "Home",
     "subtitle": "Secure payments",
-    "logout": "Sign out"
+    "adminSubtitle": "Administration",
+    "logout": "Sign out",
+    "adminHome": "Dashboard",
+    "adminDisputes": "Disputes",
+    "adminUsers": "Users",
+    "adminTransactions": "Transactions"
   },
   "common": {
     "loading": "Loading…",
@@ -502,6 +507,17 @@
       "emailHint": "Used for notifications and account recovery.",
       "cni": "ID Number",
       "cniHint": "National ID — required for certain operations.",
+      "addressSection": "Address",
+      "street": "Street / Neighbourhood",
+      "streetPh": "e.g. Rue Ahidjo, Bastos",
+      "city": "City",
+      "cityPh": "e.g. Yaoundé",
+      "region": "Region",
+      "regionPh": "e.g. Centre",
+      "country": "Country",
+      "countryPh": "e.g. Cameroon",
+      "postalCode": "Postal code",
+      "postalCodePh": "e.g. 8022",
       "cancel": "Cancel",
       "saving": "Saving…",
       "save": "Save"
@@ -624,6 +640,54 @@
       "unassigned": "Unassigned",
       "noDisputes": "No pending disputes",
       "noDisputesSub": "All disputes are being handled"
+    },
+    "users": {
+      "title": "User management",
+      "totalSuffix": "user(s)",
+      "empty": "No users found",
+      "verified": "Verified",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "lastLogin": "Last login",
+      "activatedToast": "{{name}} activated successfully",
+      "deactivatedToast": "{{name}} deactivated successfully",
+      "filters": {
+        "all": "All",
+        "buyers": "Buyers",
+        "sellers": "Sellers",
+        "both": "Both",
+        "support": "Support",
+        "supervisors": "Supervisors"
+      }
+    },
+    "transactions": {
+      "title": "All transactions",
+      "totalSuffix": "transaction(s)",
+      "empty": "No transactions found",
+      "gross": "Gross amount",
+      "fee": "Platform fee",
+      "net": "Seller net",
+      "ms": {
+        "created": "Created",
+        "locked": "Locked",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "released": "Released",
+        "disputed": "Disputed",
+        "refunded": "Refunded"
+      },
+      "filters": {
+        "initiated": "Initiated",
+        "locked": "Locked",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "released": "Released",
+        "disputed": "Disputed",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded"
+      }
     },
     "dispute": {
       "title": "Dispute",

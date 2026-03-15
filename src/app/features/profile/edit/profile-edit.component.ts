@@ -2,7 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
+import { AuthService } from '@core/auth/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-profile-edit',
@@ -94,6 +96,56 @@ import { TranslatePipe } from '@ngx-translate/core';
               <p class="text-xs text-slate-400 mt-1.5">{{ 'profile.editForm.cniHint' | translate }}</p>
             </div>
 
+            <!-- Address section -->
+            <p class="text-[.8125rem] font-bold text-slate-500 uppercase tracking-[.06em] mt-6 mb-4">{{ 'profile.editForm.addressSection' | translate }}</p>
+
+            <div class="mb-[1.125rem]">
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                {{ 'profile.editForm.street' | translate }} <span class="text-slate-400 font-normal">{{ 'common.optional' | translate }}</span>
+              </label>
+              <input type="text" formControlName="addressStreet"
+                     [placeholder]="'profile.editForm.streetPh' | translate"
+                     class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-[1.125rem]">
+              <div>
+                <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                  {{ 'profile.editForm.city' | translate }}
+                </label>
+                <input type="text" formControlName="addressCity"
+                       [placeholder]="'profile.editForm.cityPh' | translate"
+                       class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]" />
+              </div>
+              <div>
+                <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                  {{ 'profile.editForm.region' | translate }}
+                </label>
+                <input type="text" formControlName="addressRegion"
+                       [placeholder]="'profile.editForm.regionPh' | translate"
+                       class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-[1.125rem]">
+              <div>
+                <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                  {{ 'profile.editForm.country' | translate }}
+                </label>
+                <input type="text" formControlName="addressCountry"
+                       [placeholder]="'profile.editForm.countryPh' | translate"
+                       class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]" />
+              </div>
+              <div>
+                <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem] tracking-[.01em]">
+                  {{ 'profile.editForm.postalCode' | translate }}
+                </label>
+                <input type="text" formControlName="addressPostalCode"
+                       [placeholder]="'profile.editForm.postalCodePh' | translate"
+                       class="w-full px-4 py-[.8125rem] border-2 border-slate-200 rounded-xl bg-slate-50 text-[.9375rem] text-slate-900 outline-none font-[inherit] box-border transition-all focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(27,79,138,.08)]" />
+              </div>
+            </div>
+
             <!-- Actions -->
             <div class="flex gap-3 mt-6">
               <a routerLink="/profile"
@@ -124,23 +176,35 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class ProfileEditComponent implements OnInit {
   protected readonly auth = inject(AuthStore);
+  private readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
   protected readonly form = this.fb.group({
-    fullName:  ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-    email:     ['', Validators.email],
-    cniNumber: [''],
+    fullName:          ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+    email:             ['', Validators.email],
+    cniNumber:         [''],
+    addressStreet:     [''],
+    addressCity:       [''],
+    addressRegion:     [''],
+    addressCountry:    [''],
+    addressPostalCode: [''],
   });
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const user = this.auth.user();
     if (user) {
-      this.form.patchValue({
-        fullName:  user.fullName,
-        email:     user.email     ?? '',
-        cniNumber: user.cniNumber ?? '',
-      });
+      this.form.patchValue({ fullName: user.fullName, email: user.email ?? '' });
     }
+    try {
+      const profile = await firstValueFrom(this.authService.getProfile());
+      this.form.patchValue({
+        addressStreet:     profile.addressStreet     ?? '',
+        addressCity:       profile.addressCity        ?? '',
+        addressRegion:     profile.addressRegion      ?? '',
+        addressCountry:    profile.addressCountry     ?? '',
+        addressPostalCode: profile.addressPostalCode  ?? '',
+      });
+    } catch {}
   }
 
   protected isInvalid(field: string): boolean {
@@ -152,9 +216,14 @@ export class ProfileEditComponent implements OnInit {
     if (this.form.invalid || this.form.pristine) return;
     const v = this.form.value;
     this.auth.updateProfile({
-      fullName:  v.fullName!,
-      email:     v.email   || undefined,
-      cniNumber: v.cniNumber || undefined,
+      fullName:          v.fullName          || undefined,
+      email:             v.email             || undefined,
+      cniNumber:         v.cniNumber         || undefined,
+      addressStreet:     v.addressStreet     || undefined,
+      addressCity:       v.addressCity        || undefined,
+      addressRegion:     v.addressRegion      || undefined,
+      addressCountry:    v.addressCountry     || undefined,
+      addressPostalCode: v.addressPostalCode  || undefined,
     });
   }
 }

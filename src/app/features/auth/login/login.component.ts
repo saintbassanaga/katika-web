@@ -391,7 +391,7 @@ import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.
 
             <div class="field-wrap">
               <label class="field-label">{{ 'auth.login.phone' | translate }}</label>
-              <app-phone-input formControlName="phoneNumber" [withCountryCode]="false" />
+              <app-phone-input formControlName="phoneNumber" />
               @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
                 <p class="field-error">{{ 'auth.login.phoneError' | translate }}</p>
               }

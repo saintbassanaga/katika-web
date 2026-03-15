@@ -1,18 +1,27 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { SidebarItem } from '@shared/models/model';
 
-const SIDEBAR_ITEMS: SidebarItem[] = [
+const USER_ITEMS: SidebarItem[] = [
   { key: 'home',     route: '/dashboard' },
   { key: 'escrow',   route: '/escrow'    },
   { key: 'disputes', route: '/disputes'  },
   { key: 'wallet',   route: '/wallet'    },
   { key: 'payouts',  route: '/payouts'   },
-  { key: 'admin',    route: '/admin', roles: ['ADMIN', 'SUPERVISOR'] },
   { key: 'profile',  route: '/profile'   },
 ];
+
+const ADMIN_ITEMS: SidebarItem[] = [
+  { key: 'adminHome',         route: '/admin/dashboard'                                    },
+  { key: 'adminDisputes',     route: '/admin/disputes'                                     },
+  { key: 'adminUsers',        route: '/admin/users',        roles: ['ADMIN', 'SUPERVISOR'] },
+  { key: 'adminTransactions', route: '/admin/transactions', roles: ['ADMIN', 'SUPERVISOR'] },
+  { key: 'profile',           route: '/profile'                                            },
+];
+
+const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
 
 @Component({
   selector: 'app-sidebar',
@@ -26,7 +35,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         <img src="/icons/icon-512-transparent.png" alt="Katika" class="w-10 h-10 object-contain shrink-0" />
         <div>
           <div class="text-white text-xl font-extrabold tracking-[-0.02em]">Katika</div>
-          <div class="text-slate-400/50 text-[.6875rem]">{{ 'nav.subtitle' | translate }}</div>
+          <div class="text-slate-400/50 text-[.6875rem]">{{ isStaff() ? ('nav.adminSubtitle' | translate) : ('nav.subtitle' | translate) }}</div>
         </div>
       </div>
 
@@ -65,14 +74,29 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
                     <circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V8"/>
                   </svg>
                 }
-                @case ('admin') {
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/>
-                  </svg>
-                }
                 @case ('profile') {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                }
+                @case ('adminHome') {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                  </svg>
+                }
+                @case ('adminDisputes') {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                }
+                @case ('adminUsers') {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                  </svg>
+                }
+                @case ('adminTransactions') {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
                   </svg>
                 }
               }
@@ -97,8 +121,16 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 })
 export class SidebarComponent {
   protected readonly auth = inject(AuthStore);
+
+  protected isStaff() {
+    return STAFF_ROLES.has(this.auth.role() ?? '');
+  }
+
   protected visibleItems() {
-    const role = this.auth.role();
-    return SIDEBAR_ITEMS.filter(i => !i.roles || (role && i.roles.includes(role)));
+    const role = this.auth.role() ?? '';
+    if (STAFF_ROLES.has(role)) {
+      return ADMIN_ITEMS.filter(i => !i.roles || i.roles.includes(role));
+    }
+    return USER_ITEMS;
   }
 }

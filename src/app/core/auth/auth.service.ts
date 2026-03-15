@@ -10,6 +10,7 @@ import {
   RegisterRequest,
   UpdateProfileRequest,
   UserProfile,
+  UserProfileResponse,
 } from '@shared/models/model';
 
 export type {
@@ -21,6 +22,7 @@ export type {
   RegisterRequest,
   UpdateProfileRequest,
   UserProfile,
+  UserProfileResponse,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -95,8 +97,15 @@ export class AuthService extends ApiService {
     );
   }
 
-  updateProfile(req: UpdateProfileRequest): Observable<void> {
-    return this.http.patch<void>(
+  getProfile(): Observable<UserProfileResponse> {
+    return this.http.get<UserProfileResponse>(
+      this.url('/api/users/me'),
+      this.defaultOptions,
+    );
+  }
+
+  updateProfile(req: UpdateProfileRequest): Observable<UserProfileResponse> {
+    return this.http.patch<UserProfileResponse>(
       this.url('/api/users/me'),
       req,
       this.defaultOptions,

@@ -9,7 +9,12 @@
     "profile": "Profil",
     "home": "Accueil",
     "subtitle": "Paiements sécurisés",
-    "logout": "Déconnexion"
+    "adminSubtitle": "Espace administration",
+    "logout": "Déconnexion",
+    "adminHome": "Tableau de bord",
+    "adminDisputes": "Litiges",
+    "adminUsers": "Utilisateurs",
+    "adminTransactions": "Transactions"
   },
   "common": {
     "loading": "Chargement…",
@@ -502,6 +507,17 @@
       "emailHint": "Utilisé pour les notifications et la récupération de compte.",
       "cni": "Numéro CNI",
       "cniHint": "Carte Nationale d'Identité — requis pour certaines opérations.",
+      "addressSection": "Adresse",
+      "street": "Rue / Quartier",
+      "streetPh": "Ex : Rue Ahidjo, Bastos",
+      "city": "Ville",
+      "cityPh": "Ex : Yaoundé",
+      "region": "Région",
+      "regionPh": "Ex : Centre",
+      "country": "Pays",
+      "countryPh": "Ex : Cameroun",
+      "postalCode": "Code postal",
+      "postalCodePh": "Ex : 8022",
       "cancel": "Annuler",
       "saving": "Enregistrement…",
       "save": "Enregistrer"
@@ -624,6 +640,54 @@
       "unassigned": "Non assignés",
       "noDisputes": "Aucun litige en attente",
       "noDisputesSub": "Tous les litiges sont traités"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "totalSuffix": "utilisateur(s)",
+      "empty": "Aucun utilisateur trouvé",
+      "verified": "Vérifié",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "lastLogin": "Dernière connexion",
+      "activatedToast": "{{name}} activé avec succès",
+      "deactivatedToast": "{{name}} désactivé avec succès",
+      "filters": {
+        "all": "Tous",
+        "buyers": "Acheteurs",
+        "sellers": "Vendeurs",
+        "both": "Les deux",
+        "support": "Support",
+        "supervisors": "Superviseurs"
+      }
+    },
+    "transactions": {
+      "title": "Toutes les transactions",
+      "totalSuffix": "transaction(s)",
+      "empty": "Aucune transaction trouvée",
+      "gross": "Montant brut",
+      "fee": "Frais plateforme",
+      "net": "Net vendeur",
+      "ms": {
+        "created": "Créée",
+        "locked": "Verr.",
+        "shipped": "Expéd.",
+        "delivered": "Livrée",
+        "released": "Libérée",
+        "disputed": "Litige",
+        "refunded": "Remb."
+      },
+      "filters": {
+        "initiated": "Initiées",
+        "locked": "Bloquées",
+        "shipped": "Expédiées",
+        "delivered": "Livrées",
+        "released": "Libérées",
+        "disputed": "Litiges",
+        "cancelled": "Annulées",
+        "refunded": "Remboursées"
+      }
     },
     "dispute": {
       "title": "Litige",

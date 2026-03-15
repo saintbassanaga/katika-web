@@ -75,7 +75,8 @@ export const AuthStore = signalStore(
               const storedRole = user.role ?? loginRole;
               if (storedRole) sessionStorage.setItem(ROLE_KEY, storedRole);
               patchState(store, { user, storedRole, loading: false });
-              router.navigate(['/dashboard']);
+              const isStaff = ['ADMIN', 'SUPERVISOR', 'SUPPORT'].includes(storedRole ?? '');
+              router.navigate([isStaff ? '/admin' : '/dashboard']);
             }),
           );
         }),
@@ -108,7 +109,8 @@ export const AuthStore = signalStore(
                 challengeId: null,
                 loading: false,
               });
-              router.navigate(['/dashboard']);
+              const isStaff = ['ADMIN', 'SUPERVISOR', 'SUPPORT'].includes(storedRole ?? '');
+              router.navigate([isStaff ? '/admin' : '/dashboard']);
             }),
           )
         ),

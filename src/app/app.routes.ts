@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/auth/auth.guard';
 import { roleGuard } from '@core/auth/role.guard';
+import { staffRedirectGuard } from '@core/auth/staff-redirect.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -11,31 +12,31 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate:[authGuard],
+    canActivate: [authGuard, staffRedirectGuard],
     loadComponent: () =>
       import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
   },
   {
     path: 'escrow',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRedirectGuard],
     loadChildren: () =>
       import('./features/escrow/escrow.routes').then(m => m.ESCROW_ROUTES),
   },
   {
     path: 'disputes',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRedirectGuard],
     loadChildren: () =>
       import('./features/disputes/disputes.routes').then(m => m.DISPUTE_ROUTES),
   },
   {
     path: 'payouts',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRedirectGuard],
     loadChildren: () =>
       import('./features/payouts/payouts.routes').then(m => m.PAYOUT_ROUTES),
   },
   {
     path: 'wallet',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRedirectGuard],
     loadComponent: () =>
       import('./features/wallet/wallet.component').then(m => m.WalletComponent),
   },

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from '@core/auth/role.guard';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -17,5 +18,15 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'disputes/:id',
     loadComponent: () => import('./dispute-detail/admin-dispute-detail.component').then(m => m.AdminDisputeDetailComponent),
+  },
+  {
+    path: 'users',
+    canActivate: [roleGuard('ADMIN', 'SUPERVISOR')],
+    loadComponent: () => import('./users/admin-users.component').then(m => m.AdminUsersComponent),
+  },
+  {
+    path: 'transactions',
+    canActivate: [roleGuard('ADMIN', 'SUPERVISOR')],
+    loadComponent: () => import('./transactions/admin-transactions.component').then(m => m.AdminTransactionsComponent),
   },
 ];
