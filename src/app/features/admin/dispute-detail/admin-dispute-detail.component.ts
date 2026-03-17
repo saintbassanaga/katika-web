@@ -404,11 +404,12 @@ export class AdminDisputeDetailComponent implements OnInit {
   }
 
   protected applyResolution(): void {
-    const rt         = this.selectedResolution();
-    const actorType  = this.selectedActorType() || undefined;
+    const rt        = this.selectedResolution();
+    const actorType = this.selectedActorType() || undefined;
+    const actorId   = this.auth.userId();
     if (!rt || this.resolving()) return;
     this.resolving.set(true);
-    this.adminService.resolveDispute(this.id(), rt as ResolutionType, actorType).subscribe({
+    this.adminService.resolveDispute(this.id(), rt as ResolutionType, actorType, actorId).subscribe({
       next: (d) => { this.dispute.set(d); this.resolving.set(false); this.selectedActorType.set(''); },
       error: () => this.resolving.set(false),
     });

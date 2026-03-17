@@ -106,7 +106,7 @@ export class AdminService extends ApiService {
       {
         resolutionType,
         actorType: actorType ?? null,
-        actorId: actorId ?? null,
+        actorId,
         sellerPercent: sellerPercent ?? null,
       },
       this.defaultOptions,
