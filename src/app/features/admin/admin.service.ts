@@ -94,10 +94,21 @@ export class AdminService extends ApiService {
     );
   }
 
-  resolveDispute(disputeId: string, resolutionType: ResolutionType, actorId?: string, sellerPercent?: number): Observable<DisputeResponse> {
+  resolveDispute(
+    disputeId: string,
+    resolutionType: ResolutionType,
+    actorType?: string,
+    actorId?: string,
+    sellerPercent?: number,
+  ): Observable<DisputeResponse> {
     return this.http.post<DisputeResponse>(
       this.url(`/api/disputes/${disputeId}/resolve`),
-      { resolutionType, actorId: actorId ?? null, sellerPercent: sellerPercent ?? null },
+      {
+        resolutionType,
+        actorType: actorType ?? null,
+        actorId: actorId ?? null,
+        sellerPercent: sellerPercent ?? null,
+      },
       this.defaultOptions,
     );
   }
