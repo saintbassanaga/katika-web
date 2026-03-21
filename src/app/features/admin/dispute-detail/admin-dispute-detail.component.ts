@@ -210,6 +210,8 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
           @if (!isTerminal()) {
             <div class="bg-white rounded-2xl p-4 shadow-sm">
               <p class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3 m-0">{{ 'admin.dispute.resolution' | translate }}</p>
+
+              <!-- Resolution type picker -->
               <div class="space-y-2 mb-4">
                 @for (r of resolutionTypes; track r.value) {
                   <label
@@ -232,6 +234,48 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
                   </label>
                 }
               </div>
+
+              <!-- Actor type selector -->
+              <div class="mb-4">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2 m-0">{{ 'admin.dispute.actorType' | translate }}</p>
+                <div class="grid grid-cols-2 gap-2">
+                  <label
+                    class="flex items-center gap-2.5 p-3 border-2 rounded-xl cursor-pointer transition-all"
+                    [class.border-primary]="selectedActorType() === 'BUYER'"
+                    [class.bg-primary-lt]="selectedActorType() === 'BUYER'"
+                    [class.border-slate-200]="selectedActorType() !== 'BUYER'"
+                  >
+                    <input type="radio" value="BUYER" [checked]="selectedActorType() === 'BUYER'"
+                           (change)="selectedActorType.set('BUYER')" class="sr-only" />
+                    <div class="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-all"
+                         [class.border-primary]="selectedActorType() === 'BUYER'"
+                         [class.border-slate-300]="selectedActorType() !== 'BUYER'">
+                      @if (selectedActorType() === 'BUYER') {
+                        <div class="w-2 h-2 rounded-full bg-primary"></div>
+                      }
+                    </div>
+                    <span class="text-sm font-semibold text-slate-800">{{ 'admin.dispute.buyer' | translate }}</span>
+                  </label>
+                  <label
+                    class="flex items-center gap-2.5 p-3 border-2 rounded-xl cursor-pointer transition-all"
+                    [class.border-primary]="selectedActorType() === 'SELLER'"
+                    [class.bg-primary-lt]="selectedActorType() === 'SELLER'"
+                    [class.border-slate-200]="selectedActorType() !== 'SELLER'"
+                  >
+                    <input type="radio" value="SELLER" [checked]="selectedActorType() === 'SELLER'"
+                           (change)="selectedActorType.set('SELLER')" class="sr-only" />
+                    <div class="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-all"
+                         [class.border-primary]="selectedActorType() === 'SELLER'"
+                         [class.border-slate-300]="selectedActorType() !== 'SELLER'">
+                      @if (selectedActorType() === 'SELLER') {
+                        <div class="w-2 h-2 rounded-full bg-primary"></div>
+                      }
+                    </div>
+                    <span class="text-sm font-semibold text-slate-800">{{ 'admin.dispute.seller' | translate }}</span>
+                  </label>
+                </div>
+              </div>
+
               <button
                 (click)="applyResolution()"
                 [disabled]="!selectedResolution() || resolving()"
@@ -341,6 +385,7 @@ export class AdminDisputeDetailComponent implements OnInit {
   protected readonly resolving        = signal(false);
   protected readonly savingNotes      = signal(false);
   protected readonly selectedResolution = signal<ResolutionType | ''>('');
+  protected readonly selectedActorType  = signal<'BUYER' | 'SELLER' | ''>('');
 
   protected readonly resolutionTypes = RESOLUTION_TYPES;
 
@@ -359,11 +404,13 @@ export class AdminDisputeDetailComponent implements OnInit {
   }
 
   protected applyResolution(): void {
-    const rt = this.selectedResolution();
+    const rt        = this.selectedResolution();
+    const actorType = this.selectedActorType() || undefined;
+    const actorId   = this.auth.userId();
     if (!rt || this.resolving()) return;
     this.resolving.set(true);
-    this.adminService.resolveDispute(this.id(), rt as ResolutionType).subscribe({
-      next: (d) => { this.dispute.set(d); this.resolving.set(false); },
+    this.adminService.resolveDispute(this.id(), rt as ResolutionType, actorType, actorId).subscribe({
+      next: (d) => { this.dispute.set(d); this.resolving.set(false); this.selectedActorType.set(''); },
       error: () => this.resolving.set(false),
     });
   }

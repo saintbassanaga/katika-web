@@ -32,6 +32,7 @@ export const AuthStore = signalStore(
     hasMfa:     computed(() => user()?.mfaEnabled ?? false),
     isVerified: computed(() => user()?.verified   ?? false),
     fullName:   computed(() => user()?.fullName ?? ''),
+    userId:     computed(() => user()?.userId ?? ''),
     initials:   computed(() => {
       const parts = (user()?.fullName ?? '').trim().split(/\s+/);
       if (parts.length === 0 || !parts[0]) return '';

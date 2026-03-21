@@ -752,7 +752,8 @@
       "arbitrationFee": "Frais de saisine",
       "submissionDeadline": "Échéance de paiement",
       "buyerFeePaid": "Acheteur a payé",
-      "sellerFeePaid": "Vendeur a payé"
+      "sellerFeePaid": "Vendeur a payé",
+      "actorType": "Partie concernée (optionnel)"
     }
   },
   "notifications": {

@@ -280,6 +280,7 @@ export interface CreateDisputeRequest {
 
 export interface ResolveDisputeRequest {
   resolutionType: ResolutionType;
+  actorType?: 'BUYER' | 'SELLER' | 'ADMIN' | 'SUPERVISOR' | 'SUPPORT';
   actorId?: string;
   sellerPercent?: number;
 }

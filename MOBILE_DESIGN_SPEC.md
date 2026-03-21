@@ -943,7 +943,7 @@ All list endpoints return:
 
 ```json
 {
-  "content": [...],
+  "content": ["..."],
   "page": 0,
   "size": 20,
   "totalElements": 150,
