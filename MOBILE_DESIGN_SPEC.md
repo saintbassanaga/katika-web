@@ -1,4 +1,4 @@
-# Katika — Mobile App Design Specification
+# Katica — Mobile App Design Specification
 
 > Cross-platform reference for Android & iOS (Flutter / React Native / Kotlin Multiplatform)
 > Derived from the existing Angular mobile-first web frontend.
@@ -28,7 +28,7 @@
 
 | Property | Value |
 |----------|-------|
-| **App name** | Katika |
+| **App name** | Katica |
 | **Tagline** | Paiements sécurisés au Cameroun |
 | **Primary audience** | Buyers & sellers in Cameroon using Mobile Money |
 | **Tone** | Trustworthy, clean, professional fintech |
@@ -699,7 +699,7 @@ Screens with a back navigation (non-root tabs) show a top bar:
 
 | Slide | Content |
 |-------|---------|
-| 1 | Welcome illustration + headline "Bienvenue sur Katika" + tagline |
+| 1 | Welcome illustration + headline "Bienvenue sur Katica" + tagline |
 | 2 | How it works: 3 steps (Lock funds → Deliver → Release) |
 | 3 | CGU + Privacy Policy (scrollable) + checkbox to accept → "Start" button |
 
@@ -885,7 +885,7 @@ Null/empty amounts: display as `— XAF`
 
 ### 13.4 Language Switch
 
-- Stored in `localStorage` key: `katika_lang`
+- Stored in `localStorage` key: `katica_lang`
 - Toggle available in: Profile screen, top bar (FR / EN pill)
 - Applied at app startup
 
@@ -897,7 +897,7 @@ Null/empty amounts: display as `— XAF`
 
 - **Method**: Cookie-based JWT (BFF pattern)
 - **Cookie name**: `ACCESS_TOKEN` (HttpOnly, Secure)
-- **Base URL**: `https://api.katika.cm`
+- **Base URL**: `https://api.katica.app`
 - **All requests**: include credentials (cookie)
 - **401 response**: redirect to login
 - **MFA**: TOTP (6-digit code) on sensitive operations
@@ -907,7 +907,7 @@ On mobile, use a **secure in-memory token store** since HttpOnly cookies are not
 ### 14.2 Real-time (WebSocket)
 
 - **Protocol**: STOMP over SockJS
-- **URL**: `wss://api.katika.cm/ws`
+- **URL**: `wss://api.katica.app/ws`
 - **Subscriptions** used in dispute chat:
   - `/topic/dispute.{id}` — new messages
   - `/topic/dispute.{id}.status` — status updates

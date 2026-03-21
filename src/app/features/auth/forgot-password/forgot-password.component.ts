@@ -23,7 +23,7 @@ import { AuthService } from '@core/auth/auth.service';
               <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <span class="text-[1.125rem] font-extrabold text-dark tracking-[-0.02em]">Katika</span>
+          <span class="text-[1.125rem] font-extrabold text-dark tracking-[-0.02em]">Katica</span>
         </div>
 
         <!-- Step indicators -->

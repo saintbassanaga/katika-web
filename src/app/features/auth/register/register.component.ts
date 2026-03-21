@@ -380,8 +380,8 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 
         <div class="brand-content">
           <div class="brand-header">
-            <img src="/icons/icon-512-transparent.png" alt="Katika" class="brand-logo" />
-            <h1 class="brand-name">Katika</h1>
+            <img src="/icons/icon-512-transparent.png" alt="Katica" class="brand-logo" />
+            <h1 class="brand-name">Katica</h1>
           </div>
           <span class="brand-sep"></span>
           <p class="brand-tagline">Paiements sécurisés au Cameroun</p>

@@ -30,14 +30,14 @@ export class App {
   private  readonly router  = inject(Router);
   private  readonly bp      = inject(BreakpointObserver);
 
-  private readonly _onboardingDismissed = signal(!!localStorage.getItem('katika_onboarded'));
+  private readonly _onboardingDismissed = signal(!!localStorage.getItem('katica_onboarded'));
 
   protected readonly showOnboardingOverlay = computed(() =>
     this.auth.isAuthenticated() && !this._onboardingDismissed(),
   );
 
   protected onOnboardingDone() {
-    localStorage.setItem('katika_onboarded', '1');
+    localStorage.setItem('katica_onboarded', '1');
     this._onboardingDismissed.set(true);
   }
 

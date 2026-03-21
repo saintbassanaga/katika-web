@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "katika": {
+    "katica": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -21,7 +21,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
-            "outputPath": "dist/katika",
+            "outputPath": "dist/katica",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -92,10 +92,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "katika:build:production"
+              "buildTarget": "katica:build:production"
             },
             "development": {
-              "buildTarget": "katika:build:development"
+              "buildTarget": "katica:build:development"
             }
           },
           "defaultConfiguration": "development"

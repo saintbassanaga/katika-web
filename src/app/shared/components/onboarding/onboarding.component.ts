@@ -41,11 +41,11 @@ import { Component, output, signal } from '@angular/core';
                 <div class="absolute bottom-[-30px] left-[-20px] w-[120px] h-[120px] rounded-full pointer-events-none"
                      style="background:radial-gradient(circle,rgba(27,79,138,.4) 0%,transparent 70%)"></div>
                 <div class="relative flex items-center gap-3 mb-6">
-                  <img src="/icons/icon-512-transparent.png" alt="Katika" class="w-10 h-10 object-contain" />
-                  <span class="text-white text-2xl font-extrabold tracking-[-0.03em]">Katika</span>
+                  <img src="/icons/icon-512-transparent.png" alt="Katica" class="w-10 h-10 object-contain" />
+                  <span class="text-white text-2xl font-extrabold tracking-[-0.03em]">Katica</span>
                 </div>
                 <h2 class="text-white text-[1.625rem] font-extrabold tracking-[-0.03em] leading-[1.2] m-0 mb-2">
-                  Bienvenue sur Katika&nbsp;👋
+                  Bienvenue sur Katica&nbsp;👋
                 </h2>
                 <p class="m-0 text-sm font-medium leading-relaxed" style="color:rgba(203,213,225,.8)">
                   La plateforme de paiements sécurisés entre acheteurs et vendeurs au Cameroun.
@@ -170,7 +170,7 @@ import { Component, output, signal } from '@angular/core';
                         <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> <strong>Escrow&nbsp;:</strong> Le vendeur crée la transaction (min 25 XAF, max 10 000 000 XAF). L'acheteur paie via Mobile Money (CamPay/MonetBil). Les fonds sont séquestrés jusqu'à validation de la livraison.</li>
                         <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> <strong>Wallet&nbsp;:</strong> Chaque utilisateur dispose d'un portefeuille affichant solde disponible, solde gelé et solde total. L'historique complet est consultable.</li>
                         <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> <strong>Retrait (Payout)&nbsp;:</strong> Retrait vers un compte Mobile Money via saisie du montant, numéro bénéficiaire et validation par OTP.</li>
-                        <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> <strong>Litiges&nbsp;:</strong> En cas de désaccord, l'une ou l'autre des parties peut ouvrir un litige. Un agent Katika arbitre et rend une décision finale et exécutoire. Katika ne garantit pas l'issue en faveur d'une partie spécifique.</li>
+                        <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> <strong>Litiges&nbsp;:</strong> En cas de désaccord, l'une ou l'autre des parties peut ouvrir un litige. Un agent Katica arbitre et rend une décision finale et exécutoire. Katica ne garantit pas l'issue en faveur d'une partie spécifique.</li>
                       </ul>
                     </div>
 
@@ -195,7 +195,7 @@ import { Component, output, signal } from '@angular/core';
                     <div>
                       <p class="text-[11px] font-bold text-slate-800 uppercase tracking-wider mb-2">Art. 8 — Responsabilité de l'éditeur</p>
                       <ul class="m-0 p-0 flex flex-col gap-1.5 list-none">
-                        <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> La plateforme est fournie « en l'état ». Katika n'est pas responsable des pertes issues des transactions entre utilisateurs ni des retards des prestataires de paiement.</li>
+                        <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> La plateforme est fournie « en l'état ». Katica n'est pas responsable des pertes issues des transactions entre utilisateurs ni des retards des prestataires de paiement.</li>
                         <li class="flex gap-2 text-xs text-slate-600 leading-relaxed"><span class="text-primary mt-px shrink-0">›</span> CamPay et MonetBil opèrent sous leurs propres conditions. L'éditeur décline toute responsabilité pour leurs défaillances.</li>
                       </ul>
                     </div>
@@ -304,7 +304,7 @@ import { Component, output, signal } from '@angular/core';
                     }
                   </div>
                   <p class="text-xs text-slate-600 m-0 leading-relaxed">
-                    J'ai lu et j'accepte les <strong class="text-slate-800">Conditions Générales d'Utilisation</strong> et la <strong class="text-slate-800">Politique de Confidentialité</strong> de Katika — BytesMind Tech (Version 1.0, Mars 2026).
+                    J'ai lu et j'accepte les <strong class="text-slate-800">Conditions Générales d'Utilisation</strong> et la <strong class="text-slate-800">Politique de Confidentialité</strong> de Katica — BytesMind Tech (Version 1.0, Mars 2026).
                   </p>
                 </label>
 
@@ -369,7 +369,7 @@ export class OnboardingComponent {
   protected readonly timeline = [
     { n: 1, emoji: '🛒', title: 'Vendeur crée la transaction',         desc: 'Il renseigne le montant, l\'acheteur et une description.',            bg: 'rgba(27,79,138,.1)'   },
     { n: 2, emoji: '💳', title: 'Acheteur paie via Mobile Money',      desc: 'Paiement sécurisé via CamPay ou MonetBil.',                            bg: 'rgba(201,146,13,.12)' },
-    { n: 3, emoji: '🔒', title: 'Fonds séquestrés sur Katika',         desc: 'L\'argent est bloqué jusqu\'à confirmation de livraison.',             bg: 'rgba(139,92,246,.1)'  },
+    { n: 3, emoji: '🔒', title: 'Fonds séquestrés sur Katica',         desc: 'L\'argent est bloqué jusqu\'à confirmation de livraison.',             bg: 'rgba(139,92,246,.1)'  },
     { n: 4, emoji: '✅', title: 'Livraison confirmée → fonds libérés', desc: 'Le vendeur reçoit le montant sur son wallet (frais 3 % déduits).',     bg: 'rgba(16,185,129,.1)'  },
   ];
 
@@ -387,7 +387,7 @@ export class OnboardingComponent {
   protected goTo(i: number)     { this.step.set(i); }
 
   protected finish() {
-    localStorage.setItem('katika_onboarded', '1');
+    localStorage.setItem('katica_onboarded', '1');
     this.done.emit();
   }
 }

@@ -344,8 +344,8 @@ import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.
         </div>
 
         <div class="brand-content">
-          <img src="/icons/icon-512-transparent.png" alt="Katika" class="brand-logo" />
-          <h1 class="brand-name">Katika</h1>
+          <img src="/icons/icon-512-transparent.png" alt="Katica" class="brand-logo" />
+          <h1 class="brand-name">Katica</h1>
           <span class="brand-sep"></span>
           <p class="brand-tagline">{{ 'auth.login.tagline' | translate }}</p>
 

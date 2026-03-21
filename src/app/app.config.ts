@@ -54,7 +54,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(async () => {
       const translate = inject(TranslateService);
       const authStore = inject(AuthStore);
-      const saved = (localStorage.getItem('katika_lang') as 'fr' | 'en') || 'fr';
+      const saved = (localStorage.getItem('katica_lang') as 'fr' | 'en') || 'fr';
       await firstValueFrom(translate.use(saved));
       return await authStore.init();
     }),

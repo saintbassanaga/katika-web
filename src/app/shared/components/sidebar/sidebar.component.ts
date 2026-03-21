@@ -35,9 +35,9 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
 
       <!-- Logo -->
       <div class="px-5 pt-6 pb-5 border-b border-white/[.07] flex items-center gap-3">
-        <img src="/icons/icon-512-transparent.png" alt="Katika" class="w-10 h-10 object-contain shrink-0" />
+        <img src="/icons/icon-512-transparent.png" alt="Katica" class="w-10 h-10 object-contain shrink-0" />
         <div>
-          <div class="text-white text-xl font-extrabold tracking-[-0.02em]">Katika</div>
+          <div class="text-white text-xl font-extrabold tracking-[-0.02em]">Katica</div>
           <div class="text-slate-400/50 text-[.6875rem]">{{ isStaff() ? ('nav.adminSubtitle' | translate) : ('nav.subtitle' | translate) }}</div>
         </div>
       </div>

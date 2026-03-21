@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { ToastService } from '../notification/toast.service';
 import { AuthState } from '@shared/models/model';
 
-const ROLE_KEY = 'katika_role';
+const ROLE_KEY = 'katica_role';
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },

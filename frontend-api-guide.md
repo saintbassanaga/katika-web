@@ -1,6 +1,6 @@
-# Katika — Frontend API Guide
+# Katica — Frontend API Guide
 
-> Base URL: `https://api.katika.cm`
+> Base URL: `https://api.katica.app`
 > Auth: JWT via `ACCESS_TOKEN` cookie (BFF flow) ou `Authorization: Bearer <token>` (SPA/mobile)
 > Platform API: `X-Api-Key: ktk_live_...` header
 > Format: `application/json` sauf multipart indiqué
@@ -881,7 +881,7 @@ GET /api/users/me/verification
 
 ## 10. Portail Développeur
 
-> Nécessite un compte Katika authentifié.
+> Nécessite un compte Katica authentifié.
 
 ### Créer une application
 ```
@@ -903,7 +903,7 @@ POST /api/developer/applications
   "termsAccepted": true,
   "termsVersion": "1.0",
   "requestedScopes": ["escrow:write", "payout:write"],
-  "webhookUrl": "https://monmarche.cm/webhooks/katika",
+  "webhookUrl": "https://monmarche.cm/webhooks/katica",
   "initialKeyName": "Production Key",
   "initialKeyEnvironment": "PRODUCTION"
 }
@@ -937,7 +937,7 @@ GET /api/developer/applications/{appId}
   "allowedScopes": ["escrow:write", "payout:write"],
   "rateLimitPerHour": 100,
   "rateLimitPerDay": 1000,
-  "webhookUrl": "https://monmarche.cm/webhooks/katika",
+  "webhookUrl": "https://monmarche.cm/webhooks/katica",
   "webhookSecretConfigured": true,
   "oauth2ClientId": null,
   "createdAt": "2026-03-13T10:00:00Z"
@@ -1092,7 +1092,7 @@ POST /api/admin/users/staff
   "phoneNumber": "+237670000001",
   "fullName": "Agent Support",
   "password": "password123",
-  "email": "agent@katika.cm",
+  "email": "agent@katica.app",
   "role": "SUPPORT"
 }
 ```
@@ -1272,7 +1272,7 @@ PATCH /api/support/disputes/{disputeId}/notes
 
 ### Connexion STOMP
 ```
-ws://api.katika.cm/ws
+ws://api.katica.app/ws
 ```
 Headers: `Authorization: Bearer <token>`
 

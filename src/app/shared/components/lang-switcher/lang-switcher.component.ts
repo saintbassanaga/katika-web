@@ -48,12 +48,12 @@ import { TranslateService } from '@ngx-translate/core';
 export class LangSwitcherComponent {
   private readonly translate = inject(TranslateService);
   protected readonly current = signal<string>(
-    localStorage.getItem('katika_lang') || 'fr',
+    localStorage.getItem('katica_lang') || 'fr',
   );
 
   use(lang: 'fr' | 'en'): void {
     this.translate.use(lang);
     this.current.set(lang);
-    localStorage.setItem('katika_lang', lang);
+    localStorage.setItem('katica_lang', lang);
   }
 }
