@@ -1,4 +1,4 @@
-const BACKEND = 'https://api.katica.app';
+const BACKEND = 'http://api.katica.app:8080';
 const PROXY_PREFIXES = ['/bff/', '/api/', '/ws/'];
 
 export default {
