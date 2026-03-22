@@ -76,7 +76,6 @@ export const appConfig: ApplicationConfig = {
       const platformId = inject(PLATFORM_ID);
 
       if (!isPlatformBrowser(platformId)) {
-        translate.setDefaultLang('fr');
         return;
       }
 

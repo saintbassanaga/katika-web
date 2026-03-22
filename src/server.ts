@@ -5,6 +5,13 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
+
+// Polyfill browser APIs absentes en Node.js (@ng-web-apis/common, TaigaUI)
+if (typeof requestAnimationFrame === 'undefined') {
+  (globalThis as any).requestAnimationFrame = (cb: FrameRequestCallback) =>
+    setTimeout(cb, 16) as unknown as number;
+  (globalThis as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
+}
 import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
