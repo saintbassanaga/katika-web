@@ -74,9 +74,13 @@ export const appConfig: ApplicationConfig = {
       const translate = inject(TranslateService);
       const authStore = inject(AuthStore);
       const platformId = inject(PLATFORM_ID);
-      const saved = isPlatformBrowser(platformId)
-        ? (localStorage.getItem('katica_lang') as 'fr' | 'en') || 'fr'
-        : 'fr';
+
+      if (!isPlatformBrowser(platformId)) {
+        translate.setDefaultLang('fr');
+        return;
+      }
+
+      const saved = (localStorage.getItem('katica_lang') as 'fr' | 'en') || 'fr';
       await firstValueFrom(translate.use(saved));
       return await authStore.init();
     }), provideClientHydration(withEventReplay()),
