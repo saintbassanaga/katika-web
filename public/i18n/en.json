@@ -571,6 +571,7 @@
     }
   },
   "status": {
+    "PENDING_ACCEPTANCE": "Pending",
     "INITIATED": "Initiated",
     "LOCKED": "Held",
     "SHIPPED": "Shipped",

@@ -148,7 +148,7 @@ const STATUS_ORDER: Record<string, number> = {
               </div>
 
               <!-- Fee breakdown — visible only once funds are locked -->
-              @if (tx.platformFee != null && tx.netAmount != null) {
+              @if (tx.platformFee != null && tx.netAmount != null && tx.platformFee > 0) {
                 <div class="flex justify-between text-sm">
                   <span style="color: var(--clr-muted)">{{ 'escrow.detail.fee' | translate }}</span>
                   <span style="color: var(--clr-error)">−{{ tx.platformFee | amount }}</span>
