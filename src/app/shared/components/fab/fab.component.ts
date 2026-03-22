@@ -326,7 +326,7 @@ export class FabComponent {
         onSuccess: (tx) => {
           this.toast.success(this.translate.instant('toast.transactionCreated'));
           this.closeSheet();
-          this.router.navigate(['/escrow', tx.id]);
+          void this.router.navigate(['/escrow', tx.id]);
         },
       },
     );
