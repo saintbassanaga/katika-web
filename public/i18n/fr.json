@@ -169,6 +169,7 @@
     "title": "Transactions",
     "filters": {
       "all": "Tous",
+      "pending": "À accepter",
       "locked": "En attente",
       "shipped": "Livraison",
       "disputed": "Litiges"
@@ -191,11 +192,18 @@
       "back": "Retour",
       "progress": "Avancement",
       "steps": {
-        "INITIATED": "Initié",
+        "PENDING_ACCEPTANCE": "Acceptation",
+        "INITIATED": "Paiement",
         "LOCKED": "Bloqué",
         "SHIPPED": "Expédié",
         "DELIVERED": "Livré",
         "RELEASED": "Libéré"
+      },
+      "acceptSection": {
+        "title": "Confirmer et payer",
+        "subtitle": "Le vendeur a créé cette transaction. En acceptant, vous déclenchez la demande de paiement USSD sur votre téléphone.",
+        "waitingTitle": "En attente de l'acheteur",
+        "waitingSubtitle": "L'acheteur doit accepter la transaction pour déclencher le paiement."
       },
       "live": "En direct",
       "liveUpdate": "Statut mis à jour : {{status}}",
@@ -235,6 +243,8 @@
         "instruction": "Placez le QR code du vendeur dans le cadre"
       },
       "actions": {
+        "accept": "Accepter et payer",
+        "reject": "Refuser la transaction",
         "release": "Libérer les fonds",
         "deliver": "J'ai reçu ma commande",
         "scanQr": "Scanner le QR code",

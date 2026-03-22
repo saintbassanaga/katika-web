@@ -95,8 +95,8 @@ export interface TransactionSummary {
   sellerId: string;
   sellerName: string;
   grossAmount: number;
-  platformFee: number;
-  netAmount: number;
+  platformFee: number | null;
+  netAmount: number | null;
   currency: string;
   status: string;
   createdAt: string;
@@ -116,8 +116,8 @@ export interface TransactionDetail {
   sellerId: string;
   sellerName: string;
   grossAmount: number;
-  platformFee: number;
-  netAmount: number;
+  platformFee: number | null;
+  netAmount: number | null;
   currency: string;
   status: string;
   activeDisputeId: string | null;

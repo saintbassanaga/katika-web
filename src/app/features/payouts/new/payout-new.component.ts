@@ -1,14 +1,12 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 import { TuiTextfield } from '@taiga-ui/core';
 import { TuiInputNumberDirective } from '@taiga-ui/kit';
-import { PayoutService } from '../payout.service';
-import { AuthStore } from '@core/auth/auth.store';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { injectBalanceQuery, injectCreatePayoutMutation } from '../payout.queries';
 
 const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
 
@@ -23,7 +21,7 @@ const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
       @if (balance() !== null) {
         <div class="animate-entry bg-blue-50 rounded-2xl p-4 mb-6">
           <p class="text-xs text-blue-600 font-medium mb-1">{{ 'payouts.balance' | translate }}</p>
-          <p class="text-2xl font-bold text-blue-700">{{ balance() | amount }}</p>
+          <p class="text-2xl font-bold text-blue-700">{{ balance()! | amount }}</p>
         </div>
       }
 
@@ -47,13 +45,15 @@ const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
                 {{ amount | amount }}
               </button>
             }
-            <button
-              type="button"
-              (click)="setAmount(balance()!)"
-              class="px-3 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600"
-            >
-              {{ 'payouts.allAmount' | translate }}
-            </button>
+            @if (balance() !== null) {
+              <button
+                type="button"
+                (click)="setAmount(balance()!)"
+                class="px-3 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600"
+              >
+                {{ 'payouts.allAmount' | translate }}
+              </button>
+            }
           </div>
           <tui-textfield>
             <input
@@ -88,12 +88,12 @@ const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
 
         <button
           type="submit"
-          [disabled]="form.invalid || loading()"
+          [disabled]="form.invalid || createMutation.isPending()"
           class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold text-sm
                  hover:bg-blue-700 transition-colors disabled:opacity-50 min-h-11
                  flex items-center justify-center gap-2"
         >
-          @if (loading()) {
+          @if (createMutation.isPending()) {
             <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           }
           {{ 'payouts.continue' | translate }}
@@ -102,27 +102,20 @@ const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
     </div>
   `,
 })
-export class PayoutNewComponent implements OnInit {
-  private readonly payoutService = inject(PayoutService);
-  private readonly auth = inject(AuthStore);
+export class PayoutNewComponent {
   private readonly router = inject(Router);
-  private readonly fb = inject(FormBuilder);
+  private readonly fb    = inject(FormBuilder);
 
-  protected readonly balance = signal<number | null>(null);
-  protected readonly loading = signal(false);
-  protected readonly quickAmounts = QUICK_AMOUNTS;
+  protected readonly balanceQuery    = injectBalanceQuery();
+  protected readonly createMutation  = injectCreatePayoutMutation();
+  protected readonly quickAmounts    = QUICK_AMOUNTS;
+
+  protected readonly balance = computed(() => this.balanceQuery.data()?.balance ?? null);
 
   protected readonly form = this.fb.group({
     amount: [null as number | null, [Validators.required, Validators.min(500)]],
     phone: ['', Validators.required],
   });
-
-  async ngOnInit(): Promise<void> {
-    try {
-      const wallet = await firstValueFrom(this.payoutService.getBalance());
-      this.balance.set(wallet.balance);
-    } catch {}
-  }
 
   protected setAmount(amount: number): void {
     this.form.patchValue({ amount });
@@ -140,22 +133,14 @@ export class PayoutNewComponent implements OnInit {
 
   protected onSubmit(): void {
     if (this.form.invalid) return;
-    this.loading.set(true);
     const v = this.form.value;
-    this.payoutService.create({
-      amount: v.amount!,
-      destinationPhone: v.phone!,
-    }).subscribe({
-      next: (res) => {
-        const payoutId = res?.id;
-        if (!payoutId) {
-          console.error('Payout create response missing id:', res);
-          this.loading.set(false);
-          return;
-        }
-        this.router.navigate(['/payouts', payoutId, 'otp']);
+    this.createMutation.mutate(
+      { amount: v.amount!, destinationPhone: v.phone! },
+      {
+        onSuccess: (res) => {
+          if (res?.id) this.router.navigate(['/payouts', res.id, 'otp']);
+        },
       },
-      error: () => this.loading.set(false),
-    });
+    );
   }
 }

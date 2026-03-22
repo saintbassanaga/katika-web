@@ -71,6 +71,14 @@
   --tui-service-autofill-background: rgba(229, 238, 248, 0.8);
 }
 
+/* ── TaigaUI alerts — taille de police réduite ───────────── */
+tui-alert tui-notification,
+tui-alert [tuiTitle],
+tui-alert [tuiSubtitle] {
+  font-size: 0.8125rem !important; /* 13px */
+  line-height: 1.4 !important;
+}
+
 /* ── TaigaUI textfield — override appearance to match brand ── */
 [tuiAppearance][data-appearance='textfield'],
 [tuiAppearance][data-appearance=''] {

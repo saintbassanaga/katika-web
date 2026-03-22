@@ -4,6 +4,7 @@ import { StatusConfig } from '@shared/models/model';
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
   // Escrow statuses
+  PENDING_ACCEPTANCE: { bg: '#FDF4DC', color: '#92400E', dot: '#C9920D' },
   INITIATED:   { bg: '#EDF1F7', color: '#475569', dot: '#94A3B8' },
   LOCKED:      { bg: '#E5EEF8', color: '#154B85', dot: '#3A7BC8' },
   SHIPPED:     { bg: '#FFFBEB', color: '#B45309', dot: '#F59E0B' },

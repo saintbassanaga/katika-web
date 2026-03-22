@@ -50,6 +50,12 @@ export class EscrowService extends ApiService {
     );
   }
 
+  accept(id: string): Observable<TransactionDetail> {
+    return this.http.post<TransactionDetail>(
+      this.url(`/api/escrow/${id}/accept`), {}, this.defaultOptions,
+    );
+  }
+
   ship(id: string): Observable<TransactionDetail> {
     return this.http.post<TransactionDetail>(
       this.url(`/api/escrow/${id}/ship`), {}, this.defaultOptions,

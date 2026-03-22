@@ -169,6 +169,7 @@
     "title": "Transactions",
     "filters": {
       "all": "All",
+      "pending": "To accept",
       "locked": "Pending",
       "shipped": "Shipped",
       "disputed": "Disputed"
@@ -191,7 +192,8 @@
       "back": "Back",
       "progress": "Progress",
       "steps": {
-        "INITIATED": "Initiated",
+        "PENDING_ACCEPTANCE": "Acceptance",
+        "INITIATED": "Payment",
         "LOCKED": "Held",
         "SHIPPED": "Shipped",
         "DELIVERED": "Delivered",
@@ -234,7 +236,15 @@
         "releasing": "Releasing funds…",
         "instruction": "Place the seller's QR code inside the frame"
       },
+      "acceptSection": {
+        "title": "Confirm & pay",
+        "subtitle": "The seller created this transaction. By accepting, you trigger the USSD payment request on your phone.",
+        "waitingTitle": "Waiting for buyer",
+        "waitingSubtitle": "The buyer must accept the transaction to trigger the payment."
+      },
       "actions": {
+        "accept": "Accept & pay",
+        "reject": "Decline transaction",
         "release": "Release funds",
         "deliver": "I received my order",
         "scanQr": "Scan QR code",

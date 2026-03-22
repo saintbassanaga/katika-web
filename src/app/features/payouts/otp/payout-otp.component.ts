@@ -1,9 +1,9 @@
-import { Component, inject, input, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, computed, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { PayoutService } from '../payout.service';
 import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
 import { ToastService } from '@core/notification/toast.service';
 import { TranslatePipe } from '@ngx-translate/core';
+import { injectValidatePayoutOtpMutation, injectSubmitPayoutMutation } from '../payout.queries';
 
 @Component({
   selector: 'app-payout-otp',
@@ -19,7 +19,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
       <app-otp-input (completed)="onCode($event)" [(value)]="otpValue" />
 
-      @if (error()) {
+      @if (validateMutation.isError() || submitMutation.isError()) {
         <p class="text-sm text-red-600 mt-4">{{ error() }}</p>
       }
 
@@ -50,12 +50,22 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class PayoutOtpComponent implements OnInit, OnDestroy {
   readonly id = input.required<string>();
 
-  private readonly payoutService = inject(PayoutService);
   private readonly router = inject(Router);
-  private readonly toast = inject(ToastService);
+  private readonly toast  = inject(ToastService);
 
-  protected readonly loading = signal(false);
-  protected readonly error = signal('');
+  protected readonly validateMutation = injectValidatePayoutOtpMutation();
+  protected readonly submitMutation   = injectSubmitPayoutMutation();
+
+  protected readonly loading = computed(
+    () => this.validateMutation.isPending() || this.submitMutation.isPending(),
+  );
+
+  protected readonly error = computed(() => {
+    if (this.validateMutation.isError()) return 'Code invalide. Réessayez.';
+    if (this.submitMutation.isError())   return 'Erreur lors de la soumission. Réessayez.';
+    return '';
+  });
+
   protected readonly resendCountdown = signal(60);
   protected otpValue = '';
   private countdownInterval?: ReturnType<typeof setInterval>;
@@ -65,26 +75,19 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
   }
 
   protected onCode(code: string): void {
-    this.error.set('');
-    this.loading.set(true);
-    this.payoutService.validateOtp(this.id(), code).subscribe({
-      next: () => {
-        this.payoutService.submit(this.id()).subscribe({
-          next: () => {
-            this.toast.success('Retrait en cours de traitement');
-            this.router.navigate(['/wallet']);
-          },
-          error: () => {
-            this.loading.set(false);
-            this.error.set('Erreur lors de la soumission. Réessayez.');
-          },
-        });
+    this.validateMutation.mutate(
+      { payoutId: this.id(), code },
+      {
+        onSuccess: () => {
+          this.submitMutation.mutate(this.id(), {
+            onSuccess: () => {
+              this.toast.success('Retrait en cours de traitement');
+              this.router.navigate(['/wallet']);
+            },
+          });
+        },
       },
-      error: () => {
-        this.loading.set(false);
-        this.error.set('Code invalide. Réessayez.');
-      },
-    });
+    );
   }
 
   protected resendOtp(): void {
