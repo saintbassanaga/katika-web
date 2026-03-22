@@ -17,6 +17,13 @@ export default {
       headers.set('X-Forwarded-Proto', url.protocol.replace(':', ''));
 
       const isWebSocket = request.headers.get('Upgrade') === 'websocket';
+
+      // WebSocket upgrade : forward direct sans body ni redirect manipulation
+      // Cloudflare établit le bridge TCP automatiquement si l'origine répond 101
+      if (isWebSocket) {
+        return fetch(new Request(backendUrl, { headers, method: 'GET' }));
+      }
+
       const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
 
       const proxyRequest = new Request(backendUrl, {
@@ -25,8 +32,7 @@ export default {
         body: hasBody ? request.body : undefined,
         // duplex requis quand body est un ReadableStream (uploads)
         ...(hasBody ? { duplex: 'half' } : {}),
-        // WebSocket ne supporte pas redirect:follow
-        redirect: isWebSocket ? 'manual' : 'follow',
+        redirect: 'follow',
       });
 
       return fetch(proxyRequest);
