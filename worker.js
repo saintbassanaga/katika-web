@@ -1,6 +1,6 @@
 const BACKEND_URL = 'https://api.katica.app';
 const BACKEND_HOST = 'api.katica.app';
-const PROXY_PREFIXES = ['/bff/', '/api/', '/ws/'];
+const PROXY_PREFIXES = ['/bff/', '/api/'];
 
 export default {
   async fetch(request, env) {
