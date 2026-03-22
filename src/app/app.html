@@ -1,28 +1,29 @@
-<div [class]="shellClass()" style="background:#EDF1F7">
+<tui-root>
+  <div [class]="shellClass()" style="background:#EDF1F7">
 
-  @if (showNav()) {
-    @if (isMobile()) {
-      <app-bottom-nav class="shrink-0" />
-    } @else {
-      <app-sidebar class="shrink-0" />
+    @if (showNav()) {
+      @if (isMobile()) {
+        <app-bottom-nav class="shrink-0" />
+      } @else {
+        <app-sidebar class="shrink-0" />
+      }
     }
-  }
 
-  <main
-    id="main-content"
-    tabindex="-1"
-    [class]="contentClass()"
-  >
-    <router-outlet />
-  </main>
+    <main
+      id="main-content"
+      tabindex="-1"
+      [class]="contentClass()"
+    >
+      <router-outlet />
+    </main>
 
-  @if (showNav() && !showOnboardingOverlay()) {
-    <app-fab />
-  }
-  <app-toast-container />
+    @if (showNav() && !showOnboardingOverlay()) {
+      <app-fab />
+    }
 
-  @if (showOnboardingOverlay()) {
-    <app-onboarding (done)="onOnboardingDone()" />
-  }
+    @if (showOnboardingOverlay()) {
+      <app-onboarding (done)="onOnboardingDone()" />
+    }
 
-</div>
+  </div>
+</tui-root>

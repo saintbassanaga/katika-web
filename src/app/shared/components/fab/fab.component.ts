@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, firstValueFrom, map, startWith } from 'rxjs';
+import { TuiTextfield } from '@taiga-ui/core';
+import { TuiInputNumberDirective } from '@taiga-ui/kit';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { EscrowService } from '@features/escrow/escrow.service';
@@ -13,7 +15,7 @@ import { FabConfig } from '@shared/models/model';
 @Component({
   selector: 'app-fab',
   standalone: true,
-  imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe],
+  imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe, TuiTextfield, TuiInputNumberDirective],
   styles: [`
     /* ── FAB button ─────────────────────────────── */
     :host {
@@ -207,14 +209,16 @@ import { FabConfig } from '@shared/models/model';
             <!-- Amount -->
             <div class="field">
               <label class="label">{{ 'fab.form.amount' | translate }}</label>
-              <div class="amount-wrap">
-                <input type="number" formControlName="grossAmount"
-                       placeholder="Ex. 50000"
-                       class="input input-amount"
-                       [class.error]="txForm.get('grossAmount')?.invalid && txForm.get('grossAmount')?.touched"
-                       min="25" max="10000000" step="1" />
-                <span class="amount-suffix">XAF</span>
-              </div>
+              <tui-textfield>
+                <input
+                  tuiInputNumber
+                  formControlName="grossAmount"
+                  placeholder="Ex. 50000"
+                  [min]="25"
+                  [max]="10000000"
+                  postfix="XAF"
+                />
+              </tui-textfield>
               @if (txForm.get('grossAmount')?.errors?.['min'] && txForm.get('grossAmount')?.touched) {
                 <p class="err">{{ 'fab.form.amountMin' | translate }}</p>
               }

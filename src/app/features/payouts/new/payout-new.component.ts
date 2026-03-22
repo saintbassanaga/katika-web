@@ -2,6 +2,8 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { TuiTextfield } from '@taiga-ui/core';
+import { TuiInputNumberDirective } from '@taiga-ui/kit';
 import { PayoutService } from '../payout.service';
 import { AuthStore } from '@core/auth/auth.store';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
@@ -13,7 +15,7 @@ const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
 @Component({
   selector: 'app-payout-new',
   standalone: true,
-  imports: [ReactiveFormsModule, AmountPipe, PhoneInputComponent, TranslatePipe],
+  imports: [ReactiveFormsModule, AmountPipe, PhoneInputComponent, TranslatePipe, TuiTextfield, TuiInputNumberDirective],
   template: `
     <div class="animate-fade px-4 py-6 pb-24 max-w-sm mx-auto">
       <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.title' | translate }}</h1>
@@ -53,14 +55,15 @@ const QUICK_AMOUNTS = [5000, 10000, 25000, 50000];
               {{ 'payouts.allAmount' | translate }}
             </button>
           </div>
-          <input
-            type="number"
-            formControlName="amount"
-            [placeholder]="'payouts.amountPh' | translate"
-            min="500"
-            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm
-                   focus:border-blue-600 focus:outline-none transition-colors"
-          />
+          <tui-textfield>
+            <input
+              tuiInputNumber
+              formControlName="amount"
+              [placeholder]="'payouts.amountPh' | translate"
+              [min]="500"
+              postfix="XAF"
+            />
+          </tui-textfield>
         </div>
 
         <!-- Phone -->

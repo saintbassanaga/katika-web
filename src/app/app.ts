@@ -3,8 +3,8 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
+import { TuiRoot } from '@taiga-ui/core';
 import { AuthStore } from './core/auth/auth.store';
-import { ToastContainerComponent } from './shared/components/toast/toast-container.component';
 import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { FabComponent } from './shared/components/fab/fab.component';
@@ -21,7 +21,7 @@ const FULL_SCREEN_PATTERNS = [
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastContainerComponent, BottomNavComponent, SidebarComponent, FabComponent, OnboardingComponent],
+  imports: [RouterOutlet, TuiRoot, BottomNavComponent, SidebarComponent, FabComponent, OnboardingComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

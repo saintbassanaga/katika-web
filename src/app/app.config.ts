@@ -6,6 +6,8 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { NG_EVENT_PLUGINS } from '@taiga-ui/event-plugins';
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { provideServiceWorker } from '@angular/service-worker';
 import {
@@ -31,6 +33,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
+    provideAnimations(),
+    ...NG_EVENT_PLUGINS,
     provideRouter(
       routes,
       withComponentInputBinding(),

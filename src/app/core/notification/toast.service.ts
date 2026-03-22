@@ -1,10 +1,22 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { TuiAlertService } from '@taiga-ui/core';
 import { Toast, ToastType } from '@shared/models/model';
 
 export type { Toast, ToastType };
 
+/** Maps internal toast types to TaigaUI appearance tokens */
+const APPEARANCE_MAP: Record<ToastType, string> = {
+  success: 'positive',
+  error:   'negative',
+  warning: 'warning',
+  info:    'info',
+};
+
 @Injectable({ providedIn: 'root' })
 export class ToastService {
+  private readonly tuiAlerts = inject(TuiAlertService);
+
+  /** Kept for backward compatibility (read-only; TuiAlertService owns display) */
   readonly toasts = signal<Toast[]>([]);
 
   success(message: string) { this.push('success', message); }
@@ -12,13 +24,14 @@ export class ToastService {
   warning(message: string) { this.push('warning',  message); }
   info(message: string)    { this.push('info',     message); }
 
-  dismiss(id: string): void {
-    this.toasts.update(ts => ts.filter(t => t.id !== id));
+  dismiss(_id: string): void {
+    // Dismissal is handled automatically by TuiAlertService via autoClose
   }
 
   private push(type: ToastType, message: string): void {
-    const id = crypto.randomUUID();
-    this.toasts.update(ts => [...ts, { id, type, message }]);
-    setTimeout(() => this.dismiss(id), 4000);
+    this.tuiAlerts.open(message, {
+      appearance: APPEARANCE_MAP[type],
+      autoClose: 4000,
+    }).subscribe();
   }
 }
