@@ -38,6 +38,12 @@ export default {
       return fetch(proxyRequest);
     }
 
-    return env.ASSETS.fetch(request);
+    // Fallback SPA : Angular SSR génère index.csr.html (pas index.html)
+    const assetResponse = await env.ASSETS.fetch(request);
+    if (assetResponse.status === 404) {
+      const fallback = new Request(new URL('/index.csr.html', request.url).toString());
+      return env.ASSETS.fetch(fallback);
+    }
+    return assetResponse;
   },
 };
