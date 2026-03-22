@@ -20,28 +20,25 @@ export default {
 
       // WebSocket upgrade : forward direct — Cloudflare bridge le TCP si l'origine répond 101
       if (isWebSocket) {
-        return fetch(new Request(backendUrl, { headers, method: 'GET' }));
+        return fetch(backendUrl, { headers, method: 'GET' });
       }
 
       const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
 
-      const proxyRequest = new Request(backendUrl, {
+      return fetch(backendUrl, /** @type {any} */({
         method: request.method,
         headers,
         body: hasBody ? request.body : undefined,
         // duplex requis quand body est un ReadableStream (uploads)
         ...(hasBody ? { duplex: 'half' } : {}),
         redirect: 'follow',
-      });
-
-      return fetch(proxyRequest);
+      }));
     }
 
     // Fallback SPA : Angular SSR génère index.csr.html (pas index.html)
-    const assetResponse = await env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request.url);
     if (assetResponse.status === 404) {
-      const fallback = new Request(new URL('/index.csr.html', request.url).toString());
-      return env.ASSETS.fetch(fallback);
+      return env.ASSETS.fetch(new URL('/index.csr.html', request.url).toString());
     }
     return assetResponse;
   },
