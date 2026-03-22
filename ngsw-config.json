@@ -23,6 +23,7 @@
         "files": [
           "/i18n/**",
           "/icons/**",
+          "/assets/**",
           "/**/*.{svg,png,jpg,jpeg,webp,gif,woff2,woff,ttf}"
         ]
       }

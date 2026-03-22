@@ -1,4 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -26,18 +27,23 @@ const FULL_SCREEN_PATTERNS = [
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly auth   = inject(AuthStore);
-  private  readonly router  = inject(Router);
-  private  readonly bp      = inject(BreakpointObserver);
+  protected readonly auth       = inject(AuthStore);
+  private  readonly router      = inject(Router);
+  private  readonly bp          = inject(BreakpointObserver);
+  private  readonly platformId  = inject(PLATFORM_ID);
 
-  private readonly _onboardingDismissed = signal(!!localStorage.getItem('katica_onboarded'));
+  private readonly _onboardingDismissed = signal(
+    isPlatformBrowser(this.platformId) && !!localStorage.getItem('katica_onboarded'),
+  );
 
   protected readonly showOnboardingOverlay = computed(() =>
     this.auth.isAuthenticated() && !this._onboardingDismissed(),
   );
 
   protected onOnboardingDone() {
-    localStorage.setItem('katica_onboarded', '1');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('katica_onboarded', '1');
+    }
     this._onboardingDismissed.set(true);
   }
 

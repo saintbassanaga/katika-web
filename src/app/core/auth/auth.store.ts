@@ -1,4 +1,5 @@
-import { computed, inject } from '@angular/core';
+import { computed, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap, catchError, EMPTY, firstValueFrom } from 'rxjs';
@@ -15,7 +16,7 @@ export const AuthStore = signalStore(
 
   withState<AuthState>({
     user: null,
-    storedRole: sessionStorage.getItem(ROLE_KEY),
+    storedRole: typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(ROLE_KEY) : null,
     mfaRequired: false,
     challengeId: null,
     loading: false,
@@ -42,9 +43,13 @@ export const AuthStore = signalStore(
     }),
   })),
 
-  withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService), translate = inject(TranslateService)) => ({
+  withMethods((store, svc = inject(AuthService), router = inject(Router), toast = inject(ToastService), translate = inject(TranslateService), platformId = inject(PLATFORM_ID)) => ({
 
     async init(): Promise<void> {
+      if (!isPlatformBrowser(platformId)) {
+        patchState(store, { initialized: true });
+        return;
+      }
       try {
         const user = await firstValueFrom(svc.getMe());
         const storedRole = user.role ?? sessionStorage.getItem(ROLE_KEY);

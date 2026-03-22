@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -46,14 +47,17 @@ import { TranslateService } from '@ngx-translate/core';
   `,
 })
 export class LangSwitcherComponent {
-  private readonly translate = inject(TranslateService);
-  protected readonly current = signal<string>(
-    localStorage.getItem('katica_lang') || 'fr',
+  private readonly translate  = inject(TranslateService);
+  private readonly platformId = inject(PLATFORM_ID);
+  protected readonly current  = signal<string>(
+    isPlatformBrowser(this.platformId) ? (localStorage.getItem('katica_lang') || 'fr') : 'fr',
   );
 
   use(lang: 'fr' | 'en'): void {
     this.translate.use(lang);
     this.current.set(lang);
-    localStorage.setItem('katica_lang', lang);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('katica_lang', lang);
+    }
   }
 }

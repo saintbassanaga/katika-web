@@ -2,10 +2,12 @@ import {
   ApplicationConfig,
   inject,
   isDevMode,
+  PLATFORM_ID,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { NG_EVENT_PLUGINS } from '@taiga-ui/event-plugins';
 import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
@@ -28,6 +30,7 @@ import {authInterceptor} from '@core/http/auth.interceptor';
 import {offlineInterceptor} from '@core/http/offline.interceptor';
 import {errorInterceptor} from '@core/http/error.interceptor';
 import {AuthStore} from '@core/auth/auth.store';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -70,9 +73,12 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(async () => {
       const translate = inject(TranslateService);
       const authStore = inject(AuthStore);
-      const saved = (localStorage.getItem('katica_lang') as 'fr' | 'en') || 'fr';
+      const platformId = inject(PLATFORM_ID);
+      const saved = isPlatformBrowser(platformId)
+        ? (localStorage.getItem('katica_lang') as 'fr' | 'en') || 'fr'
+        : 'fr';
       await firstValueFrom(translate.use(saved));
       return await authStore.init();
-    }),
+    }), provideClientHydration(withEventReplay()),
   ],
 };

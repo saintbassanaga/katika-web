@@ -4,8 +4,8 @@
   "description": "Plateforme sécurisée d'escrow et de paiement",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#EDF1F7",
+  "theme_color": "#1B4F8A",
   "orientation": "portrait-primary",
   "lang": "fr",
   "icons": [

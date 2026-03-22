@@ -42,6 +42,7 @@
             ],
             "allowedCommonJsDependencies": [
               "qrcode",
+              "pngjs",
               "dijkstrajs",
               "isarray",
               "dayjs",
@@ -50,7 +51,15 @@
               "dayjs/locale/en",
               "@stomp/stompjs",
               "sockjs-client"
-            ]
+            ],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "security": {
+              "allowedHosts": []
+            },
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
