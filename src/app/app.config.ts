@@ -6,6 +6,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
+import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { provideServiceWorker } from '@angular/service-worker';
 import {
   provideRouter,
@@ -49,6 +50,17 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    provideAngularQuery(
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 5, // 5 minutes
+            gcTime: 1000 * 60 * 10,   // 10 minutes
+            retry: 1,
+          },
+        },
+      }),
+    ),
     provideTranslateService({fallbackLang: 'en'}),
     ...provideTranslateHttpLoader({prefix: '/i18n/', useHttpBackend: true}),
     provideAppInitializer(async () => {
