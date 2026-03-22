@@ -1,6 +1,6 @@
 const BACKEND_URL = 'https://api.katica.app';
 const BACKEND_HOST = 'api.katica.app';
-const PROXY_PREFIXES = ['/bff/', '/api/'];
+const PROXY_PREFIXES = ['/bff/', '/api/', '/ws/'];
 
 export default {
   async fetch(request, env) {
@@ -17,6 +17,12 @@ export default {
       headers.set('X-Forwarded-Proto', url.protocol.replace(':', ''));
 
       const isWebSocket = request.headers.get('Upgrade') === 'websocket';
+
+      // WebSocket upgrade : forward direct — Cloudflare bridge le TCP si l'origine répond 101
+      if (isWebSocket) {
+        return fetch(new Request(backendUrl, { headers, method: 'GET' }));
+      }
+
       const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
 
       const proxyRequest = new Request(backendUrl, {
@@ -25,13 +31,18 @@ export default {
         body: hasBody ? request.body : undefined,
         // duplex requis quand body est un ReadableStream (uploads)
         ...(hasBody ? { duplex: 'half' } : {}),
-        // WebSocket ne supporte pas redirect:follow
-        redirect: isWebSocket ? 'manual' : 'follow',
+        redirect: 'follow',
       });
 
       return fetch(proxyRequest);
     }
 
-    return env.ASSETS.fetch(request);
+    // Fallback SPA : Angular SSR génère index.csr.html (pas index.html)
+    const assetResponse = await env.ASSETS.fetch(request);
+    if (assetResponse.status === 404) {
+      const fallback = new Request(new URL('/index.csr.html', request.url).toString());
+      return env.ASSETS.fetch(fallback);
+    }
+    return assetResponse;
   },
 };
