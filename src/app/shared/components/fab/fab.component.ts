@@ -123,12 +123,12 @@ import countryToCurrency from 'country-to-currency';
     .err { font-size: .6875rem; color: #DC2626; margin: .2rem 0 0; }
 
     /* Amount wrapper with XAF suffix */
-    .amount-wrap { position: relative; }
+    .amount-wrap { position: relative; display: block; width: 100%; }
     .amount-suffix {
       position: absolute; right: .875rem; top: 50%; transform: translateY(-50%);
       font-size: .75rem; font-weight: 700; color: #94A3B8; pointer-events: none;
     }
-    .input-amount { padding-right: 3.25rem; }
+    .input-amount { width: 100%; padding-right: 3.25rem; box-sizing: border-box; }
 
     /* Submit */
     .submit-btn {
@@ -199,8 +199,8 @@ import countryToCurrency from 'country-to-currency';
             <div class="field">
               <label class="label">{{ 'fab.form.amount' | translate }}</label>
               <div class="amount-wrap">
-                <input type="number" formControlName="grossAmount"
-                       placeholder="Ex. 50000" min="25" max="10000000"
+                <input type="text" inputmode="numeric" formControlName="grossAmount"
+                       placeholder="Ex. 50000"
                        class="input input-amount"
                        [class.error]="txForm.get('grossAmount')?.invalid && txForm.get('grossAmount')?.touched" />
                 <span class="amount-suffix">{{ currency() }}</span>

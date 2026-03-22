@@ -1,0 +1,36 @@
+[changelog]
+header = ""
+body   = """
+## {{ version }} — {{ timestamp | date(format="%d/%m/%Y") }}
+
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group }}
+{% for commit in commits %}
+- {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message }} ([`{{ commit.id | truncate(length=7, end="") }}`]({{ commit.id }}))
+{% endfor %}
+{% endfor %}
+"""
+trim   = true
+footer = ""
+
+[git]
+conventional_commits    = true
+filter_unconventional   = true
+split_commits           = false
+filter_commits          = false
+tag_pattern             = "v[0-9].*"
+skip_tags               = ""
+ignore_tags             = ""
+topo_order              = false
+sort_commits            = "newest"
+
+commit_parsers = [
+  { message = "^feat",     group = "✨ Nouveautés"    },
+  { message = "^fix",      group = "🐛 Correctifs"    },
+  { message = "^perf",     group = "⚡ Performances"  },
+  { message = "^refactor", group = "♻️  Refactoring"   },
+  { message = "^docs",     group = "📚 Documentation" },
+  { message = "^chore",    skip  = true               },
+  { message = "^ci",       skip  = true               },
+  { message = "^style",    skip  = true               },
+]

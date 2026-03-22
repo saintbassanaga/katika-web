@@ -1,0 +1,12 @@
+name       = "katika"
+main       = "worker.js"
+compatibility_date = "2024-01-01"
+
+[assets]
+directory = "./dist/katica/browser"
+
+[env.production]
+name = "katika"
+
+[env.production.assets]
+directory = "./dist/katica/browser"
