@@ -1,21 +1,21 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, firstValueFrom, map, startWith } from 'rxjs';
-import { TuiTextfield } from '@taiga-ui/core';
-import { TuiInputNumberDirective } from '@taiga-ui/kit';
+import { filter, map, startWith } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '@core/auth/auth.store';
-import { EscrowService } from '@features/escrow/escrow.service';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
 import { FabConfig } from '@shared/models/model';
+import { injectCreateEscrowMutation } from '@features/escrow/escrow.queries';
+import { detectCountry } from '../phone-input/phone-input.component';
+import countryToCurrency from 'country-to-currency';
 
 @Component({
   selector: 'app-fab',
   standalone: true,
-  imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe, TuiTextfield, TuiInputNumberDirective],
+  imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe],
   styles: [`
     /* ── FAB button ─────────────────────────────── */
     :host {
@@ -130,18 +130,6 @@ import { FabConfig } from '@shared/models/model';
     }
     .input-amount { padding-right: 3.25rem; }
 
-    /* Fee preview */
-    .fee-preview {
-      background: #E5EEF8; border-radius: 10px;
-      padding: .625rem .875rem; margin-top: -.375rem; margin-bottom: .75rem;
-      display: flex; flex-direction: column; gap: .2rem;
-    }
-    .fee-row { display: flex; justify-content: space-between; align-items: center; }
-    .fee-label { font-size: .75rem; color: #64748B; font-weight: 500; }
-    .fee-value { font-size: .75rem; font-weight: 700; color: #0F172A; }
-    .fee-net   { font-size: .875rem; font-weight: 800; color: #1B4F8A; }
-    .fee-sep   { border: none; border-top: 1px solid #C8DCF2; margin: .2rem 0; }
-
     /* Submit */
     .submit-btn {
       width: 100%; padding: .75rem; border-radius: 12px;
@@ -200,7 +188,8 @@ import { FabConfig } from '@shared/models/model';
             <!-- Buyer phone -->
             <div class="field">
               <label class="label">{{ 'fab.form.buyerPhone' | translate }}</label>
-              <app-phone-input formControlName="buyerPhone" />
+              <app-phone-input formControlName="buyerPhone"
+                               (countryChange)="onCountryChange($event)" />
               @if (txForm.get('buyerPhone')?.invalid && txForm.get('buyerPhone')?.touched) {
                 <p class="err">{{ 'fab.form.phoneError' | translate }}</p>
               }
@@ -209,16 +198,13 @@ import { FabConfig } from '@shared/models/model';
             <!-- Amount -->
             <div class="field">
               <label class="label">{{ 'fab.form.amount' | translate }}</label>
-              <tui-textfield>
-                <input
-                  tuiInputNumber
-                  formControlName="grossAmount"
-                  placeholder="Ex. 50000"
-                  [min]="25"
-                  [max]="10000000"
-                  postfix="XAF"
-                />
-              </tui-textfield>
+              <div class="amount-wrap">
+                <input type="number" formControlName="grossAmount"
+                       placeholder="Ex. 50000" min="25" max="10000000"
+                       class="input input-amount"
+                       [class.error]="txForm.get('grossAmount')?.invalid && txForm.get('grossAmount')?.touched" />
+                <span class="amount-suffix">{{ currency() }}</span>
+              </div>
               @if (txForm.get('grossAmount')?.errors?.['min'] && txForm.get('grossAmount')?.touched) {
                 <p class="err">{{ 'fab.form.amountMin' | translate }}</p>
               }
@@ -226,25 +212,6 @@ import { FabConfig } from '@shared/models/model';
                 <p class="err">{{ 'fab.form.amountMax' | translate }}</p>
               }
             </div>
-
-            <!-- Fee preview -->
-            @if (grossAmount() >= 25) {
-              <div class="fee-preview">
-                <div class="fee-row">
-                  <span class="fee-label">{{ 'fab.form.grossAmount' | translate }}</span>
-                  <span class="fee-value">{{ formatXAF(grossAmount()) }}</span>
-                </div>
-                <div class="fee-row">
-                  <span class="fee-label">{{ 'fab.form.fee' | translate }}</span>
-                  <span class="fee-value">- {{ formatXAF(platformFee()) }}</span>
-                </div>
-                <hr class="fee-sep">
-                <div class="fee-row">
-                  <span class="fee-label">{{ 'fab.form.youReceive' | translate }}</span>
-                  <span class="fee-net">{{ formatXAF(netAmount()) }}</span>
-                </div>
-              </div>
-            }
 
             <!-- Description -->
             <div class="field">
@@ -265,8 +232,8 @@ import { FabConfig } from '@shared/models/model';
             </div>
 
             <button type="submit" class="submit-btn"
-                    [disabled]="txForm.invalid || loading()">
-              @if (loading()) {
+                    [disabled]="txForm.invalid || createMutation.isPending()">
+              @if (createMutation.isPending()) {
                 <span class="spinner"></span> {{ 'fab.form.submitting' | translate }}
               } @else {
                 {{ 'fab.form.submit' | translate }}
@@ -283,12 +250,13 @@ import { FabConfig } from '@shared/models/model';
   `,
 })
 export class FabComponent {
-  private readonly router        = inject(Router);
-  private readonly fb            = inject(FormBuilder);
-  private readonly escrowService = inject(EscrowService);
-  private readonly toast         = inject(ToastService);
-  private readonly translate     = inject(TranslateService);
-  private readonly auth          = inject(AuthStore);
+  private readonly router    = inject(Router);
+  private readonly fb        = inject(FormBuilder);
+  private readonly toast     = inject(ToastService);
+  private readonly translate = inject(TranslateService);
+  private readonly auth      = inject(AuthStore);
+
+  protected readonly createMutation = injectCreateEscrowMutation();
 
   /* ── Route detection ─────────────────────────── */
   private readonly currentUrl = toSignal(
@@ -315,7 +283,13 @@ export class FabComponent {
 
   /* ── Sheet state ─────────────────────────────── */
   protected readonly sheetOpen = signal(false);
-  protected readonly loading   = signal(false);
+  protected readonly currency = signal(
+    (countryToCurrency as Record<string, string>)[detectCountry().code] ?? 'XAF',
+  );
+
+  protected onCountryChange(code: string): void {
+    this.currency.set((countryToCurrency as Record<string, string>)[code] ?? 'XAF');
+  }
 
   /* ── Transaction form ────────────────────────── */
   protected readonly txForm = this.fb.group({
@@ -324,23 +298,6 @@ export class FabComponent {
     description:      [''],
     deliveryDeadline: [''],
   });
-
-  // Track form value changes as a signal so computed() stays reactive in zoneless mode
-  private readonly txFormValues = toSignal(
-    this.txForm.valueChanges.pipe(startWith(this.txForm.value)),
-  );
-
-  /* ── Fee preview ─────────────────────────────── */
-  protected readonly grossAmount = computed(() => {
-    const v = this.txFormValues()?.grossAmount;
-    return typeof v === 'number' && v >= 25 ? Math.floor(v) : 0;
-  });
-  protected readonly platformFee = computed(() => Math.floor(this.grossAmount() * 0.03));
-  protected readonly netAmount   = computed(() => this.grossAmount() - this.platformFee());
-
-  protected formatXAF(n: number): string {
-    return new Intl.NumberFormat('fr-CM', { style: 'decimal' }).format(n) + ' XAF';
-  }
 
   /* ── Actions ─────────────────────────────────── */
   protected onFabClick(): void {
@@ -352,12 +309,11 @@ export class FabComponent {
     this.txForm.reset();
   }
 
-  protected async submitTransaction(): Promise<void> {
+  protected submitTransaction(): void {
     if (this.txForm.invalid) { this.txForm.markAllAsTouched(); return; }
-    this.loading.set(true);
     const v = this.txForm.value;
-    try {
-      const tx = await firstValueFrom(this.escrowService.createTransaction({
+    this.createMutation.mutate(
+      {
         buyerPhone:       v.buyerPhone!,
         grossAmount:      Math.floor(v.grossAmount!),
         description:      v.description || undefined,
@@ -365,13 +321,14 @@ export class FabComponent {
           ? new Date(v.deliveryDeadline).toISOString()
           : undefined,
         idempotencyKey:   crypto.randomUUID(),
-      }));
-      this.toast.success(this.translate.instant('toast.transactionCreated'));
-      this.closeSheet();
-      await this.router.navigate(['/escrow', tx.id]);
-    } catch {
-    } finally {
-      this.loading.set(false);
-    }
+      },
+      {
+        onSuccess: (tx) => {
+          this.toast.success(this.translate.instant('toast.transactionCreated'));
+          this.closeSheet();
+          this.router.navigate(['/escrow', tx.id]);
+        },
+      },
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, computed, forwardRef, inject, input, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, forwardRef, inject, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { AsYouType, parsePhoneNumber, CountryCode } from 'libphonenumber-js/min';
 
@@ -31,7 +31,7 @@ const TZ_MAP: Record<string, CountryCode> = {
   'America/New_York': 'US', 'America/Chicago': 'US', 'America/Los_Angeles': 'US',
 };
 
-function detectCountry(): Country {
+export function detectCountry(): Country {
   try {
     const tz   = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const code = TZ_MAP[tz];
@@ -158,8 +158,9 @@ function detectCountry(): Country {
   `,
 })
 export class PhoneInputComponent implements ControlValueAccessor {
-  readonly placeholder     = input<string | undefined>(undefined);
-  readonly withCountryCode = input<boolean>(true);
+  readonly placeholder      = input<string | undefined>(undefined);
+  readonly withCountryCode  = input<boolean>(true);
+  readonly countryChange    = output<CountryCode>();
 
   protected readonly countries  = COUNTRIES;
   protected readonly country    = signal<Country>(detectCountry());
@@ -194,6 +195,7 @@ export class PhoneInputComponent implements ControlValueAccessor {
     this.rawDigits.set('');
     this.open.set(false);
     this.onChange('');
+    this.countryChange.emit(c.code);
   }
 
   protected onInput(value: string): void {

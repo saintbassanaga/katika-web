@@ -60,6 +60,7 @@
     "@tanstack/angular-query-experimental": "^5.94.5",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
+    "country-to-currency": "^2.0.3",
     "dayjs": "^1.11.19",
     "libphonenumber-js": "^1.12.39",
     "qrcode": "^1.5.4",
