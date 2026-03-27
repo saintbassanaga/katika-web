@@ -11,6 +11,7 @@ import {
   UpdateProfileRequest,
   UserProfile,
   UserProfileResponse,
+  VerificationRequestResponse,
 } from '@shared/models/model';
 
 export type {
@@ -23,6 +24,7 @@ export type {
   UpdateProfileRequest,
   UserProfile,
   UserProfileResponse,
+  VerificationRequestResponse,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -120,10 +122,21 @@ export class AuthService extends ApiService {
     );
   }
 
-  requestVerification(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
+  requestVerification(bill1: File, bill2: File, notes?: string): Observable<VerificationRequestResponse> {
+    const fd = new FormData();
+    fd.append('bill1', bill1);
+    fd.append('bill2', bill2);
+    if (notes?.trim()) fd.append('notes', notes.trim());
+    return this.http.post<VerificationRequestResponse>(
       this.url('/api/users/me/verification'),
-      {},
+      fd,
+      { withCredentials: true },
+    );
+  }
+
+  getVerificationStatus(): Observable<VerificationRequestResponse | null> {
+    return this.http.get<VerificationRequestResponse | null>(
+      this.url('/api/users/me/verification'),
       this.defaultOptions,
     );
   }

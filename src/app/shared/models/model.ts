@@ -95,6 +95,23 @@ export interface AuthState {
   initialized: boolean;
 }
 
+// ── Verification ──────────────────────────────────────────────
+
+export type VerificationStatus = 'PENDING' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED';
+
+export interface VerificationRequestResponse {
+  id: string;
+  userId: string;
+  status: VerificationStatus;
+  notes: string | null;
+  rejectionReason: string | null;
+  bill1Uploaded: boolean;
+  bill2Uploaded: boolean;
+  reviewedBy: string | null;
+  submittedAt: string;
+  reviewedAt: string | null;
+}
+
 // ── Notification ─────────────────────────────────────────────
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';

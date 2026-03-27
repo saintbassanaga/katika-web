@@ -1,11 +1,13 @@
 import { Component, ElementRef, inject, QueryList, signal, ViewChildren } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@core/auth/auth.store';
 import { AuthService } from '@core/auth/auth.service';
 import { ToastService } from '@core/notification/toast.service';
 import { firstValueFrom } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { injectVerificationStatusQuery, injectSubmitVerificationMutation } from '../profile.queries';
 
 function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   return c.get('newPassword')?.value === c.get('confirmPassword')?.value
@@ -15,7 +17,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-security-settings',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, TranslatePipe],
+  imports: [RouterLink, ReactiveFormsModule, TranslatePipe, NgTemplateOutlet],
   template: `
     <div class="min-h-[100svh] bg-page animate-fade">
 
@@ -35,6 +37,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         <p class="text-[.6875rem] font-bold uppercase tracking-[.08em] text-slate-400 mb-2 ml-0.5">{{ 'profile.securityForm.verificationSection' | translate }}</p>
 
         @if (auth.isVerified()) {
+          <!-- Verified -->
           <div class="bg-gradient-to-br from-success to-[#047857] rounded-[20px] px-6 py-4 flex items-center gap-3.5 mb-3">
             <div class="w-10 h-10 rounded-xl shrink-0 bg-white/[.18] flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -46,24 +49,153 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
               <p class="text-white/70 text-xs m-0 mt-[.1rem]">{{ 'profile.securityForm.verifiedSub' | translate }}</p>
             </div>
           </div>
-        } @else {
-          <div class="bg-gradient-to-br from-primary to-primary-dk rounded-[20px] px-6 py-5 flex items-center gap-4 mb-3 relative overflow-hidden">
-            <div class="absolute top-[-40%] right-[-10%] w-[200px] h-[200px] rounded-full bg-white/[.07] pointer-events-none"></div>
-            <div class="w-12 h-12 rounded-[14px] shrink-0 bg-white/[.15] flex items-center justify-center">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+
+        } @else if (verificationQuery.data()?.status === 'PENDING') {
+          <!-- Pending -->
+          <div class="bg-amber-50 border border-amber-200 rounded-[20px] px-6 py-4 flex items-center gap-3.5 mb-3">
+            <div class="w-10 h-10 rounded-xl shrink-0 bg-amber-100 flex items-center justify-center">
+              <span class="w-5 h-5 border-2 border-amber-400 border-t-amber-600 rounded-full animate-spin"></span>
+            </div>
+            <div>
+              <p class="text-amber-900 text-sm font-semibold m-0">{{ 'profile.securityForm.pendingStatus' | translate }}</p>
+              <p class="text-amber-600 text-xs m-0 mt-[.1rem]">{{ 'profile.securityForm.pendingSub' | translate }}</p>
+            </div>
+          </div>
+
+        } @else if (verificationQuery.data()?.status === 'UNDER_REVIEW') {
+          <!-- Under review -->
+          <div class="bg-blue-50 border border-blue-200 rounded-[20px] px-6 py-4 flex items-center gap-3.5 mb-3">
+            <div class="w-10 h-10 rounded-xl shrink-0 bg-blue-100 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </div>
-            <div class="flex-1">
-              <p class="text-white text-[.9375rem] font-bold m-0 mb-[.2rem]">{{ 'profile.securityForm.notVerified' | translate }}</p>
-              <p class="text-white/70 text-[.8125rem] m-0">{{ 'profile.securityForm.notVerifiedSub' | translate }}</p>
+            <div>
+              <p class="text-blue-900 text-sm font-semibold m-0">{{ 'profile.securityForm.underReviewStatus' | translate }}</p>
+              <p class="text-blue-600 text-xs m-0 mt-[.1rem]">{{ 'profile.securityForm.underReviewSub' | translate }}</p>
             </div>
-            <button class="ml-auto shrink-0 px-4 py-2 rounded-[10px] bg-white/20 text-white text-[.8125rem] font-bold border-none cursor-pointer font-[inherit] whitespace-nowrap transition-colors hover:bg-white/30 disabled:opacity-60 disabled:cursor-not-allowed"
-                    (click)="requestVerification()" [disabled]="verifyLoading()">
-              @if (verifyLoading()) { {{ 'profile.securityForm.sending' | translate }} } @else { {{ 'profile.securityForm.verifyBtn' | translate }} }
-            </button>
+          </div>
+
+        } @else if (verificationQuery.data()?.status === 'REJECTED') {
+          <!-- Rejected — can resubmit -->
+          <div class="bg-red-50 border border-red-200 rounded-[20px] px-6 py-4 mb-3">
+            <div class="flex items-center gap-3.5 mb-0" [class.mb-0]="!showVerifyForm()" [class.mb-3]="showVerifyForm()">
+              <div class="w-10 h-10 rounded-xl shrink-0 bg-red-100 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="text-red-900 text-sm font-semibold m-0">{{ 'profile.securityForm.rejectedStatus' | translate }}</p>
+                @if (verificationQuery.data()?.rejectionReason) {
+                  <p class="text-red-500 text-xs m-0 mt-[.1rem]">{{ verificationQuery.data()!.rejectionReason }}</p>
+                }
+              </div>
+              <button class="ml-auto shrink-0 px-3.5 py-1.5 rounded-lg bg-red-100 text-red-700 text-[.8125rem] font-bold border-none cursor-pointer font-[inherit] transition-colors hover:bg-red-200"
+                      (click)="toggleVerifyForm()">
+                {{ showVerifyForm() ? ('profile.securityForm.cancel' | translate) : ('profile.securityForm.verifyBtn' | translate) }}
+              </button>
+            </div>
+            @if (showVerifyForm()) {
+              <ng-container *ngTemplateOutlet="verifyForm" />
+            }
+          </div>
+
+        } @else {
+          <!-- No request yet -->
+          <div class="bg-white rounded-[20px] overflow-hidden shadow-[0_1px_4px_rgba(15,23,42,.06)] mb-3">
+            <div class="flex items-center gap-3.5 px-6 py-4">
+              <div class="w-10 h-10 rounded-xl shrink-0 bg-primary-lt flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B4F8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="text-slate-900 text-sm font-semibold m-0">{{ 'profile.securityForm.notVerified' | translate }}</p>
+                <p class="text-slate-400 text-xs m-0 mt-[.1rem]">{{ 'profile.securityForm.notVerifiedSub' | translate }}</p>
+              </div>
+              <button class="ml-auto shrink-0 px-3.5 py-1.5 rounded-lg bg-primary-lt text-primary text-[.8125rem] font-bold border-none cursor-pointer font-[inherit] transition-colors hover:bg-[#C8DCF2]"
+                      (click)="toggleVerifyForm()">
+                {{ showVerifyForm() ? ('profile.securityForm.cancel' | translate) : ('profile.securityForm.verifyBtn' | translate) }}
+              </button>
+            </div>
+
+            @if (showVerifyForm()) {
+              <div class="px-6 pb-5 border-t border-page animate-slide-down">
+                <ng-container *ngTemplateOutlet="verifyForm" />
+              </div>
+            }
           </div>
         }
+
+        <!-- ── Shared upload form template ── -->
+        <ng-template #verifyForm>
+          <div class="mt-4 space-y-4">
+            <!-- Bill 1 -->
+            <div>
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem]">
+                {{ 'profile.securityForm.bill1Label' | translate }}
+                <span class="text-error ml-1">*</span>
+              </label>
+              <label class="flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors"
+                     [class]="bill1() ? 'border-success bg-green-50' : 'border-slate-200 bg-slate-50 hover:border-primary'">
+                <input type="file" accept=".jpg,.jpeg,.png,.pdf" class="sr-only" (change)="onFileChange($event, 'bill1')" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="bill1() ? '#10B981' : '#94A3B8'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span class="text-[.8125rem]" [class]="bill1() ? 'text-success font-medium' : 'text-slate-400'">
+                  {{ bill1() ? bill1()!.name : ('profile.securityForm.filePh' | translate) }}
+                </span>
+              </label>
+              <p class="text-[.6875rem] text-slate-400 mt-1">{{ 'profile.securityForm.fileHint' | translate }}</p>
+            </div>
+
+            <!-- Bill 2 -->
+            <div>
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem]">
+                {{ 'profile.securityForm.bill2Label' | translate }}
+                <span class="text-error ml-1">*</span>
+              </label>
+              <label class="flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors"
+                     [class]="bill2() ? 'border-success bg-green-50' : 'border-slate-200 bg-slate-50 hover:border-primary'">
+                <input type="file" accept=".jpg,.jpeg,.png,.pdf" class="sr-only" (change)="onFileChange($event, 'bill2')" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="bill2() ? '#10B981' : '#94A3B8'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span class="text-[.8125rem]" [class]="bill2() ? 'text-success font-medium' : 'text-slate-400'">
+                  {{ bill2() ? bill2()!.name : ('profile.securityForm.filePh' | translate) }}
+                </span>
+              </label>
+              <p class="text-[.6875rem] text-slate-400 mt-1">{{ 'profile.securityForm.fileHint' | translate }}</p>
+            </div>
+
+            <!-- Notes (optional) -->
+            <div>
+              <label class="block text-[.8125rem] font-semibold text-slate-700 mb-[.4rem]">
+                {{ 'profile.securityForm.notesLabel' | translate }}
+                <span class="text-slate-400 font-normal ml-1">{{ 'common.optional' | translate }}</span>
+              </label>
+              <textarea rows="2"
+                        [placeholder]="'profile.securityForm.notesPh' | translate"
+                        [value]="verifyNotes()"
+                        (input)="verifyNotes.set($any($event.target).value)"
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-slate-50 text-[.875rem] text-slate-900 outline-none font-[inherit] resize-y min-h-[60px] transition-all focus:border-primary focus:bg-white box-border"></textarea>
+            </div>
+
+            <!-- Submit -->
+            <button type="button"
+                    (click)="submitVerification()"
+                    [disabled]="!bill1() || !bill2() || verificationMutation.isPending()"
+                    class="w-full py-3 rounded-xl bg-gradient-to-br from-primary to-primary-dk text-white text-sm font-bold border-none cursor-pointer font-[inherit] flex items-center justify-center gap-2 shadow-[0_3px_12px_rgba(27,79,138,.3)] transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+              @if (verificationMutation.isPending()) {
+                <span class="w-4 h-4 border-2 border-white/35 border-t-white rounded-full animate-spin"></span>
+                {{ 'profile.securityForm.submitting' | translate }}
+              } @else {
+                {{ 'profile.securityForm.submitVerify' | translate }}
+              }
+            </button>
+          </div>
+        </ng-template>
 
         <!-- ── Password ─────────────────────────── -->
         <p class="text-[.6875rem] font-bold uppercase tracking-[.08em] text-slate-400 mt-5 mb-2 ml-0.5">{{ 'profile.securityForm.passwordSection' | translate }}</p>
@@ -220,14 +352,21 @@ export class SecuritySettingsComponent {
   @ViewChildren('mfaCell') private readonly mfaCells!: QueryList<ElementRef<HTMLInputElement>>;
 
   /* ── UI state ── */
-  protected readonly showPwdForm    = signal(false);
-  protected readonly showMfaDisable = signal(false);
-  protected readonly showCurrent    = signal(false);
-  protected readonly showNew        = signal(false);
-  protected readonly pwdLoading     = signal(false);
-  protected readonly mfaLoading     = signal(false);
-  protected readonly verifyLoading  = signal(false);
-  protected readonly mfaCode        = signal('');
+  protected readonly showPwdForm       = signal(false);
+  protected readonly showMfaDisable    = signal(false);
+  protected readonly showCurrent       = signal(false);
+  protected readonly showNew           = signal(false);
+  protected readonly pwdLoading        = signal(false);
+  protected readonly mfaLoading        = signal(false);
+  protected readonly mfaCode           = signal('');
+
+  /* ── Verification ── */
+  protected readonly verificationQuery   = injectVerificationStatusQuery();
+  protected readonly verificationMutation = injectSubmitVerificationMutation();
+  protected readonly showVerifyForm      = signal(false);
+  protected readonly bill1               = signal<File | null>(null);
+  protected readonly bill2               = signal<File | null>(null);
+  protected readonly verifyNotes         = signal('');
 
   /* ── Password form ── */
   protected readonly pwdForm = this.fb.group({
@@ -310,15 +449,35 @@ export class SecuritySettingsComponent {
   }
 
   /* ── Verification ── */
-  protected async requestVerification(): Promise<void> {
-    this.verifyLoading.set(true);
-    try {
-      const res = await firstValueFrom(this.authService.requestVerification());
-      this.toast.success(res.message ?? this.translate.instant('toast.verificationSent'));
-    } catch {
-      // error interceptor shows toast
-    } finally {
-      this.verifyLoading.set(false);
+  protected onFileChange(event: Event, field: 'bill1' | 'bill2'): void {
+    const file = (event.target as HTMLInputElement).files?.[0] ?? null;
+    field === 'bill1' ? this.bill1.set(file) : this.bill2.set(file);
+  }
+
+  protected toggleVerifyForm(): void {
+    this.showVerifyForm.update(v => !v);
+    if (!this.showVerifyForm()) {
+      this.bill1.set(null);
+      this.bill2.set(null);
+      this.verifyNotes.set('');
     }
+  }
+
+  protected submitVerification(): void {
+    const b1 = this.bill1();
+    const b2 = this.bill2();
+    if (!b1 || !b2) return;
+    this.verificationMutation.mutate(
+      { bill1: b1, bill2: b2, notes: this.verifyNotes() || undefined },
+      {
+        onSuccess: () => {
+          this.showVerifyForm.set(false);
+          this.bill1.set(null);
+          this.bill2.set(null);
+          this.verifyNotes.set('');
+          this.toast.success(this.translate.instant('toast.verificationSent'));
+        },
+      },
+    );
   }
 }

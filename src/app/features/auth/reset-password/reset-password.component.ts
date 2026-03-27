@@ -87,10 +87,10 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
             </div>
 
             <button type="submit"
-                    class="w-full py-[.9375rem] bg-gradient-to-br from-primary to-primary-dk text-white text-[.9375rem] font-bold border-none rounded-[14px] cursor-pointer flex items-center justify-center gap-2 min-h-[52px] mt-6 font-[inherit] shadow-[0_4px_20px_rgba(27,79,138,.35)] transition-all hover:opacity-90 hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full py-3.75 bg-linear-to-br from-primary to-primary-dk text-white text-[.9375rem] font-bold border-none rounded-[14px] cursor-pointer flex items-center justify-center gap-2 min-h-13 mt-6 font-[inherit] shadow-[0_4px_20px_rgba(27,79,138,.35)] transition-all hover:opacity-90 hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
                     [disabled]="form.invalid || loading()">
               @if (loading()) {
-                <span class="w-[18px] h-[18px] border-[2.5px] border-white/35 border-t-white rounded-full animate-spin"></span>
+                <span class="w-4.5 h-4.5 border-[2.5px] border-white/35 border-t-white rounded-full animate-spin"></span>
                 {{ 'auth.resetPassword.submitting' | translate }}
               } @else {
                 {{ 'auth.resetPassword.submit' | translate }}
