@@ -5,7 +5,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'auth/login',           renderMode: RenderMode.Prerender },
   { path: 'auth/register',        renderMode: RenderMode.Prerender },
   { path: 'auth/forgot-password', renderMode: RenderMode.Prerender },
-  { path: 'reset-password',       renderMode: RenderMode.Prerender },
+  { path: 'reset-password',       renderMode: RenderMode.Client },
   { path: '403',                  renderMode: RenderMode.Prerender },
 
   // ── Pages authentifiées — CSR (nécessitent un token) ──────────────────────
