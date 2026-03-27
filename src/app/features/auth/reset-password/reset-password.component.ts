@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,8 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { firstValueFrom, startWith } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '@core/auth/auth.service';
 
@@ -72,23 +71,6 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                 </button>
               </div>
 
-              <!-- Real-time security requirements checklist -->
-              @if (pwdValue().length > 0) {
-                <div class="mt-3 grid grid-cols-1 gap-1.5 px-0.5">
-                  @for (req of requirements(); track req.key) {
-                    <div class="flex items-center gap-2 text-[.75rem] transition-colors duration-200"
-                         [class]="req.met ? 'text-success' : 'text-slate-400'">
-                      <div class="w-[16px] h-[16px] rounded-full flex items-center justify-center shrink-0 border transition-all duration-200"
-                           [class]="req.met ? 'bg-success border-success' : 'bg-transparent border-slate-300'">
-                        @if (req.met) {
-                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        }
-                      </div>
-                      <span>{{ req.label | translate }}</span>
-                    </div>
-                  }
-                </div>
-              }
             </div>
 
             <!-- Confirm password field -->
@@ -164,29 +146,9 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   private redirectTimer?: ReturnType<typeof setInterval>;
 
   protected readonly form = this.fb.group({
-    newPassword:     ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/)]],
+    newPassword:     ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
   }, { validators: passwordsMatch });
-
-  // Track form value as a signal for real-time requirements
-  private readonly formValues = toSignal(
-    this.form.valueChanges.pipe(startWith(this.form.value)),
-  );
-
-  protected readonly pwdValue     = computed(() => this.formValues()?.newPassword     ?? '');
-  protected readonly confirmValue = computed(() => this.formValues()?.confirmPassword ?? '');
-
-  protected readonly requirements = computed(() => {
-    const pwd     = this.pwdValue();
-    const confirm = this.confirmValue();
-    return [
-      { key: 'length',    label: 'auth.resetPassword.requirements.length',    met: pwd.length >= 8 },
-      { key: 'uppercase', label: 'auth.resetPassword.requirements.uppercase',  met: /[A-Z]/.test(pwd) },
-      { key: 'number',    label: 'auth.resetPassword.requirements.number',     met: /\d/.test(pwd) },
-      { key: 'special',   label: 'auth.resetPassword.requirements.special',    met: /[^A-Za-z0-9]/.test(pwd) },
-      { key: 'match',     label: 'auth.resetPassword.requirements.match',      met: pwd.length > 0 && pwd === confirm },
-    ];
-  });
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');

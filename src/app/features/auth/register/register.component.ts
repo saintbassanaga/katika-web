@@ -572,7 +572,7 @@ export class RegisterComponent {
     phone:           ['', Validators.required],
     email:           ['', Validators.email],
     role:            ['BUYER', Validators.required],
-    password:        ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/)]],
+    password:        ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
   }, { validators: passwordsMatch });
 
