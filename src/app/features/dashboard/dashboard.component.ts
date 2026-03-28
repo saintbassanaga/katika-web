@@ -561,7 +561,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                 class="text-[.625rem] font-semibold px-1.5 py-0.5 rounded-full bg-success-lt text-success whitespace-nowrap">{{ 'status.IN_PROGRESS' | translate }}</span>
             </div>
             <div class="text-[.75rem] text-slate-500 font-medium mb-1">{{ 'nav.escrow' | translate }}</div>
-            <div class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">{{ transactions().length }}
+            <div class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">{{ transactionTotal() }}
             </div>
             <div class="text-[.6875rem] text-slate-400 mt-1">{{ 'dashboard.kpi.active' | translate }}</div>
           </div>
@@ -603,7 +603,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
               class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">{{ pendingAmount() | amount }}
             </div>
             <div
-              class="text-[.6875rem] text-slate-400 mt-1">{{ 'dashboard.kpi.txCount' | translate:{count: transactions().length} }}
+              class="text-[.6875rem] text-slate-400 mt-1">{{ 'dashboard.kpi.txCount' | translate:{count: transactionTotal()} }}
             </div>
           </div>
         </div>
@@ -625,7 +625,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
               <div class="skeleton-shimmer rounded w-16 h-3"></div>
             </div>
           }
-        } @else if (transactions().length === 0) {
+        } @else if (transactionTotal() === 0) {
           <div class="text-center py-10">
             <div class="w-12 h-12 rounded-[14px] bg-slate-100 flex items-center justify-center mx-auto mb-3">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.75"
@@ -637,7 +637,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             <p class="text-xs text-slate-400 m-0">{{ 'escrow.empty.message' | translate }}</p>
           </div>
         } @else {
-          @for (tx of transactions(); track tx.id) {
+          @for (tx of transactions().slice(0, 5); track tx.id) {
             <a [routerLink]="['/escrow', tx.id]"
                class="animate-entry stagger-item flex items-center gap-3 bg-white rounded-[18px] p-4 mb-2 shadow-[0_1px_4px_rgba(15,23,42,.06),0_4px_12px_rgba(15,23,42,.04)] no-underline transition-all hover:shadow-[0_4px_16px_rgba(15,23,42,.1)] hover:-translate-y-px">
               <div
@@ -734,7 +734,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
               <span class="d-kpi-trend d-kpi-trend--up">{{ 'status.IN_PROGRESS' | translate }}</span>
             </div>
             <div class="d-kpi-label">{{ 'dashboard.kpi.activeTransactions' | translate }}</div>
-            <div class="d-kpi-value">{{ transactions().length }}</div>
+            <div class="d-kpi-value">{{ transactionTotal() }}</div>
             <div class="d-kpi-sub">{{ 'dashboard.kpi.lockedOrShipped' | translate }}</div>
           </div>
 
@@ -770,7 +770,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             </div>
             <div class="d-kpi-label">{{ 'dashboard.kpi.amountToReceive' | translate }}</div>
             <div class="d-kpi-value">{{ pendingAmount() | amount }}</div>
-            <div class="d-kpi-sub">{{ 'dashboard.kpi.onNTransactions' | translate:{count: transactions().length} }}
+            <div class="d-kpi-sub">{{ 'dashboard.kpi.onNTransactions' | translate:{count: transactionTotal()} }}
             </div>
           </div>
         </div>
@@ -795,7 +795,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                   <div class="sk skeleton-shimmer" style="width:70px;height:12px"></div>
                 </div>
               }
-            } @else if (transactions().length === 0) {
+            } @else if (transactionTotal() === 0) {
               <div class="d-empty">
                 <div class="d-empty-icon">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5"
@@ -818,7 +818,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                 </tr>
                 </thead>
                 <tbody>
-                  @for (tx of transactions(); track tx.id) {
+                  @for (tx of transactions().slice(0, 5); track tx.id) {
                     <tr (click)="router.navigate(['/escrow', tx.id])">
                       <td class="d-tx-date">{{ tx.createdAt | date:'dd/MM/yy' }}</td>
                       <td class="d-tx-ref">{{ tx.reference }}</td>
@@ -932,6 +932,7 @@ export class DashboardComponent implements OnInit {
   protected readonly today = new Date();
   protected readonly loading = signal(true);
   protected readonly transactions = signal<DashboardTransactionSummary[]>([]);
+  protected readonly transactionTotal = signal(0);
   protected readonly disputes = signal<DisputeSummary[]>([]);
   protected readonly disputeTotal = signal(0);
   protected readonly wallet = signal<WalletInfo | null>(null);
@@ -941,7 +942,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      transactions: this.http.get<{ content: DashboardTransactionSummary[] }>(
+      transactions: this.http.get<{ content: DashboardTransactionSummary[]; totalElements: number }>(
         `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED,RELEASED&page=0&size=5`,
         {withCredentials: true},
       ),
@@ -956,6 +957,7 @@ export class DashboardComponent implements OnInit {
     }).subscribe({
       next: ({transactions, disputes, wallet}) => {
         this.transactions.set(transactions?.content ?? []);
+        this.transactionTotal.set(transactions?.totalElements ?? transactions?.content?.length ?? 0);
         this.disputes.set(disputes?.content ?? []);
         this.disputeTotal.set(disputes?.totalElements ?? disputes?.content?.length ?? 0);
         this.wallet.set(wallet);
