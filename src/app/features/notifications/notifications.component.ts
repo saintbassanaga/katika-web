@@ -7,13 +7,14 @@ import { AuthStore } from '@core/auth/auth.store';
 import { ToastService } from '@core/notification/toast.service';
 import { AppNotificationResponse, NotificationType } from '@shared/models/model';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
+import { TuiIcon } from '@taiga-ui/core';
 
 const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
 
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [RouterLink, TimeAgoPipe, TranslatePipe],
+  imports: [RouterLink, TimeAgoPipe, TranslatePipe, TuiIcon],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
 
@@ -21,9 +22,7 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">
         <a [routerLink]="backRoute()"
            class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
         </a>
         <div class="flex-1 min-w-0">
           <h1 class="text-sm font-bold text-white m-0">{{ 'notifications.title' | translate }}</h1>
@@ -38,7 +37,7 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
             class="px-3 py-1.5 rounded-lg bg-white/10 text-white/80 text-xs font-semibold border-none cursor-pointer transition-colors hover:bg-white/20 disabled:opacity-40"
           >
             @if (markingAll()) {
-              <span class="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block mr-1"></span>
+              <tui-icon icon="@tui.loader-circle" class="w-3 h-3 animate-spin inline-block mr-1" />
             }
             {{ 'notifications.markAllRead' | translate }}
           </button>
@@ -64,7 +63,9 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
 
         } @else if (notifications().length === 0) {
           <div class="flex flex-col items-center justify-center py-24 text-center">
-            <div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center text-4xl mb-4">🔔</div>
+            <div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+              <tui-icon icon="@tui.bell" class="w-10 h-10 text-slate-400" />
+            </div>
             <p class="text-base font-bold text-slate-900 m-0 mb-1">{{ 'notifications.empty' | translate }}</p>
             <p class="text-sm text-slate-400 m-0">{{ 'notifications.emptySub' | translate }}</p>
           </div>
@@ -80,9 +81,9 @@ const STAFF_ROLES = new Set(['ADMIN', 'SUPERVISOR', 'SUPPORT']);
                   : 'bg-primary/[.04] shadow-[0_1px_4px_rgba(27,79,138,.08)] hover:shadow-[0_4px_16px_rgba(27,79,138,.12)] border border-primary/10'"
               >
                 <!-- Icon -->
-                <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-lg relative"
+                <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center relative"
                      [class]="notifIconBg(n.type)">
-                  {{ notifEmoji(n.type) }}
+                  <tui-icon [icon]="notifIcon(n.type)" class="w-5 h-5" [style.color]="notifIconColor(n.type)" />
                   @if (!n.read) {
                     <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-white"></span>
                   }
@@ -216,10 +217,17 @@ export class NotificationsComponent implements OnInit {
     return 'bg-slate-100';
   }
 
-  protected notifEmoji(type: NotificationType): string {
-    if (type.startsWith('ESCROW'))       return '🔒';
-    if (type.startsWith('PAYOUT'))       return '💸';
-    if (type.startsWith('VERIFICATION')) return '✅';
-    return '🔔';
+  protected notifIcon(type: NotificationType): string {
+    if (type.startsWith('ESCROW'))       return '@tui.lock';
+    if (type.startsWith('PAYOUT'))       return '@tui.banknote';
+    if (type.startsWith('VERIFICATION')) return '@tui.check-circle';
+    return '@tui.bell';
+  }
+
+  protected notifIconColor(type: NotificationType): string {
+    if (type.startsWith('ESCROW'))       return '#6366F1';
+    if (type.startsWith('PAYOUT'))       return '#22C55E';
+    if (type.startsWith('VERIFICATION')) return '#F59E0B';
+    return '#94A3B8';
   }
 }

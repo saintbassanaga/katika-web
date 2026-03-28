@@ -7,6 +7,7 @@ import { TransactionSummary } from '@shared/models/model';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
+import { TuiIcon } from '@taiga-ui/core';
 
 const STATUS_FILTERS = [
   { value: '',           labelKey: 'disputes.filters.all' },
@@ -33,7 +34,7 @@ const MILESTONES: { key: keyof TransactionSummary; labelKey: string }[] = [
 @Component({
   selector: 'app-admin-transactions',
   standalone: true,
-  imports: [RouterLink, DatePipe, AmountPipe, TimeAgoPipe, StatusBadgeComponent, TranslatePipe],
+  imports: [RouterLink, DatePipe, AmountPipe, TimeAgoPipe, StatusBadgeComponent, TranslatePipe, TuiIcon],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
@@ -42,9 +43,7 @@ const MILESTONES: { key: keyof TransactionSummary; labelKey: string }[] = [
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">
         <a routerLink="/admin/dashboard"
            class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
         </a>
         <div class="flex-1 min-w-0">
           <h1 class="text-sm font-bold text-white m-0">{{ 'admin.transactions.title' | translate }}</h1>
@@ -100,7 +99,7 @@ const MILESTONES: { key: keyof TransactionSummary; labelKey: string }[] = [
 
         } @else if (transactions().length === 0) {
           <div class="flex flex-col items-center justify-center py-20 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl mb-4">💳</div>
+            <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4"><tui-icon icon="@tui.credit-card" class="w-8 h-8" /></div>
             <p class="text-base font-bold text-slate-900 m-0 mb-1">{{ 'admin.transactions.empty' | translate }}</p>
           </div>
 
@@ -135,9 +134,7 @@ const MILESTONES: { key: keyof TransactionSummary; labelKey: string }[] = [
                     </div>
                   </div>
                   <!-- Arrow -->
-                  <svg class="text-slate-300 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
+                  <tui-icon icon="@tui.arrow-right" class="w-4 h-4" />
                   <!-- Seller -->
                   <div class="flex items-center gap-2 min-w-0 flex-1 justify-end">
                     <div class="min-w-0 text-right">
@@ -175,9 +172,9 @@ const MILESTONES: { key: keyof TransactionSummary; labelKey: string }[] = [
                       @let date = tx[ms.key];
                       @if (date) {
                         <div class="shrink-0 flex flex-col items-center min-w-[64px]">
-                          <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] mb-1"
+                          <div class="w-5 h-5 rounded-full flex items-center justify-center mb-1"
                                [class]="ms.key === 'disputedAt' ? 'bg-red-100 text-red-500' : ms.key === 'refundedAt' ? 'bg-orange-100 text-orange-500' : 'bg-success-lt text-success'">
-                            ✓
+                            <tui-icon icon="@tui.check" class="w-4 h-4" />
                           </div>
                           <p class="text-[9px] font-semibold text-slate-500 m-0 text-center leading-tight">{{ ms.labelKey | translate }}</p>
                           <p class="text-[9px] text-slate-400 m-0 text-center mt-0.5">{{ date | date:'dd/MM HH:mm' }}</p>

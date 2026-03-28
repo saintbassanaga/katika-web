@@ -1,11 +1,12 @@
-import { Component, inject, signal, OnDestroy, input } from '@angular/core';
+import { Component, inject, signal, DestroyRef, input, effect } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { injectQueryClient } from '@tanstack/angular-query-experimental';
+import { QueryClient } from '@tanstack/angular-query-experimental';
 import { AuthStore } from '@core/auth/auth.store';
 import { StompService } from '@core/websocket/stomp.service';
 import { ToastService } from '@core/notification/toast.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { LoadingSkeletonComponent } from '@shared/components/loading-skeleton/loading-skeleton.component';
@@ -52,12 +53,12 @@ const STATUS_ORDER: Record<string, number> = {
 @Component({
   selector: 'app-transaction-detail',
   standalone: true,
-  imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe, LoadingSkeletonComponent],
+  imports: [RouterLink, AmountPipe, StatusBadgeComponent, DatePipe, TranslatePipe, LoadingSkeletonComponent, TuiIcon],
   template: `
     <div class="animate-fade px-4 py-6 pb-24 max-w-lg mx-auto">
 
       <a routerLink="/escrow" class="flex items-center gap-2 text-sm text-gray-500 mb-4 hover:text-gray-700">
-        ← {{ 'escrow.detail.back' | translate }}
+        <tui-icon icon="@tui.arrow-left" class="w-4 h-4" /> {{ 'escrow.detail.back' | translate }}
       </a>
 
       @if (query.isPending()) {
@@ -78,12 +79,12 @@ const STATUS_ORDER: Record<string, number> = {
                 {{ tx.createdAt | date:'dd/MM/yyyy à HH:mm' }}
               </p>
               @if (isBuyer(tx)) {
-                <p class="text-sm font-medium mt-1.5" style="color: var(--clr-primary)">
-                  🛒 {{ 'escrow.detail.contextBuyer' | translate:{name: tx.sellerName} }}
+                <p class="text-sm font-medium mt-1.5 flex items-center gap-1" style="color: var(--clr-primary)">
+                  <tui-icon icon="@tui.shopping-cart" class="w-4 h-4" /> {{ 'escrow.detail.contextBuyer' | translate:{name: tx.sellerName} }}
                 </p>
               } @else if (isSeller(tx)) {
-                <p class="text-sm font-medium mt-1.5" style="color: var(--clr-success)">
-                  🏪 {{ 'escrow.detail.contextSeller' | translate:{name: tx.buyerName} }}
+                <p class="text-sm font-medium mt-1.5 flex items-center gap-1" style="color: var(--clr-success)">
+                  <tui-icon icon="@tui.store" class="w-4 h-4" /> {{ 'escrow.detail.contextSeller' | translate:{name: tx.buyerName} }}
                 </p>
               }
             </div>
@@ -112,7 +113,7 @@ const STATUS_ORDER: Record<string, number> = {
                     [style.border-color]="isStepDone(step, tx) ? 'var(--clr-primary)' : 'var(--clr-border)'"
                     [style.color]="isStepDone(step, tx) ? '#fff' : 'var(--clr-muted)'"
                   >
-                    {{ isStepDone(step, tx) ? '✓' : (i + 1) }}
+                    @if (isStepDone(step, tx)) { <tui-icon icon="@tui.check" class="w-3 h-3" /> } @else { {{ i + 1 }} }
                   </div>
                   <p class="text-xs mt-1 text-center w-16" style="color: var(--clr-muted)">
                     {{ 'escrow.detail.steps.' + step | translate }}
@@ -141,8 +142,11 @@ const STATUS_ORDER: Record<string, number> = {
               <!-- Gross amount — always visible -->
               <div class="flex justify-between text-sm font-semibold">
                 <span style="color: var(--clr-text)">
-                  @if (isBuyer(tx)) { {{ 'escrow.detail.grossAmountBuyer' | translate }} }
-                  @else { {{ 'escrow.detail.grossAmountSeller' | translate }} }
+                  @if (isBuyer(tx)) {
+                    {{ 'escrow.detail.grossAmountBuyer' | translate }}
+                  } @else {
+                    {{ 'escrow.detail.grossAmountSeller' | translate }}
+                  }
                 </span>
                 <span style="color: var(--clr-primary)">{{ tx.grossAmount | amount }}</span>
               </div>
@@ -156,8 +160,11 @@ const STATUS_ORDER: Record<string, number> = {
                 <div class="border-t pt-2 flex justify-between text-sm font-semibold"
                      style="border-color: var(--clr-border)">
                   <span [style.color]="isSeller(tx) ? 'var(--clr-text)' : 'var(--clr-muted)'">
-                    @if (isSeller(tx)) { {{ 'escrow.detail.netSeller' | translate }} }
-                    @else { {{ 'escrow.detail.netBuyer' | translate }} }
+                    @if (isSeller(tx)) {
+                      {{ 'escrow.detail.netSeller' | translate }}
+                    } @else {
+                      {{ 'escrow.detail.netBuyer' | translate }}
+                    }
                   </span>
                   <span [style.color]="isSeller(tx) ? 'var(--clr-success)' : 'var(--clr-muted)'">
                     {{ tx.netAmount | amount }}
@@ -224,20 +231,20 @@ const STATUS_ORDER: Record<string, number> = {
               </p>
               <div class="space-y-2">
                 <button (click)="accept(tx.id)" [disabled]="acceptMutation.isPending() || cancelMutation.isPending()"
-                  class="flex items-center justify-center gap-2 w-full py-3 text-white
+                        class="flex items-center justify-center gap-2 w-full py-3 text-white
                          rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-40"
-                  style="background: var(--clr-gold)">
+                        style="background: var(--clr-gold)">
                   @if (acceptMutation.isPending()) {
-                    <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    <tui-icon icon="@tui.loader-circle" class="w-4 h-4 animate-spin" />
                   } @else {
-                    💳
+                    <tui-icon icon="@tui.credit-card" class="w-4 h-4" />
                   }
                   {{ acceptMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.accept' | translate) }}
                 </button>
                 <button (click)="cancel(tx.id)" [disabled]="cancelMutation.isPending() || acceptMutation.isPending()"
-                  class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm
+                        class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm
                          transition-colors disabled:opacity-50"
-                  style="border: 1.5px solid var(--clr-border); color: var(--clr-muted)">
+                        style="border: 2px solid var(--clr-border); color: var(--clr-muted)">
                   {{ cancelMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.reject' | translate) }}
                 </button>
               </div>
@@ -247,7 +254,7 @@ const STATUS_ORDER: Record<string, number> = {
           <!-- Seller sees a waiting notice when PENDING_ACCEPTANCE -->
           @if (isSeller(tx) && tx.status === 'PENDING_ACCEPTANCE') {
             <div class="bg-white rounded-2xl p-4 shadow-sm text-center">
-              <p class="text-2xl mb-2">⏳</p>
+              <tui-icon icon="@tui.hourglass" class="w-8 h-8 mb-2 mx-auto" style="color: var(--clr-muted)" />
               <p class="text-sm font-medium" style="color: var(--clr-text)">
                 {{ 'escrow.detail.acceptSection.waitingTitle' | translate }}
               </p>
@@ -267,10 +274,10 @@ const STATUS_ORDER: Record<string, number> = {
                 {{ 'escrow.detail.deliverSection.subtitle' | translate }}
               </p>
               <button (click)="deliver(tx.id)" [disabled]="deliverMutation.isPending()"
-                class="flex items-center justify-center gap-2 w-full py-3 text-white
+                      class="flex items-center justify-center gap-2 w-full py-3 text-white
                        rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-40"
-                style="background: var(--clr-primary)">
-                📦 {{ deliverMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.deliver' | translate) }}
+                      style="background: var(--clr-primary)">
+                <tui-icon icon="@tui.package" class="w-4 h-4" /> {{ deliverMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.deliver' | translate) }}
               </button>
             </div>
           }
@@ -285,10 +292,10 @@ const STATUS_ORDER: Record<string, number> = {
                 {{ 'escrow.detail.confirmSection.subtitle' | translate }}
               </p>
               <a [routerLink]="['/escrow', tx.id, 'scan']"
-                class="flex items-center justify-center gap-2 w-full py-3 text-white
+                 class="flex items-center justify-center gap-2 w-full py-3 text-white
                        rounded-xl font-semibold text-sm transition-opacity hover:opacity-90"
-                style="background: var(--clr-primary)">
-                📷 {{ 'escrow.detail.actions.scanQr' | translate }}
+                 style="background: var(--clr-primary)">
+                <tui-icon icon="@tui.scan" class="w-4 h-4" /> {{ 'escrow.detail.actions.scanQr' | translate }}
               </a>
               <div class="flex items-center gap-2 my-4">
                 <div class="flex-1 h-px" style="background: var(--clr-border)"></div>
@@ -299,19 +306,19 @@ const STATUS_ORDER: Record<string, number> = {
               </div>
               <div class="space-y-2">
                 <input type="text"
-                  [value]="confirmCode()"
-                  (input)="confirmCode.set($any($event.target).value)"
-                  [placeholder]="'escrow.detail.confirmSection.codePh' | translate"
-                  class="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2"
-                  style="border-color: var(--clr-border); color: var(--clr-text);
+                       [value]="confirmCode()"
+                       (input)="confirmCode.set($any($event.target).value)"
+                       [placeholder]="'escrow.detail.confirmSection.codePh' | translate"
+                       class="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2"
+                       style="border-color: var(--clr-border); color: var(--clr-text);
                          background: var(--clr-surface, #F8FAFC); --tw-ring-color: var(--clr-primary)"
                 />
                 <button (click)="release(tx.id)"
-                  [disabled]="releaseMutation.isPending() || !confirmCode().trim()"
-                  class="flex items-center justify-center gap-2 w-full py-3 text-white
+                        [disabled]="releaseMutation.isPending() || !confirmCode().trim()"
+                        class="flex items-center justify-center gap-2 w-full py-3 text-white
                          rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-40"
-                  style="background: var(--clr-success)">
-                  ✓ {{ releaseMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.confirmReception' | translate) }}
+                        style="background: var(--clr-success)">
+                  <tui-icon icon="@tui.check" class="w-4 h-4" /> {{ releaseMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.confirmReception' | translate) }}
                 </button>
               </div>
             </div>
@@ -321,41 +328,38 @@ const STATUS_ORDER: Record<string, number> = {
           <div class="space-y-2">
             @if (isSeller(tx) && ['LOCKED', 'DELIVERED'].includes(tx.status)) {
               <a [routerLink]="['/escrow', tx.id, 'qr']"
-                class="flex items-center justify-center gap-2 w-full py-3 text-white
+                 class="flex items-center justify-center gap-2 w-full py-3 text-white
                        rounded-xl font-semibold text-sm transition-opacity hover:opacity-90"
-                style="background: var(--clr-success)">
-                🔲 {{ 'escrow.detail.actions.generateQr' | translate }}
+                 style="background: var(--clr-success)">
+                <tui-icon icon="@tui.qr-code" class="w-4 h-4" /> {{ 'escrow.detail.actions.generateQr' | translate }}
               </a>
             }
             @if (isSeller(tx) && tx.status === 'LOCKED') {
               <button (click)="ship(tx.id)" [disabled]="shipMutation.isPending()"
-                class="flex items-center justify-center gap-2 w-full py-3 text-white
+                      class="flex items-center justify-center gap-2 w-full py-3 text-white
                        rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-                style="background: var(--clr-primary)">
-                🚚 {{ shipMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.ship' | translate) }}
+                      style="background: var(--clr-primary)">
+                <tui-icon icon="@tui.truck" class="w-4 h-4" /> {{ shipMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.ship' | translate) }}
               </button>
             }
             @if (tx.activeDisputeId) {
               <a [routerLink]="['/disputes', tx.activeDisputeId]"
-                class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
-                style="background: #FEF2F2; border: 1.5px solid var(--clr-error); color: var(--clr-error)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
+                 class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
+                 style="background: #FEF2F2; border: 2px solid var(--clr-error); color: var(--clr-error)">
+                <tui-icon icon="@tui.message-circle" class="w-4 h-4" />
                 {{ 'escrow.detail.actions.viewDispute' | translate }}
               </a>
             } @else if (['LOCKED', 'SHIPPED', 'DELIVERED'].includes(tx.status)) {
               <button (click)="openDispute(tx.id)"
-                class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
-                style="border: 1.5px solid var(--clr-error); color: var(--clr-error)">
-                ⚠ {{ 'escrow.detail.actions.openDispute' | translate }}
+                      class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
+                      style="border: 2px solid var(--clr-error); color: var(--clr-error)">
+                <tui-icon icon="@tui.alert-triangle" class="w-4 h-4" /> {{ 'escrow.detail.actions.openDispute' | translate }}
               </button>
             }
             @if (['INITIATED', 'LOCKED'].includes(tx.status) || (tx.status === 'PENDING_ACCEPTANCE' && isSeller(tx))) {
               <button (click)="cancel(tx.id)" [disabled]="cancelMutation.isPending()"
-                class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50"
-                style="border: 1.5px solid var(--clr-border); color: var(--clr-muted)">
+                      class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50"
+                      style="border: 2px solid var(--clr-border); color: var(--clr-muted)">
                 {{ cancelMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.cancel' | translate) }}
               </button>
             }
@@ -366,7 +370,7 @@ const STATUS_ORDER: Record<string, number> = {
     </div>
   `,
 })
-export class TransactionDetailComponent implements OnDestroy {
+export class TransactionDetailComponent {
   readonly id = input.required<string>();
 
   private readonly auth        = inject(AuthStore);
@@ -374,7 +378,8 @@ export class TransactionDetailComponent implements OnDestroy {
   private readonly toast       = inject(ToastService);
   private readonly stomp       = inject(StompService);
   private readonly translate   = inject(TranslateService);
-  private readonly queryClient = injectQueryClient();
+  private readonly queryClient = inject(QueryClient);
+  private readonly destroyRef  = inject(DestroyRef);
 
   protected readonly query           = injectEscrowDetailQuery(this.id);
   protected readonly acceptMutation  = injectAcceptEscrowMutation();
@@ -390,14 +395,15 @@ export class TransactionDetailComponent implements OnDestroy {
   private stompSub: StompSubscription | null = null;
 
   constructor() {
-    // Connect WebSocket once data is loaded
-    const stopEffect = (effect => effect)(
-      (() => {
-        const id = this.id();
-        if (id && !this.liveConnected()) this.connectLive(id);
-      }) as unknown as () => void,
-    );
-    void stopEffect;
+    effect(() => {
+      const id = this.id();
+      if (id && !this.liveConnected()) this.connectLive(id);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.stompSub?.unsubscribe();
+      this.liveConnected.set(false);
+    });
   }
 
   private connectLive(txId: string): void {
@@ -420,11 +426,6 @@ export class TransactionDetailComponent implements OnDestroy {
         );
       });
     }).catch(() => { /* WebSocket unavailable — REST state is still accurate */ });
-  }
-
-  ngOnDestroy(): void {
-    this.stompSub?.unsubscribe();
-    this.liveConnected.set(false);
   }
 
   protected isBuyer(tx: TransactionDetail): boolean {

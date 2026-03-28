@@ -7,6 +7,7 @@ import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { ToastService } from '@core/notification/toast.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AdminCreateStaffComponent } from '../staff/admin-create-staff.component';
+import { TuiIcon } from '@taiga-ui/core';
 
 const ROLE_FILTERS = [
   { value: '',           labelKey: 'admin.users.filters.all' },
@@ -20,7 +21,7 @@ const ROLE_FILTERS = [
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [RouterLink, TimeAgoPipe, TranslatePipe, AdminCreateStaffComponent],
+  imports: [RouterLink, TimeAgoPipe, TranslatePipe, AdminCreateStaffComponent, TuiIcon],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
@@ -29,9 +30,7 @@ const ROLE_FILTERS = [
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">
         <a routerLink="/admin/dashboard"
            class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
         </a>
         <div class="flex-1 min-w-0">
           <h1 class="text-sm font-bold text-white m-0">{{ 'admin.users.title' | translate }}</h1>
@@ -41,9 +40,7 @@ const ROLE_FILTERS = [
         </div>
         <button (click)="showCreateModal.set(true)"
           class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
+          <tui-icon icon="@tui.plus" class="w-4 h-4" />
           {{ 'admin.staff.newButton' | translate }}
         </button>
       </div>
@@ -79,7 +76,7 @@ const ROLE_FILTERS = [
           </div>
         } @else if (users().length === 0) {
           <div class="flex flex-col items-center justify-center py-20 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl mb-4">👥</div>
+            <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4"><tui-icon icon="@tui.users" class="w-8 h-8" /></div>
             <p class="text-base font-bold text-slate-900 m-0 mb-1">{{ 'admin.users.empty' | translate }}</p>
           </div>
         } @else {
@@ -127,15 +124,11 @@ const ROLE_FILTERS = [
                     [title]="u.active ? ('admin.users.deactivate' | translate) : ('admin.users.activate' | translate)"
                   >
                     @if (actionId() === u.id) {
-                      <span class="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                      <tui-icon icon="@tui.loader-circle" class="w-4 h-4 animate-spin" />
                     } @else if (u.active) {
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
+                      <tui-icon icon="@tui.x" class="w-4 h-4" />
                     } @else {
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
+                      <tui-icon icon="@tui.check" class="w-4 h-4" />
                     }
                   </button>
                 </div>

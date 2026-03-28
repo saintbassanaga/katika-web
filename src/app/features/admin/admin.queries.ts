@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { AdminService } from './admin.service';
@@ -83,7 +83,7 @@ export function injectAdminTransactionsQuery(params: () => {
 
 export function injectAssignDisputeMutation() {
   const service = inject(AdminService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ disputeId, agentId }: { disputeId: string; agentId: string }) =>
       firstValueFrom(service.assignDispute(disputeId, agentId)),
@@ -94,7 +94,7 @@ export function injectAssignDisputeMutation() {
 
 export function injectUnassignDisputeMutation() {
   const service = inject(AdminService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (disputeId: string) => firstValueFrom(service.unassignDispute(disputeId)),
     onSuccess: (_, disputeId) =>
@@ -104,7 +104,7 @@ export function injectUnassignDisputeMutation() {
 
 export function injectResolveAdminDisputeMutation() {
   const service = inject(AdminService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (payload: {
       disputeId: string;
@@ -131,7 +131,7 @@ export function injectResolveAdminDisputeMutation() {
 
 export function injectCreateStaffMutation() {
   const service = inject(AdminService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (payload: CreateStaffRequest) => firstValueFrom(service.createStaff(payload)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: adminKeys.users({}) }),
@@ -140,7 +140,7 @@ export function injectCreateStaffMutation() {
 
 export function injectToggleUserActiveMutation() {
   const service = inject(AdminService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ userId, activate }: { userId: string; activate: boolean }) =>
       firstValueFrom(activate ? service.activateUser(userId) : service.deactivateUser(userId)),

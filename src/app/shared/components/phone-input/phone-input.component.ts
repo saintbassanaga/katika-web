@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, computed, forwardRef, inject, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { AsYouType, parsePhoneNumber, CountryCode } from 'libphonenumber-js/min';
+import { TuiIcon } from '@taiga-ui/core';
 
 interface Country { code: CountryCode; name: string; dial: string; flag: string; placeholder: string; }
 
@@ -44,7 +45,7 @@ export function detectCountry(): Country {
 @Component({
   selector: 'app-phone-input',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TuiIcon],
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => PhoneInputComponent), multi: true },
   ],
@@ -122,12 +123,7 @@ export function detectCountry(): Country {
               [disabled]="isDisabled()">
         <span>{{ country().flag }}</span>
         <span>+{{ country().dial }}</span>
-        <svg class="chevron" [class.open]="open()"
-             width="12" height="12" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+        <tui-icon icon="@tui.chevron-down" class="chevron w-3 h-3" [class.open]="open()" />
       </button>
 
       @if (open()) {

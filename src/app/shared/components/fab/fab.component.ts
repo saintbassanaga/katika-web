@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
@@ -15,7 +16,7 @@ import countryToCurrency from 'country-to-currency';
 @Component({
   selector: 'app-fab',
   standalone: true,
-  imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe],
+  imports: [ReactiveFormsModule, PhoneInputComponent, TranslatePipe, TuiIcon],
   styles: [`
     /* ── FAB button ─────────────────────────────── */
     :host {
@@ -160,10 +161,7 @@ import countryToCurrency from 'country-to-currency';
         (click)="onFabClick()"
         [attr.aria-label]="cfg.labelKey | translate"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
+        <tui-icon icon="@tui.plus" class="w-6 h-6" />
       </button>
     }
 
@@ -175,10 +173,7 @@ import countryToCurrency from 'country-to-currency';
           <div class="drag-handle"></div>
           <span class="sheet-title">{{ 'fab.form.title' | translate }}</span>
           <button class="close-btn" (click)="closeSheet()" [attr.aria-label]="'common.close' | translate">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
+            <tui-icon icon="@tui.x" class="w-4 h-4" />
           </button>
         </div>
 
@@ -237,10 +232,7 @@ import countryToCurrency from 'country-to-currency';
                 <span class="spinner"></span> {{ 'fab.form.submitting' | translate }}
               } @else {
                 {{ 'fab.form.submit' | translate }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+                <tui-icon icon="@tui.arrow-right" class="w-4 h-4" />
               }
             </button>
           </form>

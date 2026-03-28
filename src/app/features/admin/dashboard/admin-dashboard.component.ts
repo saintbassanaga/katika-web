@@ -7,11 +7,12 @@ import { AuthStore } from '@core/auth/auth.store';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { TuiIcon } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, AmountPipe, TranslatePipe],
+  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, AmountPipe, TranslatePipe, TuiIcon],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
 
@@ -20,9 +21,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
            style="box-shadow: 0 2px 20px rgba(15,34,64,.45)">
         <a routerLink="/dashboard"
            class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 no-underline shrink-0 hover:bg-white/20 transition-colors">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
         </a>
         <div class="flex-1 min-w-0">
           <h1 class="text-sm font-extrabold text-white m-0 tracking-tight">{{ 'admin.title' | translate }}</h1>
@@ -32,26 +31,19 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
           @if (isAdmin()) {
             <a routerLink="/admin/users"
                class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/8 text-white/70 text-xs font-medium no-underline hover:bg-white/15 transition-colors">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
+              <tui-icon icon="@tui.users" class="w-5 h-5" />
               {{ 'admin.users.title' | translate }}
             </a>
             <a routerLink="/admin/transactions"
                class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/8 text-white/70 text-xs font-medium no-underline hover:bg-white/15 transition-colors">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-              </svg>
+              <tui-icon icon="@tui.credit-card" class="w-5 h-5" />
               {{ 'admin.transactions.title' | translate }}
             </a>
           }
           <a routerLink="/admin/disputes"
              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold no-underline transition-colors"
              style="background: var(--color-primary); color: #fff">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+            <tui-icon icon="@tui.message-circle" class="w-5 h-5" />
             {{ 'admin.dashboard.allDisputes' | translate }}
           </a>
         </div>
@@ -86,9 +78,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                   <div class="absolute top-0 right-0 w-16 h-16 rounded-full bg-red-50 -translate-y-4 translate-x-4"></div>
                   <div class="relative">
                     <div class="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center mb-2.5">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                      </svg>
+                      <tui-icon icon="@tui.circle-alert" class="w-5 h-5" />
                     </div>
                     <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.open' | translate }}</p>
                     <p class="text-2xl font-black text-error m-0 leading-tight">{{ stats()!.openDisputes }}</p>
@@ -103,9 +93,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                   <div class="absolute top-0 right-0 w-16 h-16 rounded-full bg-indigo-50 -translate-y-4 translate-x-4"></div>
                   <div class="relative">
                     <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center mb-2.5">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                      </svg>
+                      <tui-icon icon="@tui.search" class="w-5 h-5" />
                     </div>
                     <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.underReview' | translate }}</p>
                     <p class="text-2xl font-black text-indigo-600 m-0 leading-tight">{{ stats()!.underReviewDisputes }}</p>
@@ -118,9 +106,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                   <div class="absolute top-0 right-0 w-16 h-16 rounded-full bg-violet-50 -translate-y-4 translate-x-4"></div>
                   <div class="relative">
                     <div class="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center mb-2.5">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                      </svg>
+                      <tui-icon icon="@tui.star" class="w-5 h-5" />
                     </div>
                     <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.arbitration' | translate }}</p>
                     <p class="text-2xl font-black text-violet-600 m-0 leading-tight">{{ stats()!.referredToArbitrationDisputes }}</p>
@@ -133,9 +119,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                   <div class="absolute top-0 right-0 w-16 h-16 rounded-full bg-emerald-50 -translate-y-4 translate-x-4"></div>
                   <div class="relative">
                     <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center mb-2.5">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-                      </svg>
+                      <tui-icon icon="@tui.check" class="w-4 h-4" />
                     </div>
                     <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.resolved' | translate }}</p>
                     <p class="text-2xl font-black text-success m-0 leading-tight">{{ stats()!.resolvedDisputes }}</p>
@@ -157,10 +141,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                   <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center"
                          style="background: var(--color-primary-lt)">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B4F8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                      </svg>
+                      <tui-icon icon="@tui.users" class="w-5 h-5" />
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.activeUsers' | translate }}</p>
@@ -184,9 +165,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                 <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
                   <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center bg-gold-lt">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9920D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-                      </svg>
+                      <tui-icon icon="@tui.credit-card" class="w-5 h-5" />
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.transactions' | translate }}</p>
@@ -203,9 +182,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                      style="background: linear-gradient(135deg, #fff 70%, #ecfdf5)">
                   <div class="flex items-start gap-3">
                     <div class="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center bg-success-lt">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                      </svg>
+                      <tui-icon icon="@tui.download" class="w-4 h-4" />
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-[11px] text-slate-500 m-0">{{ 'admin.dashboard.volume' | translate }}</p>
@@ -233,9 +210,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                class="flex items-center gap-1 text-xs font-semibold no-underline hover:underline"
                style="color: var(--color-primary)">
               {{ 'dashboard.viewAll' | translate }}
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
+              <tui-icon icon="@tui.chevron-right" class="w-4 h-4" />
             </a>
           </div>
 
@@ -256,9 +231,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
           } @else if (disputes().length === 0) {
             <div class="bg-white rounded-2xl p-10 shadow-sm text-center border border-dashed border-slate-200">
               <div class="w-12 h-12 rounded-2xl bg-success-lt flex items-center justify-center mx-auto mb-3">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-                </svg>
+                <tui-icon icon="@tui.check" class="w-4 h-4" />
               </div>
               <p class="text-sm font-bold text-slate-900 m-0">{{ 'admin.dashboard.noDisputes' | translate }}</p>
               <p class="text-xs text-slate-400 m-0 mt-1">{{ 'admin.dashboard.noDisputesSub' | translate }}</p>
@@ -300,9 +273,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
                   <!-- Status + chevron -->
                   <div class="flex items-center gap-2 shrink-0">
                     <app-status-badge [status]="d.status" />
-                    <svg class="text-slate-300 transition-transform group-hover:translate-x-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M9 18l6-6-6-6"/>
-                    </svg>
+                    <tui-icon icon="@tui.chevron-right" class="w-4 h-4" />
                   </div>
                 </a>
               }

@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { DisputeService } from './dispute.service';
@@ -55,7 +55,7 @@ export function injectDisputeMessagesQuery(id: () => string) {
 
 export function injectCreateDisputeMutation() {
   const service = inject(DisputeService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (req: CreateDisputeRequest) => firstValueFrom(service.createDispute(req)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: disputeKeys.lists() }),
@@ -64,7 +64,7 @@ export function injectCreateDisputeMutation() {
 
 export function injectSendDisputeMessageMutation() {
   const service = inject(DisputeService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ disputeId, content }: { disputeId: string; content: string }) =>
       firstValueFrom(service.sendMessage(disputeId, content)),
@@ -75,7 +75,7 @@ export function injectSendDisputeMessageMutation() {
 
 export function injectSubmitArbitrationFeeMutation() {
   const service = inject(DisputeService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (disputeId: string) =>
       firstValueFrom(service.submitArbitrationFee(disputeId)),
@@ -86,7 +86,7 @@ export function injectSubmitArbitrationFeeMutation() {
 
 export function injectResolveDisputeMutation() {
   const service = inject(DisputeService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ disputeId, resolutionType }: { disputeId: string; resolutionType: ResolutionType }) =>
       firstValueFrom(service.resolveDispute(disputeId, resolutionType)),

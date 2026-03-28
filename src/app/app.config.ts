@@ -8,9 +8,8 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { NG_EVENT_PLUGINS } from '@taiga-ui/event-plugins';
-import { provideAngularQuery, QueryClient } from '@tanstack/angular-query-experimental';
+import { provideEventPlugins } from '@taiga-ui/event-plugins';
+import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { provideServiceWorker } from '@angular/service-worker';
 import {
   provideRouter,
@@ -36,8 +35,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideAnimations(),
-    ...NG_EVENT_PLUGINS,
+    provideEventPlugins(),
     provideRouter(
       routes,
       withComponentInputBinding(),
@@ -57,7 +55,7 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideAngularQuery(
+    provideTanStackQuery(
       new QueryClient({
         defaultOptions: {
           queries: {

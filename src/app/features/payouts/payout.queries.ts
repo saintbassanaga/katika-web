@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { PayoutService } from './payout.service';
@@ -29,7 +29,7 @@ export function injectBalanceQuery() {
 
 export function injectCreatePayoutMutation() {
   const service = inject(PayoutService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (req: PayoutRequest) => firstValueFrom(service.create(req)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: payoutKeys.balance() }),
@@ -38,7 +38,7 @@ export function injectCreatePayoutMutation() {
 
 export function injectValidatePayoutOtpMutation() {
   const service = inject(PayoutService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ payoutId, code }: { payoutId: string; code: string }) =>
       firstValueFrom(service.validateOtp(payoutId, code)),
@@ -48,7 +48,7 @@ export function injectValidatePayoutOtpMutation() {
 
 export function injectSubmitPayoutMutation() {
   const service = inject(PayoutService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (payoutId: string) => firstValueFrom(service.submit(payoutId)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: payoutKeys.balance() }),

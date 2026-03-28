@@ -11,6 +11,7 @@ import { ReasonGroup } from '@shared/models/model';
 import { AuthStore } from '@core/auth/auth.store';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { TransactionDetail } from '@app/models';
+import { TuiIcon } from '@taiga-ui/core';
 
 const MAX_FILES      = 5;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -84,7 +85,7 @@ const REASON_GROUPS: ReasonGroup[] = [
 @Component({
   selector: 'app-dispute-create',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AmountPipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AmountPipe, TuiIcon],
   template: `
     <div class="px-4 py-6 max-w-lg mx-auto pb-24">
 
@@ -107,7 +108,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                  [style.background]="step() > i + 1 ? 'var(--clr-primary)' : step() === i + 1 ? 'var(--clr-primary)' : 'transparent'"
                  [style.border-color]="step() >= i + 1 ? 'var(--clr-primary)' : 'var(--clr-border)'"
                  [style.color]="step() >= i + 1 ? '#fff' : 'var(--clr-muted)'">
-              @if (step() > i + 1) { ✓ } @else { {{ i + 1 }} }
+              @if (step() > i + 1) { <tui-icon icon="@tui.check" class="w-4 h-4" /> } @else { {{ i + 1 }} }
             </div>
             <p class="text-[10px] mt-1 text-center font-medium w-16 leading-tight"
                style="color: var(--clr-muted)">{{ label | translate }}</p>
@@ -224,12 +225,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                          multiple
                          accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm,application/pdf,text/plain"
                          (change)="onFilesChange($event)" />
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                       style="color: var(--clr-muted)">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
+                  <tui-icon icon="@tui.upload" class="w-5 h-5" />
                   <span class="text-sm font-medium" style="color: var(--clr-muted)">
                     {{ 'disputes.create.evidenceBtn' | translate }}
                   </span>
@@ -257,9 +253,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                       <button type="button" (click)="removeFile(i)"
                               class="w-6 h-6 flex items-center justify-center rounded-md shrink-0"
                               style="background: #E2E8F0; color: #64748B">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
+                        <tui-icon icon="@tui.x" class="w-4 h-4" />
                       </button>
                     </div>
                   }

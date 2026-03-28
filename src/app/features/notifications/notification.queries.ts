@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { NotificationService } from './notification.service';
@@ -39,7 +39,7 @@ export function injectUnreadCountQuery() {
 
 export function injectMarkAsReadMutation() {
   const service = inject(NotificationService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.markAsRead(id)),
     onSuccess: () => {
@@ -51,7 +51,7 @@ export function injectMarkAsReadMutation() {
 
 export function injectMarkAllAsReadMutation() {
   const service = inject(NotificationService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: () => firstValueFrom(service.markAllAsRead()),
     onSuccess: () => {

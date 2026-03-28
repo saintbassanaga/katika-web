@@ -3,7 +3,7 @@ import {
   injectInfiniteQuery,
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { EscrowService } from './escrow.service';
@@ -46,7 +46,7 @@ export function injectEscrowDetailQuery(id: () => string) {
 
 export function injectCreateEscrowMutation() {
   const service = inject(EscrowService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (req: EscrowCreateRequest) => firstValueFrom(service.createTransaction(req)),
     onSuccess:  () => queryClient.invalidateQueries({ queryKey: escrowKeys.lists() }),
@@ -55,7 +55,7 @@ export function injectCreateEscrowMutation() {
 
 export function injectAcceptEscrowMutation() {
   const service = inject(EscrowService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.accept(id)),
     onSuccess:  (tx) => {
@@ -67,7 +67,7 @@ export function injectAcceptEscrowMutation() {
 
 export function injectShipEscrowMutation() {
   const service = inject(EscrowService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.ship(id)),
     onSuccess:  (tx) => {
@@ -79,7 +79,7 @@ export function injectShipEscrowMutation() {
 
 export function injectDeliverEscrowMutation() {
   const service = inject(EscrowService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.deliver(id)),
     onSuccess:  (tx) => {
@@ -91,7 +91,7 @@ export function injectDeliverEscrowMutation() {
 
 export function injectReleaseEscrowMutation() {
   const service = inject(EscrowService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ id, verificationCode }: { id: string; verificationCode: string }) =>
       firstValueFrom(service.release(id, verificationCode)),
@@ -104,7 +104,7 @@ export function injectReleaseEscrowMutation() {
 
 export function injectCancelEscrowMutation() {
   const service = inject(EscrowService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.cancel(id)),
     onSuccess:  (tx) => {

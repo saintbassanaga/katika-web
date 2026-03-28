@@ -8,7 +8,6 @@ import {
   computed,
   ViewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -32,7 +31,7 @@ import { TimelineStep } from '@shared/models/model';
 @Component({
   selector: 'app-dispute-chat',
   standalone: true,
-  imports: [FormsModule, RouterLink, StatusBadgeComponent, TimeAgoPipe, TitleCasePipe, TranslatePipe, AmountPipe],
+  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, TitleCasePipe, TranslatePipe, AmountPipe],
   styles: [`
     :host { display: block; height: 100vh; overflow: hidden; }
 
@@ -480,7 +479,8 @@ import { TimelineStep } from '@shared/models/model';
                              [class.text-white]="isOwnMessage(msg)"
                              [class.text-slate-800]="!isOwnMessage(msg)">{{ meta?.name ?? ('disputes.evidence.fileDefault' | translate) }}</p>
                           <p class="text-[.6875rem] m-0 mt-0.5"
-                             [class.text-white/70]="isOwnMessage(msg)"
+                             [class.text-white]="isOwnMessage(msg)"
+                             [style.opacity]="isOwnMessage(msg) ? '0.7' : null"
                              [class.text-slate-400]="!isOwnMessage(msg)">{{ formatFileSize(meta?.size ?? 0) }}</p>
                         </div>
                         <!-- download arrow -->
@@ -632,8 +632,8 @@ import { TimelineStep } from '@shared/models/model';
             </div><!-- end popover anchor -->
 
             <textarea
-              [(ngModel)]="messageText"
-              (input)="onTyping()"
+              [value]="messageText()"
+              (input)="onTyping($any($event.target).value)"
               (keydown.enter)="$event.preventDefault(); sendMessage()"
               [placeholder]="'disputes.chat.placeholder' | translate"
               rows="1"
@@ -642,7 +642,7 @@ import { TimelineStep } from '@shared/models/model';
 
             <button
               (click)="sendMessage()"
-              [disabled]="!messageText.trim() || sending()"
+              [disabled]="!messageText().trim() || sending()"
               class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 transition-all active:scale-95 disabled:opacity-40"
               style="background: var(--clr-primary)"
             >
@@ -813,7 +813,7 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   protected readonly evidenceType       = signal<'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'SCREENSHOT'>('IMAGE');
   protected readonly evidenceDesc       = signal('');
 
-  protected messageText = '';
+  protected readonly messageText = signal('');
 
   private readonly localFileMap = new Map<string, File>();
 
@@ -898,7 +898,6 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   protected terminalTitle(): string {
     const d = this.dispute();
     if (!d) return '';
-    const rt = d.resolutionType;
     if (d.status === 'CLOSED_NO_ACTION') return 'disputes.arbitration.closedNoAction';
     if (d.status === 'RESOLVED_SPLIT') return 'disputes.arbitration.resolvedSplit';
     if (d.status === 'RESOLVED_BUYER') return 'disputes.arbitration.resolvedBuyer';
@@ -1004,12 +1003,12 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   }
 
   protected sendMessage(): void {
-    const content = this.messageText.trim();
+    const content = this.messageText().trim();
     if (!content || this.sending()) return;
     this.sending.set(true);
     try {
       this.stomp.publish(`/app/dispute/${this.disputeId()}/message`, { content, internalOnly: false });
-      this.messageText = '';
+      this.messageText.set('');
       clearTimeout(this.typingTimeout);
       this.stomp.publish(`/app/dispute/${this.disputeId()}/typing`, { typing: false });
       setTimeout(() => { this.isNearBottomState = false; this.scrollToBottom(); }, 50);
@@ -1018,7 +1017,8 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected onTyping(): void {
+  protected onTyping(value: string): void {
+    this.messageText.set(value);
     this.stomp.publish(`/app/dispute/${this.disputeId()}/typing`, { typing: true });
     clearTimeout(this.typingTimeout);
     this.typingTimeout = setTimeout(() => {

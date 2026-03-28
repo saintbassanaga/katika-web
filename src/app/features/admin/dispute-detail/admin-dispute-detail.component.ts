@@ -10,6 +10,7 @@ import { ToastService } from '@core/notification/toast.service';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
+import { TuiIcon } from '@taiga-ui/core';
 
 const RESOLUTION_TYPES: { value: ResolutionType; labelKey: string }[] = [
   { value: 'FULL_REFUND_BUYER',    labelKey: 'admin.dispute.resolutionTypes.FULL_REFUND_BUYER' },
@@ -24,7 +25,7 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
 @Component({
   selector: 'app-admin-dispute-detail',
   standalone: true,
-  imports: [RouterLink, FormsModule, StatusBadgeComponent, TimeAgoPipe, AmountPipe, DatePipe, TranslatePipe],
+  imports: [RouterLink, FormsModule, StatusBadgeComponent, TimeAgoPipe, AmountPipe, DatePipe, TranslatePipe, TuiIcon],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
@@ -33,9 +34,7 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">
         <a routerLink="/admin/disputes"
            class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
         </a>
         <div class="flex-1 min-w-0">
           @if (dispute()) {
@@ -137,13 +136,21 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
                 <div class="flex items-center gap-1.5 text-sm"
                      [class.text-success]="dispute()!.buyerArbitrationFeePaid"
                      [class.text-slate-400]="!dispute()!.buyerArbitrationFeePaid">
-                  {{ dispute()!.buyerArbitrationFeePaid ? '✓' : '✗' }}
+                  @if (dispute()!.buyerArbitrationFeePaid) {
+                    <tui-icon icon="@tui.check" class="w-4 h-4" />
+                  } @else {
+                    <tui-icon icon="@tui.x" class="w-4 h-4" />
+                  }
                   {{ 'admin.dispute.buyerFeePaid' | translate }}
                 </div>
                 <div class="flex items-center gap-1.5 text-sm"
                      [class.text-success]="dispute()!.sellerArbitrationFeePaid"
                      [class.text-slate-400]="!dispute()!.sellerArbitrationFeePaid">
-                  {{ dispute()!.sellerArbitrationFeePaid ? '✓' : '✗' }}
+                  @if (dispute()!.sellerArbitrationFeePaid) {
+                    <tui-icon icon="@tui.check" class="w-4 h-4" />
+                  } @else {
+                    <tui-icon icon="@tui.x" class="w-4 h-4" />
+                  }
                   {{ 'admin.dispute.sellerFeePaid' | translate }}
                 </div>
               </div>
@@ -158,16 +165,16 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
                 <button
                   (click)="updateStatus('AWAITING_BUYER')"
                   [disabled]="actionLoading()"
-                  class="py-2.5 rounded-xl font-semibold text-sm border-2 border-amber-300 text-amber-700 bg-amber-50 transition-all disabled:opacity-40 hover:bg-amber-100"
+                  class="py-2.5 rounded-xl font-semibold text-sm border-2 border-amber-300 text-amber-700 bg-amber-50 transition-all disabled:opacity-40 hover:bg-amber-100 flex items-center justify-center gap-1.5"
                 >
-                  ⏳ {{ 'admin.dispute.awaitingBuyer' | translate }}
+                  <tui-icon icon="@tui.hourglass" class="w-6 h-6" /> {{ 'admin.dispute.awaitingBuyer' | translate }}
                 </button>
                 <button
                   (click)="updateStatus('AWAITING_SELLER')"
                   [disabled]="actionLoading()"
-                  class="py-2.5 rounded-xl font-semibold text-sm border-2 border-amber-300 text-amber-700 bg-amber-50 transition-all disabled:opacity-40 hover:bg-amber-100"
+                  class="py-2.5 rounded-xl font-semibold text-sm border-2 border-amber-300 text-amber-700 bg-amber-50 transition-all disabled:opacity-40 hover:bg-amber-100 flex items-center justify-center gap-1.5"
                 >
-                  ⏳ {{ 'admin.dispute.awaitingSeller' | translate }}
+                  <tui-icon icon="@tui.hourglass" class="w-6 h-6" /> {{ 'admin.dispute.awaitingSeller' | translate }}
                 </button>
               </div>
               <textarea

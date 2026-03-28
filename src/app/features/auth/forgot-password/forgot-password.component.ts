@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '@core/auth/auth.service';
+import { TuiIcon } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, TuiIcon],
   template: `
     <div class="min-h-[100svh] bg-dark flex flex-col items-center justify-center px-6 relative overflow-hidden">
       <div class="absolute rounded-full pointer-events-none w-[380px] h-[380px] top-[-20%] right-[-15%] bg-[radial-gradient(circle,rgba(201,146,13,.2)_0%,transparent_70%)] orb-1"></div>
@@ -19,9 +20,7 @@ import { AuthService } from '@core/auth/auth.service';
         <!-- Brand -->
         <div class="flex items-center gap-3 mb-8">
           <div class="w-[42px] h-[42px] bg-gradient-to-br from-gold to-gold-dk rounded-xl flex items-center justify-center shadow-[0_4px_16px_rgba(201,146,13,.35)] shrink-0">
-            <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
-              <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
           </div>
           <span class="text-[1.125rem] font-extrabold text-dark tracking-[-0.02em]">Katica</span>
         </div>
@@ -54,11 +53,11 @@ import { AuthService } from '@core/auth/auth.service';
                     class="w-full py-[.9375rem] bg-gradient-to-br from-primary to-primary-dk text-white text-[.9375rem] font-bold border-none rounded-[14px] cursor-pointer flex items-center justify-center gap-2 min-h-[52px] mt-6 font-[inherit] shadow-[0_4px_20px_rgba(27,79,138,.35)] transition-all hover:opacity-90 hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
                     [disabled]="form.invalid || loading()">
               @if (loading()) {
-                <span class="w-[18px] h-[18px] border-[2.5px] border-white/35 border-t-white rounded-full animate-spin"></span>
+                <tui-icon icon="@tui.loader-circle" class="w-4 h-4 animate-spin" />
                 {{ 'auth.forgotPassword.sendingLink' | translate }}
               } @else {
                 {{ 'auth.forgotPassword.sendLink' | translate }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <tui-icon icon="@tui.arrow-right" class="w-4 h-4" />
               }
             </button>
           </form>
@@ -72,10 +71,7 @@ import { AuthService } from '@core/auth/auth.service';
         @if (step() === 2) {
           <div class="text-center">
             <div class="w-16 h-16 rounded-[20px] mx-auto mb-6 bg-gradient-to-br from-primary to-primary-dk flex items-center justify-center shadow-[0_8px_24px_rgba(27,79,138,.3)]">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
+              <tui-icon icon="@tui.mail" class="w-8 h-8" />
             </div>
             <p class="text-[1.375rem] font-bold text-slate-900 m-0 mb-2 tracking-[-0.02em]">{{ 'auth.forgotPassword.checkInboxTitle' | translate }}</p>
             <p class="text-sm text-slate-500 text-center leading-relaxed m-0 mb-6">{{ 'auth.forgotPassword.checkInboxSub' | translate }}</p>

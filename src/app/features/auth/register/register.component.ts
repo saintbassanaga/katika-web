@@ -6,6 +6,7 @@ import { AuthService } from '@core/auth/auth.service';
 import { AuthStore } from '@core/auth/auth.store';
 import { ToastService } from '@core/notification/toast.service';
 import { PhoneInputComponent } from '@shared/components/phone-input/phone-input.component';
+import { TuiIcon } from '@taiga-ui/core';
 
 function passwordStrength(p: string): number {
   let s = 0;
@@ -23,7 +24,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, PhoneInputComponent, TranslatePipe, TuiIcon],
   styles: [`
     :host { display: block; }
 
@@ -389,25 +390,25 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
           <ul class="brand-features">
             <li class="bf-item">
               <div class="bf-icon" style="background:rgba(27,79,138,.25)">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#74B3F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <tui-icon icon="@tui.shield" class="w-5 h-5" />
               </div>
               Argent bloqué jusqu'à confirmation
             </li>
             <li class="bf-item">
               <div class="bf-icon" style="background:rgba(201,146,13,.2)">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F5D48A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <tui-icon icon="@tui.credit-card" class="w-5 h-5" />
               </div>
               Retraits Mobile Money rapides
             </li>
             <li class="bf-item">
               <div class="bf-icon" style="background:rgba(16,185,129,.2)">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <tui-icon icon="@tui.check" class="w-4 h-4" />
               </div>
               Protection acheteur &amp; vendeur
             </li>
             <li class="bf-item">
               <div class="bf-icon" style="background:rgba(139,92,246,.18)">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <tui-icon icon="@tui.clock" class="w-5 h-5" />
               </div>
               Résolution de litiges en 48h
             </li>
@@ -475,24 +476,14 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                 <label class="role-card" [class.active]="form.get('role')?.value === 'BUYER'">
                   <input type="radio" formControlName="role" value="BUYER" style="display:none" />
                   <div class="role-icon">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-                         [attr.stroke]="form.get('role')?.value === 'BUYER' ? '#1B4F8A' : '#94A3B8'"
-                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61H19a2 2 0 001.99-1.74L23 6H6"/>
-                    </svg>
+                    <tui-icon icon="@tui.shopping-cart" class="w-8 h-8" />
                   </div>
                   <span class="role-label">{{ 'auth.register.buyer' | translate }}</span>
                 </label>
                 <label class="role-card" [class.active]="form.get('role')?.value === 'SELLER'">
                   <input type="radio" formControlName="role" value="SELLER" style="display:none" />
                   <div class="role-icon">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-                         [attr.stroke]="form.get('role')?.value === 'SELLER' ? '#1B4F8A' : '#94A3B8'"
-                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-                      <polyline points="9 22 9 12 15 12 15 22"/>
-                    </svg>
+                    <tui-icon icon="@tui.home" class="w-8 h-8" />
                   </div>
                   <span class="role-label">{{ 'auth.register.seller' | translate }}</span>
                 </label>
@@ -508,9 +499,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                        class="field-input" [class.is-error]="isInvalid('password')" />
                 <button type="button" class="pw-toggle" (click)="showPwd.set(!showPwd())">
                   @if (showPwd()) {
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    <tui-icon icon="@tui.eye-off" class="w-5 h-5" />
                   } @else {
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <tui-icon icon="@tui.eye" class="w-5 h-5" />
                   }
                 </button>
               </div>
@@ -539,11 +530,11 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
             <!-- Submit -->
             <button type="submit" class="submit-btn" [disabled]="form.invalid || loading()">
               @if (loading()) {
-                <span class="spinner"></span>
+                <tui-icon icon="@tui.loader-circle" class="w-4 h-4 animate-spin" />
                 Inscription en cours…
               } @else {
                 {{ 'auth.register.submit' | translate }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <tui-icon icon="@tui.arrow-right" class="w-4 h-4" />
               }
             </button>
           </form>

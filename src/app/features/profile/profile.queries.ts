@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient,
+  QueryClient,
 } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
@@ -29,7 +29,7 @@ export function injectVerificationStatusQuery() {
 
 export function injectSubmitVerificationMutation() {
   const service     = inject(AuthService);
-  const queryClient = injectQueryClient();
+  const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: ({ bill1, bill2, notes }: { bill1: File; bill2: File; notes?: string }) =>
       firstValueFrom(service.requestVerification(bill1, bill2, notes)),

@@ -10,6 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '@core/auth/auth.service';
+import { TuiIcon } from '@taiga-ui/core';
 
 function passwordsMatch(c: AbstractControl): ValidationErrors | null {
   return c.get('newPassword')?.value === c.get('confirmPassword')?.value
@@ -20,7 +21,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, TuiIcon],
   template: `
     <div class="min-h-[100svh] bg-dark flex flex-col items-center justify-center px-6 relative overflow-hidden">
       <div class="absolute rounded-full pointer-events-none w-[380px] h-[380px] top-[-20%] right-[-15%] bg-[radial-gradient(circle,rgba(201,146,13,.2)_0%,transparent_70%)] orb-1"></div>
@@ -31,9 +32,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         <!-- Brand -->
         <div class="flex items-center gap-3 mb-8">
           <div class="w-[42px] h-[42px] bg-gradient-to-br from-gold to-gold-dk rounded-xl flex items-center justify-center shadow-[0_4px_16px_rgba(201,146,13,.35)] shrink-0">
-            <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
-              <path d="M7 5v18M7 14l10-9M7 14l10 9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <tui-icon icon="@tui.arrow-left" class="w-5 h-5" />
           </div>
           <span class="text-[1.125rem] font-extrabold text-dark tracking-[-0.02em]">Katica</span>
         </div>
@@ -64,9 +63,9 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
                         class="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-slate-400 p-1 flex items-center transition-colors hover:text-slate-600"
                         (click)="showPwd.set(!showPwd())">
                   @if (showPwd()) {
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    <tui-icon icon="@tui.eye-off" class="w-5 h-5" />
                   } @else {
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <tui-icon icon="@tui.eye" class="w-5 h-5" />
                   }
                 </button>
               </div>
@@ -107,9 +106,7 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
         @if (step() === 2) {
           <div class="text-center">
             <div class="w-16 h-16 rounded-[20px] mx-auto mb-6 bg-gradient-to-br from-success to-[#047857] flex items-center justify-center shadow-[0_8px_24px_rgba(5,150,105,.3)]">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
+              <tui-icon icon="@tui.check" class="w-4 h-4" />
             </div>
             <p class="text-[1.375rem] font-bold text-slate-900 m-0 mb-2 tracking-[-0.02em]">{{ 'auth.resetPassword.successTitle' | translate }}</p>
             <p class="text-sm text-slate-500 text-center leading-relaxed m-0 mb-5">{{ 'auth.resetPassword.successSub' | translate }}</p>

@@ -6,6 +6,7 @@ import { AmountPipe } from '@shared/pipes/amount.pipe';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { BottomSheetComponent } from '@shared/components/bottom-sheet/bottom-sheet.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { MovementType, WalletBalance, WalletMovement } from '@shared/models/model';
 
 const TYPE_FILTERS: { labelKey: string; types: string }[] = [
@@ -28,27 +29,27 @@ const TYPE_FILTERS: { labelKey: string; types: string }[] = [
 ];
 
 const TYPE_ICONS: Record<MovementType, string> = {
-  ESCROW_FREEZE:          '🔒',
-  ESCROW_UNFREEZE:        '🔓',
-  ESCROW_CREDIT:          '✦',
-  REFUND_UNFREEZE:        '↩',
-  REFUND_CREDIT:          '↩',
-  DISPUTE_FREEZE:         '⚖',
-  DISPUTE_REFUND_BUYER:   '⚖',
-  DISPUTE_RELEASE_SELLER: '⚖',
-  DISPUTE_SPLIT_BUYER:    '⚖',
-  DISPUTE_SPLIT_SELLER:   '⚖',
-  PAYOUT_DEBIT:           '↗',
-  PAYOUT_REVERSAL:        '↩',
-  PAYOUT_FAILED_REFUND:   '↩',
-  DEPOSIT_CREDIT:         '↙',
-  PLATFORM_FEE_CREDIT:    '✦',
+  ESCROW_FREEZE:          '@tui.lock',
+  ESCROW_UNFREEZE:        '@tui.lock-open',
+  ESCROW_CREDIT:          '@tui.coins',
+  REFUND_UNFREEZE:        '@tui.rotate-cw',
+  REFUND_CREDIT:          '@tui.rotate-cw',
+  DISPUTE_FREEZE:         '@tui.scale',
+  DISPUTE_REFUND_BUYER:   '@tui.scale',
+  DISPUTE_RELEASE_SELLER: '@tui.scale',
+  DISPUTE_SPLIT_BUYER:    '@tui.scale',
+  DISPUTE_SPLIT_SELLER:   '@tui.scale',
+  PAYOUT_DEBIT:           '@tui.arrow-up-right',
+  PAYOUT_REVERSAL:        '@tui.rotate-cw',
+  PAYOUT_FAILED_REFUND:   '@tui.rotate-cw',
+  DEPOSIT_CREDIT:         '@tui.download',
+  PLATFORM_FEE_CREDIT:    '@tui.coins',
 };
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [RouterLink, AmountPipe, TimeAgoPipe, BottomSheetComponent, TranslatePipe],
+  imports: [RouterLink, AmountPipe, TimeAgoPipe, BottomSheetComponent, TranslatePipe, TuiIcon],
   styles: [':host { display: block; }'],
   template: `
     <div class="animate-fade">
@@ -66,24 +67,13 @@ const TYPE_ICONS: Record<MovementType, string> = {
           <div class="text-[clamp(2rem,8vw,3rem)] font-extrabold tracking-[.08em] leading-none text-white/18">••••••</div>
         }
         <button class="shrink-0 w-9 h-9 rounded-[10px] bg-white/[.07] border border-white/10 text-white/45 cursor-pointer flex items-center justify-center mt-1 transition-colors hover:bg-white/12 hover:text-white/75" (click)="balanceVisible.set(!balanceVisible())">
-          @if (balanceVisible()) {
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-              <line x1="1" y1="1" x2="23" y2="23"/>
-            </svg>
-          } @else {
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          }
+          <tui-icon [icon]="balanceVisible() ? '@tui.eye-off' : '@tui.eye'" class="w-4 h-4" />
         </button>
       </div>
 
       @if (+( wallet()?.frozenAmount ?? 0) > 0) {
         <div class="inline-flex items-center gap-1.25 bg-[rgba(201,146,13,.1)] border border-[rgba(201,146,13,.28)] rounded-full px-3 py-1 mb-6 text-xs font-semibold text-[#D4A330]">
-          🔒 {{ 'wallet.frozen' | translate }}: {{ wallet()?.frozenAmount | amount }}
+          <tui-icon icon="@tui.lock" class="w-3.5 h-3.5" /> {{ 'wallet.frozen' | translate }}: {{ wallet()?.frozenAmount | amount }}
         </div>
       }
 
@@ -125,7 +115,7 @@ const TYPE_ICONS: Record<MovementType, string> = {
 
       } @else if (movements().length === 0) {
         <div class="text-center py-16 px-6">
-          <div class="text-[2.5rem] mb-3 opacity-35">📊</div>
+          <tui-icon icon="@tui.bar-chart" class="w-10 h-10 mb-3 mx-auto opacity-35" />
           <p class="text-[.9375rem] font-semibold text-slate-500">{{ 'wallet.empty.title' | translate }}</p>
           <p class="text-[.8125rem] text-slate-400 mt-1">{{ 'wallet.empty.message' | translate }}</p>
         </div>
@@ -140,10 +130,13 @@ const TYPE_ICONS: Record<MovementType, string> = {
               (click)="selectedMovement.set(mov); sheetOpen.set(true)"
             >
               <div
-                class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center text-[.9375rem]"
+                class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center"
                 [class.bg-success-lt]="isCredit(mov)"
                 [class.bg-error-lt]="!isCredit(mov)"
-              >{{ typeIcon(mov.movementType) }}</div>
+                [style.color]="isCredit(mov) ? 'var(--clr-success)' : 'var(--clr-error)'"
+              >
+                <tui-icon [icon]="typeIcon(mov.movementType)" class="w-4.5 h-4.5" />
+              </div>
 
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis m-0">{{ mov.description }}</p>
