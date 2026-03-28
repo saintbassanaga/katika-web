@@ -471,9 +471,9 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
           </a>
           <a routerLink="/disputes"
              class="w-8 h-8 rounded-[10px] bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 no-underline transition-colors"
-             [class.bg-error-lt]="disputes().length > 0"
-             [class.border-red-200]="disputes().length > 0"
-             [class.text-error]="disputes().length > 0"
+             [class.bg-error-lt]="disputeTotal() > 0"
+             [class.border-red-200]="disputeTotal() > 0"
+             [class.text-error]="disputeTotal() > 0"
              [title]="'nav.disputes' | translate">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -497,7 +497,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
         </div>
 
         <!-- Dispute alert -->
-        @if (disputes().length > 0) {
+        @if (disputeTotal() > 0) {
           <div class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5 mb-5">
             <div class="w-8 h-8 shrink-0 bg-amber-500 rounded-[10px] flex items-center justify-center">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
@@ -509,7 +509,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             </div>
             <div class="flex-1 min-w-0">
               <div
-                class="text-sm font-bold text-amber-900">{{ 'dashboard.disputeAlert' | translate:{count: disputes().length} }}
+                class="text-sm font-bold text-amber-900">{{ 'dashboard.disputeAlert' | translate:{count: disputeTotal()} }}
               </div>
             </div>
             <a routerLink="/disputes"
@@ -576,13 +576,13 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                   <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
               </div>
-              @if (disputes().length > 0) {
+              @if (disputeTotal() > 0) {
                 <span
                   class="text-[.625rem] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600 whitespace-nowrap">{{ 'dashboard.kpi.toProcess' | translate }}</span>
               }
             </div>
             <div class="text-[.75rem] text-slate-500 font-medium mb-1">{{ 'nav.disputes' | translate }}</div>
-            <div class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">{{ disputes().length }}</div>
+            <div class="text-xl font-extrabold text-dark tracking-[-0.02em] leading-none">{{ disputeTotal() }}</div>
             <div class="text-[.6875rem] text-slate-400 mt-1">{{ 'dashboard.kpi.pending' | translate }}</div>
           </div>
 
@@ -676,8 +676,8 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
             </svg>
           </a>
           <a routerLink="/disputes" class="d-topbar-icon" [title]="'nav.disputes' | translate"
-             [style.background]="disputes().length > 0 ? '#FEF2F2' : ''"
-             [style.color]="disputes().length > 0 ? '#DC2626' : ''">
+             [style.background]="disputeTotal() > 0 ? '#FEF2F2' : ''"
+             [style.color]="disputeTotal() > 0 ? '#DC2626' : ''">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
               <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -748,12 +748,12 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                   <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
               </div>
-              @if (disputes().length > 0) {
+              @if (disputeTotal() > 0) {
                 <span class="d-kpi-trend d-kpi-trend--warn">{{ 'dashboard.kpi.toProcess' | translate }}</span>
               }
             </div>
             <div class="d-kpi-label">{{ 'dashboard.kpi.activeDisputes' | translate }}</div>
-            <div class="d-kpi-value">{{ disputes().length }}</div>
+            <div class="d-kpi-value">{{ disputeTotal() }}</div>
             <div class="d-kpi-sub">{{ 'dashboard.kpi.openPending' | translate }}</div>
           </div>
 
@@ -847,7 +847,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                 <h2>{{ 'dashboard.kpi.activeDisputes' | translate }}</h2>
                 <a routerLink="/disputes" class="d-see-all">{{ 'dashboard.viewAll' | translate }} →</a>
               </div>
-              @if (disputes().length === 0) {
+              @if (disputeTotal() === 0) {
                 <div class="d-empty" style="padding:1.5rem">
                   <div class="d-empty-icon">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5"
@@ -858,7 +858,7 @@ import { DashboardTransactionSummary, DisputeSummary, WalletInfo } from '@shared
                   <p class="d-empty-title" style="font-size:.875rem">{{ 'dashboard.noActiveDisputes' | translate }}</p>
                 </div>
               } @else {
-                @for (d of disputes(); track d.id) {
+                @for (d of disputes().slice(0, 2); track d.id) {
                   <a [routerLink]="['/disputes', d.id]" class="d-dispute-row">
                     <div class="d-dispute-dot"></div>
                     <div>
@@ -933,6 +933,7 @@ export class DashboardComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly transactions = signal<DashboardTransactionSummary[]>([]);
   protected readonly disputes = signal<DisputeSummary[]>([]);
+  protected readonly disputeTotal = signal(0);
   protected readonly wallet = signal<WalletInfo | null>(null);
 
   protected readonly pendingAmount = computed(() =>
@@ -944,8 +945,8 @@ export class DashboardComponent implements OnInit {
         `${environment.apiUrl}/api/escrow?status=LOCKED,SHIPPED,INITIATED,RELEASED&page=0&size=5`,
         {withCredentials: true},
       ),
-      disputes: this.http.get<{ content: DisputeSummary[] }>(
-        `${environment.apiUrl}/api/disputes?status=OPENED&page=0&size=5`,
+      disputes: this.http.get<{ content: DisputeSummary[]; totalElements: number }>(
+        `${environment.apiUrl}/api/disputes?page=0&size=5`,
         {withCredentials: true},
       ),
       wallet: this.http.get<WalletInfo>(
@@ -956,6 +957,7 @@ export class DashboardComponent implements OnInit {
       next: ({transactions, disputes, wallet}) => {
         this.transactions.set(transactions?.content ?? []);
         this.disputes.set(disputes?.content ?? []);
+        this.disputeTotal.set(disputes?.totalElements ?? disputes?.content?.length ?? 0);
         this.wallet.set(wallet);
         this.loading.set(false);
       },
