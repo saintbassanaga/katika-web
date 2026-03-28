@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TuiIcon } from '@taiga-ui/core';
 import { DisputeService, DisputeResponse } from '../dispute.service';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
@@ -21,7 +22,7 @@ const RESOLVED_STATUSES = new Set([
 @Component({
   selector: 'app-dispute-list',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, AmountPipe, TranslatePipe],
+  imports: [RouterLink, TuiIcon, StatusBadgeComponent, TimeAgoPipe, AmountPipe, TranslatePipe],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
@@ -75,7 +76,9 @@ const RESOLVED_STATUSES = new Set([
 
         } @else if (filtered().length === 0) {
           <div class="flex flex-col items-center justify-center py-20 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center text-3xl mb-4">⚖️</div>
+            <div class="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-4">
+              <tui-icon icon="@tui.scale" class="w-8 h-8 text-red-400" />
+            </div>
             <p class="text-base font-bold text-slate-900 m-0 mb-1">{{ 'disputes.empty.title' | translate }}</p>
             <p class="text-sm text-slate-400 m-0">{{ 'disputes.empty.message' | translate }}</p>
           </div>
@@ -89,9 +92,9 @@ const RESOLVED_STATUSES = new Set([
                 [class]="statusBorderClass(dispute.status)"
               >
                 <!-- Icon -->
-                <div class="w-11 h-11 rounded-[14px] shrink-0 flex items-center justify-center text-lg"
+                <div class="w-11 h-11 rounded-[14px] shrink-0 flex items-center justify-center"
                      [class]="statusIconBg(dispute.status)">
-                  {{ statusIconEmoji(dispute.status) }}
+                  <tui-icon [icon]="statusIcon(dispute.status)" class="w-5 h-5" [style.color]="statusIconColor(dispute.status)" />
                 </div>
 
                 <!-- Info -->
@@ -170,20 +173,36 @@ export class DisputeListComponent implements OnInit {
     return map[status] ?? 'bg-slate-50';
   }
 
-  protected statusIconEmoji(status: string): string {
+  protected statusIcon(status: string): string {
     const map: Record<string, string> = {
-      OPENED: '⚠️',
-      UNDER_REVIEW: '🔍',
-      AWAITING_BUYER: '⏳',
-      AWAITING_SELLER: '⏳',
-      AWAITING_ARBITRATION_PAYMENT: '⚖️',
-      REFERRED_TO_ARBITRATION: '🏛️',
-      RESOLVED_BUYER: '✅',
-      RESOLVED_SELLER: '✅',
-      RESOLVED_SPLIT: '🤝',
-      CLOSED_NO_ACTION: '📁',
+      OPENED:                       '@tui.triangle-alert',
+      UNDER_REVIEW:                 '@tui.search',
+      AWAITING_BUYER:               '@tui.clock',
+      AWAITING_SELLER:              '@tui.clock',
+      AWAITING_ARBITRATION_PAYMENT: '@tui.scale',
+      REFERRED_TO_ARBITRATION:      '@tui.landmark',
+      RESOLVED_BUYER:               '@tui.check-circle',
+      RESOLVED_SELLER:              '@tui.check-circle',
+      RESOLVED_SPLIT:               '@tui.handshake',
+      CLOSED_NO_ACTION:             '@tui.folder',
     };
-    return map[status] ?? '⚖️';
+    return map[status] ?? '@tui.scale';
+  }
+
+  protected statusIconColor(status: string): string {
+    const map: Record<string, string> = {
+      OPENED:                       '#f87171',
+      UNDER_REVIEW:                 '#818cf8',
+      AWAITING_BUYER:               '#fbbf24',
+      AWAITING_SELLER:              '#fbbf24',
+      AWAITING_ARBITRATION_PAYMENT: '#fb923c',
+      REFERRED_TO_ARBITRATION:      '#a78bfa',
+      RESOLVED_BUYER:               '#34d399',
+      RESOLVED_SELLER:              '#34d399',
+      RESOLVED_SPLIT:               '#2dd4bf',
+      CLOSED_NO_ACTION:             '#94a3b8',
+    };
+    return map[status] ?? '#94a3b8';
   }
 
   ngOnInit(): void {

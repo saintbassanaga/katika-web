@@ -110,8 +110,10 @@ const MILESTONES: { key: keyof TransactionSummary; labelKey: string }[] = [
 
                 <!-- ── Header ── -->
                 <div class="flex items-center gap-3 px-4 pt-4 pb-3">
-                  <div class="w-11 h-11 rounded-[14px] shrink-0 flex items-center justify-center text-xl"
-                       [class]="txIconBg(tx.status)">{{ txEmoji(tx.status) }}</div>
+                  <div class="w-11 h-11 rounded-[14px] shrink-0 flex items-center justify-center"
+                       [class]="txIconBg(tx.status)">
+                    <tui-icon [icon]="txIcon(tx.status)" class="w-5 h-5" [style.color]="txIconColor(tx.status)" />
+                  </div>
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-bold text-slate-900 m-0 font-mono tracking-tight">{{ tx.reference }}</p>
                     <p class="text-[11px] text-slate-400 m-0 mt-0.5">{{ tx.createdAt | timeAgo }} · {{ tx.currency }}</p>
@@ -267,12 +269,31 @@ export class AdminTransactionsComponent implements OnInit {
     return map[status] ?? 'bg-slate-50';
   }
 
-  protected txEmoji(status: string): string {
+  protected txIcon(status: string): string {
     const map: Record<string, string> = {
-      INITIATED: '📋', LOCKED: '🔒', SHIPPED: '📦',
-      DELIVERED: '✅', RELEASED: '💸', DISPUTED: '⚖️',
-      CANCELLED: '❌', REFUNDED: '↩️',
+      INITIATED: '@tui.clipboard-list',
+      LOCKED:    '@tui.lock',
+      SHIPPED:   '@tui.package',
+      DELIVERED: '@tui.check-circle',
+      RELEASED:  '@tui.circle-dollar-sign',
+      DISPUTED:  '@tui.scale',
+      CANCELLED: '@tui.circle-x',
+      REFUNDED:  '@tui.corner-up-left',
     };
-    return map[status] ?? '💳';
+    return map[status] ?? '@tui.credit-card';
+  }
+
+  protected txIconColor(status: string): string {
+    const map: Record<string, string> = {
+      INITIATED: '#60a5fa',
+      LOCKED:    '#818cf8',
+      SHIPPED:   '#fbbf24',
+      DELIVERED: '#34d399',
+      RELEASED:  '#34d399',
+      DISPUTED:  '#f87171',
+      CANCELLED: '#94a3b8',
+      REFUNDED:  '#fb923c',
+    };
+    return map[status] ?? '#94a3b8';
   }
 }

@@ -31,54 +31,54 @@ const REASON_GROUPS: ReasonGroup[] = [
   {
     groupKey: 'disputes.categories.delivery',
     reasons: [
-      { value: 'NOT_RECEIVED',     labelKey: 'disputes.reasons.NOT_RECEIVED',     icon: '📦' },
-      { value: 'LATE_DELIVERY',    labelKey: 'disputes.reasons.LATE_DELIVERY',    icon: '⏰' },
-      { value: 'PARTIAL_DELIVERY', labelKey: 'disputes.reasons.PARTIAL_DELIVERY', icon: '🧩' },
-      { value: 'WRONG_ADDRESS',    labelKey: 'disputes.reasons.WRONG_ADDRESS',    icon: '📍' },
+      { value: 'NOT_RECEIVED',     labelKey: 'disputes.reasons.NOT_RECEIVED',     icon: '@tui.package' },
+      { value: 'LATE_DELIVERY',    labelKey: 'disputes.reasons.LATE_DELIVERY',    icon: '@tui.clock' },
+      { value: 'PARTIAL_DELIVERY', labelKey: 'disputes.reasons.PARTIAL_DELIVERY', icon: '@tui.package-open' },
+      { value: 'WRONG_ADDRESS',    labelKey: 'disputes.reasons.WRONG_ADDRESS',    icon: '@tui.map-pin' },
     ],
   },
   {
     groupKey: 'disputes.categories.quality',
     reasons: [
-      { value: 'NOT_AS_DESCRIBED', labelKey: 'disputes.reasons.NOT_AS_DESCRIBED', icon: '🔍' },
-      { value: 'DEFECTIVE',        labelKey: 'disputes.reasons.DEFECTIVE',        icon: '🔧' },
-      { value: 'WRONG_ITEM',       labelKey: 'disputes.reasons.WRONG_ITEM',       icon: '🔄' },
-      { value: 'COUNTERFEIT',      labelKey: 'disputes.reasons.COUNTERFEIT',      icon: '⚠️' },
-      { value: 'QUALITY_ISSUE',    labelKey: 'disputes.reasons.QUALITY_ISSUE',    icon: '👎' },
+      { value: 'NOT_AS_DESCRIBED', labelKey: 'disputes.reasons.NOT_AS_DESCRIBED', icon: '@tui.search' },
+      { value: 'DEFECTIVE',        labelKey: 'disputes.reasons.DEFECTIVE',        icon: '@tui.wrench' },
+      { value: 'WRONG_ITEM',       labelKey: 'disputes.reasons.WRONG_ITEM',       icon: '@tui.refresh-cw' },
+      { value: 'COUNTERFEIT',      labelKey: 'disputes.reasons.COUNTERFEIT',      icon: '@tui.triangle-alert' },
+      { value: 'QUALITY_ISSUE',    labelKey: 'disputes.reasons.QUALITY_ISSUE',    icon: '@tui.thumbs-down' },
     ],
   },
   {
     groupKey: 'disputes.categories.service',
     reasons: [
-      { value: 'SERVICE_NOT_RENDERED',   labelKey: 'disputes.reasons.SERVICE_NOT_RENDERED',   icon: '🚫' },
-      { value: 'SERVICE_INCOMPLETE',     labelKey: 'disputes.reasons.SERVICE_INCOMPLETE',     icon: '⏳' },
-      { value: 'SERVICE_UNSATISFACTORY', labelKey: 'disputes.reasons.SERVICE_UNSATISFACTORY', icon: '😞' },
+      { value: 'SERVICE_NOT_RENDERED',   labelKey: 'disputes.reasons.SERVICE_NOT_RENDERED',   icon: '@tui.ban' },
+      { value: 'SERVICE_INCOMPLETE',     labelKey: 'disputes.reasons.SERVICE_INCOMPLETE',     icon: '@tui.hourglass' },
+      { value: 'SERVICE_UNSATISFACTORY', labelKey: 'disputes.reasons.SERVICE_UNSATISFACTORY', icon: '@tui.frown' },
     ],
   },
   {
     groupKey: 'disputes.categories.communication',
     reasons: [
-      { value: 'SELLER_UNRESPONSIVE', labelKey: 'disputes.reasons.SELLER_UNRESPONSIVE', icon: '📵' },
-      { value: 'BUYER_UNRESPONSIVE',  labelKey: 'disputes.reasons.BUYER_UNRESPONSIVE',  icon: '📵' },
+      { value: 'SELLER_UNRESPONSIVE', labelKey: 'disputes.reasons.SELLER_UNRESPONSIVE', icon: '@tui.phone-off' },
+      { value: 'BUYER_UNRESPONSIVE',  labelKey: 'disputes.reasons.BUYER_UNRESPONSIVE',  icon: '@tui.phone-off' },
     ],
   },
   {
     groupKey: 'disputes.categories.financial',
     reasons: [
-      { value: 'OVERCHARGED', labelKey: 'disputes.reasons.OVERCHARGED', icon: '💰' },
-      { value: 'HIDDEN_FEES', labelKey: 'disputes.reasons.HIDDEN_FEES', icon: '💳' },
+      { value: 'OVERCHARGED', labelKey: 'disputes.reasons.OVERCHARGED', icon: '@tui.circle-dollar-sign' },
+      { value: 'HIDDEN_FEES', labelKey: 'disputes.reasons.HIDDEN_FEES', icon: '@tui.credit-card' },
     ],
   },
   {
     groupKey: 'disputes.categories.fraud',
     reasons: [
-      { value: 'SUSPECTED_FRAUD',          labelKey: 'disputes.reasons.SUSPECTED_FRAUD',          icon: '🚨' },
-      { value: 'UNAUTHORIZED_TRANSACTION', labelKey: 'disputes.reasons.UNAUTHORIZED_TRANSACTION', icon: '🔒' },
+      { value: 'SUSPECTED_FRAUD',          labelKey: 'disputes.reasons.SUSPECTED_FRAUD',          icon: '@tui.shield-alert' },
+      { value: 'UNAUTHORIZED_TRANSACTION', labelKey: 'disputes.reasons.UNAUTHORIZED_TRANSACTION', icon: '@tui.lock' },
     ],
   },
   {
     groupKey: 'disputes.categories.other',
-    reasons: [{ value: 'OTHER', labelKey: 'disputes.reasons.OTHER', icon: '💬' }],
+    reasons: [{ value: 'OTHER', labelKey: 'disputes.reasons.OTHER', icon: '@tui.message-circle' }],
   },
 ];
 
@@ -166,7 +166,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                       >
                         <input type="radio" formControlName="reason" [value]="reason.value" class="sr-only"
                                (change)="step.set(2)" />
-                        <span class="text-xl leading-none">{{ reason.icon }}</span>
+                        <tui-icon [icon]="reason.icon" class="w-5 h-5 shrink-0" />
                         <span class="font-medium text-sm" style="color: var(--clr-text)">
                           {{ reason.labelKey | translate }}
                         </span>
@@ -239,7 +239,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                     <div class="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm"
                          [style.border-color]="sf.error ? 'var(--clr-error)' : 'var(--clr-border)'"
                          [style.background]="sf.error ? '#FEF2F2' : '#F8FAFC'">
-                      <span class="text-base leading-none">{{ fileIcon(sf.file.type) }}</span>
+                      <tui-icon [icon]="fileIcon(sf.file.type)" class="w-5 h-5 shrink-0" />
                       <div class="flex-1 min-w-0">
                         <p class="truncate font-medium text-xs" style="color: var(--clr-text)">
                           {{ sf.file.name }}
@@ -335,7 +335,7 @@ const REASON_GROUPS: ReasonGroup[] = [
                   <div class="space-y-1 mt-1">
                     @for (sf of validFiles(); track sf.file.name) {
                       <div class="flex items-center gap-2 text-xs" style="color: var(--clr-text)">
-                        <span>{{ fileIcon(sf.file.type) }}</span>
+                        <tui-icon [icon]="fileIcon(sf.file.type)" class="w-4 h-4 shrink-0" />
                         <span class="truncate">{{ sf.file.name }}</span>
                         <span class="shrink-0" style="color: var(--clr-muted)">{{ formatSize(sf.file.size) }}</span>
                       </div>
@@ -459,10 +459,10 @@ export class DisputeCreateComponent implements OnInit {
   }
 
   protected fileIcon(mimeType: string): string {
-    if (mimeType.startsWith('image/')) return '🖼️';
-    if (mimeType.startsWith('video/')) return '🎬';
-    if (mimeType === 'application/pdf') return '📄';
-    return '📎';
+    if (mimeType.startsWith('image/')) return '@tui.image';
+    if (mimeType.startsWith('video/')) return '@tui.video';
+    if (mimeType === 'application/pdf') return '@tui.file-text';
+    return '@tui.paperclip';
   }
 
   protected formatSize(bytes: number): string {

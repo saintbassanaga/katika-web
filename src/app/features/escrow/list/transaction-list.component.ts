@@ -42,11 +42,11 @@ const FILTERS = [
       @if (query.isPending()) {
         <app-loading-skeleton [count]="3" />
       } @else if (query.isError()) {
-        <app-empty-state icon="⚠️"
+        <app-empty-state icon="@tui.triangle-alert"
           [title]="'common.errorTitle' | translate"
           [message]="'common.errorMessage' | translate" />
       } @else if (transactions().length === 0) {
-        <app-empty-state icon="📋"
+        <app-empty-state icon="@tui.clipboard-list"
           [title]="'escrow.empty.title' | translate"
           [message]="'escrow.empty.message' | translate" />
       } @else {

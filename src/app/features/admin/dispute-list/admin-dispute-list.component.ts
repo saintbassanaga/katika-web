@@ -1,5 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TuiIcon } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../admin.service';
 import { DisputeResponse } from '@features/disputes/dispute.service';
@@ -18,7 +19,7 @@ const FILTERS = [
 @Component({
   selector: 'app-admin-dispute-list',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, TranslatePipe],
+  imports: [RouterLink, TuiIcon, StatusBadgeComponent, TimeAgoPipe, TranslatePipe],
   styles: [':host { display: block; height: 100%; overflow-y: auto; }'],
   template: `
     <div class="animate-fade flex flex-col min-h-full bg-page">
@@ -27,9 +28,7 @@ const FILTERS = [
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">
         <a routerLink="/admin/dashboard"
            class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]" />
         </a>
         <div class="flex-1 min-w-0">
           <h1 class="text-sm font-bold text-white m-0">{{ 'admin.title' | translate }}</h1>
@@ -82,7 +81,9 @@ const FILTERS = [
           </div>
         } @else if (disputes().length === 0) {
           <div class="flex flex-col items-center justify-center py-20 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-success-lt flex items-center justify-center text-3xl mb-4">✅</div>
+            <div class="w-16 h-16 rounded-2xl bg-success-lt flex items-center justify-center mb-4">
+              <tui-icon icon="@tui.check-circle" class="w-8 h-8 text-success" />
+            </div>
             <p class="text-base font-bold text-slate-900 m-0 mb-1">{{ 'admin.dashboard.noDisputes' | translate }}</p>
             <p class="text-sm text-slate-400 m-0">{{ 'admin.dashboard.noDisputesSub' | translate }}</p>
           </div>
@@ -93,8 +94,10 @@ const FILTERS = [
                 [routerLink]="['/admin/disputes', d.id]"
                 class="flex items-center gap-3.5 bg-white rounded-2xl px-4 py-3.5 no-underline shadow-[0_1px_4px_rgba(15,23,42,.06)] transition-all hover:shadow-[0_4px_16px_rgba(15,23,42,.1)] hover:-translate-y-px"
               >
-                <div class="w-11 h-11 rounded-[14px] shrink-0 flex items-center justify-center text-xl"
-                     [class]="iconBg(d.status)">{{ emoji(d.status) }}</div>
+                <div class="w-11 h-11 rounded-[14px] shrink-0 flex items-center justify-center"
+                     [class]="iconBg(d.status)">
+                  <tui-icon [icon]="statusIcon(d.status)" class="w-5 h-5" [style.color]="statusIconColor(d.status)" />
+                </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-slate-900 m-0 truncate">{{ d.reference }}</p>
                   <p class="text-xs text-slate-500 m-0 mt-0.5 truncate">
@@ -104,9 +107,7 @@ const FILTERS = [
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                   <app-status-badge [status]="d.status" />
-                  <svg class="text-slate-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 18l6-6-6-6"/>
-                  </svg>
+                  <tui-icon icon="@tui.chevron-right" class="text-slate-300 w-3.5 h-3.5" />
                 </div>
               </a>
             }
@@ -196,12 +197,35 @@ export class AdminDisputeListComponent implements OnInit {
     return map[status] ?? 'bg-slate-50';
   }
 
-  protected emoji(status: string): string {
+  protected statusIcon(status: string): string {
     const map: Record<string, string> = {
-      OPENED: '🔴', UNDER_REVIEW: '🔍', AWAITING_BUYER: '⏳',
-      AWAITING_SELLER: '⏳', AWAITING_ARBITRATION_PAYMENT: '⚖️',
-      REFERRED_TO_ARBITRATION: '🏛️', RESOLVED_BUYER: '✅', RESOLVED_SELLER: '✅',
+      OPENED:                       '@tui.triangle-alert',
+      UNDER_REVIEW:                 '@tui.search',
+      AWAITING_BUYER:               '@tui.clock',
+      AWAITING_SELLER:              '@tui.clock',
+      AWAITING_ARBITRATION_PAYMENT: '@tui.scale',
+      REFERRED_TO_ARBITRATION:      '@tui.landmark',
+      RESOLVED_BUYER:               '@tui.check-circle',
+      RESOLVED_SELLER:              '@tui.check-circle',
+      RESOLVED_SPLIT:               '@tui.handshake',
+      CLOSED_NO_ACTION:             '@tui.folder',
     };
-    return map[status] ?? '⚖️';
+    return map[status] ?? '@tui.scale';
+  }
+
+  protected statusIconColor(status: string): string {
+    const map: Record<string, string> = {
+      OPENED:                       '#f87171',
+      UNDER_REVIEW:                 '#818cf8',
+      AWAITING_BUYER:               '#fbbf24',
+      AWAITING_SELLER:              '#fbbf24',
+      AWAITING_ARBITRATION_PAYMENT: '#fb923c',
+      REFERRED_TO_ARBITRATION:      '#a78bfa',
+      RESOLVED_BUYER:               '#34d399',
+      RESOLVED_SELLER:              '#34d399',
+      RESOLVED_SPLIT:               '#2dd4bf',
+      CLOSED_NO_ACTION:             '#94a3b8',
+    };
+    return map[status] ?? '#94a3b8';
   }
 }

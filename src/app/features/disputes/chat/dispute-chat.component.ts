@@ -23,6 +23,7 @@ import {
 import { StompService } from '@core/websocket/stomp.service';
 import { AuthStore } from '@core/auth/auth.store';
 import { ToastService } from '@core/notification/toast.service';
+import { TuiIcon } from '@taiga-ui/core';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
@@ -31,7 +32,7 @@ import { TimelineStep } from '@shared/models/model';
 @Component({
   selector: 'app-dispute-chat',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent, TimeAgoPipe, TitleCasePipe, TranslatePipe, AmountPipe],
+  imports: [RouterLink, TuiIcon, StatusBadgeComponent, TimeAgoPipe, TitleCasePipe, TranslatePipe, AmountPipe],
   styles: [`
     :host { display: block; height: 100vh; overflow: hidden; }
 
@@ -297,7 +298,9 @@ import { TimelineStep } from '@shared/models/model';
           <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-orange-400 overflow-hidden animate-fade">
             <div class="px-4 py-3.5">
               <div class="flex items-start gap-3 mb-3">
-                <div class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center bg-orange-50 text-lg">⚖️</div>
+                <div class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center bg-orange-50">
+                  <tui-icon icon="@tui.scale" class="w-5 h-5 text-orange-400" />
+                </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-slate-900 m-0">{{ 'disputes.arbitration.title' | translate }}</p>
                   <p class="text-xs text-slate-500 m-0 mt-0.5">{{ 'disputes.arbitration.subtitle' | translate }}</p>
@@ -321,26 +324,26 @@ import { TimelineStep } from '@shared/models/model';
                 <div class="flex items-center gap-1.5 text-xs"
                      [class.text-success]="dispute()!.buyerArbitrationFeePaid"
                      [class.text-slate-400]="!dispute()!.buyerArbitrationFeePaid">
-                  <span class="text-base">{{ dispute()!.buyerArbitrationFeePaid ? '✓' : '✗' }}</span>
+                  <tui-icon [icon]="dispute()!.buyerArbitrationFeePaid ? '@tui.check' : '@tui.x'" class="w-3.5 h-3.5" />
                   {{ 'disputes.arbitration.buyerPaid' | translate }}
                 </div>
                 <div class="flex items-center gap-1.5 text-xs"
                      [class.text-success]="dispute()!.sellerArbitrationFeePaid"
                      [class.text-slate-400]="!dispute()!.sellerArbitrationFeePaid">
-                  <span class="text-base">{{ dispute()!.sellerArbitrationFeePaid ? '✓' : '✗' }}</span>
+                  <tui-icon [icon]="dispute()!.sellerArbitrationFeePaid ? '@tui.check' : '@tui.x'" class="w-3.5 h-3.5" />
                   {{ 'disputes.arbitration.sellerPaid' | translate }}
                 </div>
               </div>
               @if (!alreadyPaid() && !deadlinePassed()) {
                 <div class="bg-amber-50 rounded-xl px-3 py-2 mb-3 border border-amber-200">
-                  <p class="text-xs font-semibold text-amber-700 m-0 mb-1">⚠️ {{ 'disputes.arbitration.warning' | translate }}</p>
+                  <p class="text-xs font-semibold text-amber-700 m-0 mb-1 flex items-center gap-1"><tui-icon icon="@tui.triangle-alert" class="w-3.5 h-3.5 shrink-0" /> {{ 'disputes.arbitration.warning' | translate }}</p>
                   <p class="text-xs text-amber-600 m-0">• {{ 'disputes.arbitration.warningDefaultLose' | translate }}</p>
                   <p class="text-xs text-amber-600 m-0">• {{ 'disputes.arbitration.warningFundsReleased' | translate }}</p>
                 </div>
               }
               @if (alreadyPaid() && dispute()!.status === 'AWAITING_ARBITRATION_PAYMENT') {
                 <div class="bg-success-lt rounded-xl px-3 py-2 mb-3 border border-green-200">
-                  <p class="text-xs font-semibold text-success m-0">✓ {{ 'disputes.arbitration.paid' | translate }}</p>
+                  <p class="text-xs font-semibold text-success m-0 flex items-center gap-1"><tui-icon icon="@tui.check" class="w-3.5 h-3.5 shrink-0" /> {{ 'disputes.arbitration.paid' | translate }}</p>
                 </div>
               }
               @if (!alreadyPaid() && !deadlinePassed()) {
@@ -354,7 +357,7 @@ import { TimelineStep } from '@shared/models/model';
                     <span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                     {{ 'disputes.arbitration.payingBtn' | translate }}
                   } @else {
-                    ⚖️ {{ 'disputes.arbitration.payBtn' | translate }} — {{ dispute()!.arbitrationFee | amount }}
+                    <tui-icon icon="@tui.scale" class="w-4 h-4" /> {{ 'disputes.arbitration.payBtn' | translate }} — {{ dispute()!.arbitrationFee | amount }}
                   }
                 </button>
               }
@@ -367,7 +370,9 @@ import { TimelineStep } from '@shared/models/model';
           <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-violet-500 overflow-hidden animate-fade">
             <div class="px-4 py-3.5">
               <div class="flex items-start gap-3 mb-2">
-                <div class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center bg-violet-50 text-lg">⚖️</div>
+                <div class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center bg-violet-50">
+                  <tui-icon icon="@tui.scale" class="w-5 h-5 text-violet-400" />
+                </div>
                 <div class="flex-1">
                   <p class="text-sm font-bold text-slate-900 m-0">{{ 'disputes.arbitration.referredTitle' | translate }}</p>
                   <p class="text-xs text-slate-500 m-0 mt-0.5">{{ 'disputes.arbitration.referredBody' | translate }}</p>
@@ -375,10 +380,10 @@ import { TimelineStep } from '@shared/models/model';
               </div>
               <div class="flex gap-4 mt-2">
                 <div class="flex items-center gap-1.5 text-xs text-success">
-                  <span class="text-base">✓</span>{{ 'disputes.arbitration.buyerPaid' | translate }}
+                  <tui-icon icon="@tui.check" class="w-3.5 h-3.5" />{{ 'disputes.arbitration.buyerPaid' | translate }}
                 </div>
                 <div class="flex items-center gap-1.5 text-xs text-success">
-                  <span class="text-base">✓</span>{{ 'disputes.arbitration.sellerPaid' | translate }}
+                  <tui-icon icon="@tui.check" class="w-3.5 h-3.5" />{{ 'disputes.arbitration.sellerPaid' | translate }}
                 </div>
               </div>
               <p class="text-xs text-slate-400 mt-2 m-0">{{ 'disputes.arbitration.referredEmail' | translate }}</p>
@@ -392,7 +397,7 @@ import { TimelineStep } from '@shared/models/model';
                [class]="terminalBannerClass()">
             <div class="px-4 py-3">
               <div class="flex items-center gap-2.5">
-                <span class="text-xl">{{ terminalIcon() }}</span>
+                <tui-icon [icon]="terminalIcon()" class="w-5 h-5" />
                 <div>
                   <p class="text-sm font-bold m-0">{{ terminalTitle() | translate }}</p>
                   @if (dispute()!.refundedToBuyer) {
@@ -422,14 +427,10 @@ import { TimelineStep } from '@shared/models/model';
                       [class.text-indigo-700]="msg.messageType !== 'SYSTEM'"
                     >
                       @if (msg.messageType === 'SYSTEM') {
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
+                        <tui-icon icon="@tui.info" class="w-3 h-3" />
                         {{ 'disputes.chat.system' | translate }}
                       } @else {
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                        </svg>
+                        <tui-icon icon="@tui.user" class="w-3 h-3" />
                         {{ msg.senderRole | titlecase }} · {{ msg.senderName }}
                       }
                     </span>
@@ -473,7 +474,7 @@ import { TimelineStep } from '@shared/models/model';
                               [class.border-slate-200]="!isOwnMessage(msg)"
                               [class.rounded-bl-md]="!isOwnMessage(msg)"
                               [class.shadow-\[0_1px_4px_rgba(15\,23\,42\,\.08\)\]]="!isOwnMessage(msg)">
-                        <span class="text-[1.375rem] leading-none shrink-0">{{ fileIcon(meta?.mimeType ?? '') }}</span>
+                        <tui-icon [icon]="fileIcon(meta?.mimeType ?? '')" class="w-5 h-5 shrink-0" />
                         <div class="flex-1 min-w-0">
                           <p class="text-[.8125rem] font-semibold truncate m-0"
                              [class.text-white]="isOwnMessage(msg)"
@@ -483,11 +484,7 @@ import { TimelineStep } from '@shared/models/model';
                              [style.opacity]="isOwnMessage(msg) ? '0.7' : null"
                              [class.text-slate-400]="!isOwnMessage(msg)">{{ formatFileSize(meta?.size ?? 0) }}</p>
                         </div>
-                        <!-- download arrow -->
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 opacity-60">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
+                        <tui-icon icon="@tui.download" class="w-3.5 h-3.5 shrink-0 opacity-60" />
                       </button>
                       <p class="text-[10px] opacity-50 m-0 px-1">{{ msg.createdAt | timeAgo }}</p>
                     </div>
@@ -537,9 +534,7 @@ import { TimelineStep } from '@shared/models/model';
                 @if (uploadingFile()) {
                   <span class="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span>
                 } @else {
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                  </svg>
+                  <tui-icon icon="@tui.paperclip" class="w-5 h-5" />
                 }
               </button>
 
@@ -552,9 +547,7 @@ import { TimelineStep } from '@shared/models/model';
                     <p class="text-[.8125rem] font-bold text-slate-800 m-0">{{ 'disputes.evidence.panelTitle' | translate }}</p>
                     <button type="button" (click)="cancelEvidence()"
                             class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 shrink-0">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
+                      <tui-icon icon="@tui.x" class="w-2.5 h-2.5" />
                     </button>
                   </div>
 
@@ -574,7 +567,7 @@ import { TimelineStep } from '@shared/models/model';
                                   [class.bg-white]="evidenceType() !== opt.value"
                                   [class.border-slate-200]="evidenceType() !== opt.value"
                                   [class.text-slate-600]="evidenceType() !== opt.value">
-                            <span class="text-sm leading-none">{{ opt.icon }}</span>{{ opt.labelKey | translate }}
+                            <tui-icon [icon]="opt.icon" class="w-3.5 h-3.5" />{{ opt.labelKey | translate }}
                           </button>
                         }
                       </div>
@@ -591,7 +584,7 @@ import { TimelineStep } from '@shared/models/model';
                     <!-- File pick / preview -->
                     @if (pendingFile(); as f) {
                       <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                        <span class="text-base leading-none shrink-0">{{ fileIcon(f.type) }}</span>
+                        <tui-icon [icon]="fileIcon(f.type)" class="w-5 h-5 shrink-0" />
                         <div class="flex-1 min-w-0">
                           <p class="text-[.75rem] font-semibold text-slate-700 truncate m-0">{{ f.name }}</p>
                           <p class="text-[.6875rem] text-slate-400 m-0">{{ formatFileSize(f.size) }}</p>

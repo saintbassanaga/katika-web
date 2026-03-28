@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TuiIcon } from '@taiga-ui/core';
 import { AuthStore } from '@core/auth/auth.store';
 import { AuthService } from '@core/auth/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -9,16 +10,14 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TuiIcon, TranslatePipe],
   template: `
     <div class="h-[100svh] bg-page animate-fade flex flex-col overflow-hidden">
 
       <!-- Top bar -->
       <div class="bg-dark px-5 py-4 flex items-center gap-3.5">
         <a routerLink="/profile" class="w-9 h-9 rounded-[10px] bg-white/10 border-none cursor-pointer flex items-center justify-center text-white no-underline shrink-0 transition-colors hover:bg-white/[.18]" aria-label="Retour">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]" />
         </a>
         <span class="text-white text-base font-bold tracking-[-0.01em]">{{ 'profile.editForm.topbarTitle' | translate }}</span>
       </div>
@@ -38,9 +37,7 @@ import { firstValueFrom } from 'rxjs';
           <div class="flex items-center justify-between px-5 py-3.5 border-b border-page">
             <span class="text-[.8125rem] text-slate-400 font-medium">{{ 'profile.editForm.phone' | translate }}</span>
             <span class="flex items-center gap-1.5 text-xs text-slate-400">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-              </svg>
+              <tui-icon icon="@tui.lock" class="w-3 h-3" />
               {{ 'profile.editForm.nonEditable' | translate }}
             </span>
           </div>
@@ -160,9 +157,7 @@ import { firstValueFrom } from 'rxjs';
                   {{ 'profile.editForm.saving' | translate }}
                 } @else {
                   {{ 'profile.editForm.save' | translate }}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
+                  <tui-icon icon="@tui.check" class="w-4 h-4" />
                 }
               </button>
             </div>
