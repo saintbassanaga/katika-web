@@ -304,21 +304,39 @@ const STATUS_ORDER: Record<string, number> = {
                 </span>
                 <div class="flex-1 h-px" style="background: var(--clr-border)"></div>
               </div>
+              <!-- Code hint callout -->
+              <div class="flex items-start gap-2.5 rounded-xl p-3 mb-3"
+                   style="background: var(--clr-primary-lt)">
+                <tui-icon icon="@tui.info" class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--clr-primary)" />
+                <p class="text-xs m-0 leading-snug" style="color: var(--clr-primary)">
+                  {{ 'escrow.detail.confirmSection.codeHint' | translate }}
+                </p>
+              </div>
               <div class="space-y-2">
-                <input type="text"
-                       [value]="confirmCode()"
-                       (input)="confirmCode.set($any($event.target).value)"
-                       [placeholder]="'escrow.detail.confirmSection.codePh' | translate"
-                       class="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2"
-                       style="border-color: var(--clr-border); color: var(--clr-text);
-                         background: var(--clr-surface, #F8FAFC); --tw-ring-color: var(--clr-primary)"
-                />
+                <div class="relative">
+                  <tui-icon icon="@tui.key" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                            style="color: var(--clr-muted)" />
+                  <input type="text"
+                         [value]="confirmCode()"
+                         (input)="confirmCode.set($any($event.target).value)"
+                         [placeholder]="'escrow.detail.confirmSection.codePh' | translate"
+                         class="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2"
+                         style="border-color: var(--clr-border); color: var(--clr-text);
+                           background: var(--clr-surface, #F8FAFC); --tw-ring-color: var(--clr-primary)"
+                  />
+                </div>
                 <button (click)="release(tx.id)"
                         [disabled]="releaseMutation.isPending() || !confirmCode().trim()"
                         class="flex items-center justify-center gap-2 w-full py-3 text-white
                          rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-40"
                         style="background: var(--clr-success)">
-                  <tui-icon icon="@tui.check" class="w-4 h-4" /> {{ releaseMutation.isPending() ? ('common.loading' | translate) : ('escrow.detail.actions.confirmReception' | translate) }}
+                  @if (releaseMutation.isPending()) {
+                    <tui-icon icon="@tui.loader-circle" class="w-4 h-4 animate-spin" />
+                    {{ 'common.loading' | translate }}
+                  } @else {
+                    <tui-icon icon="@tui.check" class="w-4 h-4" />
+                    {{ 'escrow.detail.actions.confirmReception' | translate }}
+                  }
                 </button>
               </div>
             </div>

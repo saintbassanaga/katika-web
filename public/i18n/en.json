@@ -181,7 +181,7 @@
     "loadMore": "Load more",
     "loading": "Loading…",
     "qr": {
-      "back": "← Back",
+      "back": "Back",
       "title": "My delivery QR code",
       "subtitle": "Show this QR code to the buyer to confirm delivery",
       "expiry": "Expires in",
@@ -225,11 +225,12 @@
         "title": "Release payment",
         "subtitle": "Everything is as expected? Scan the seller's QR code or enter the code to transfer the funds.",
         "codePh": "Seller's confirmation code",
+        "codeHint": "Ask the seller to open their QR code screen in the app and share the confirmation code with you verbally.",
         "or": "or"
       },
       "scan": {
         "title": "Scan QR code",
-        "back": "← Back",
+        "back": "Back",
         "permissionTitle": "Camera access denied",
         "permissionMessage": "Allow camera access in your browser settings to scan the QR code.",
         "retry": "Try again",

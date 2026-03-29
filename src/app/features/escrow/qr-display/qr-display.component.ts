@@ -1,17 +1,18 @@
 import { Component, ElementRef, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom, interval, takeWhile } from 'rxjs';
+import { TuiIcon } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EscrowService } from '../escrow.service';
 
 @Component({
   selector: 'app-qr-display',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TuiIcon, TranslatePipe],
   template: `
     <div class="px-4 py-6 pb-24 max-w-sm mx-auto text-center">
-      <a [routerLink]="['/escrow', id()]" class="flex items-center gap-2 text-sm text-gray-500 mb-6 hover:text-gray-700">
-        {{ 'escrow.qr.back' | translate }}
+      <a [routerLink]="['/escrow', id()]" class="inline-flex items-center gap-2 text-sm text-gray-500 mb-6 hover:text-gray-700 no-underline">
+        <tui-icon icon="@tui.arrow-left" class="w-4 h-4" /> {{ 'escrow.qr.back' | translate }}
       </a>
 
       <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'escrow.qr.title' | translate }}</h1>
@@ -35,9 +36,9 @@ import { EscrowService } from '../escrow.service';
         <button
           (click)="refresh()"
           class="mt-4 px-6 py-3 border border-gray-200 rounded-xl text-sm
-                 text-gray-600 hover:bg-gray-50 transition-colors"
+                 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 mx-auto"
         >
-          🔄 {{ 'escrow.qr.refresh' | translate }}
+          <tui-icon icon="@tui.refresh-cw" class="w-4 h-4" /> {{ 'escrow.qr.refresh' | translate }}
         </button>
       }
     </div>

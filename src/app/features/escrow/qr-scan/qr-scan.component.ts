@@ -1,25 +1,29 @@
 import { Component, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { TuiIcon } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EscrowService } from '../escrow.service';
 
 @Component({
   selector: 'app-qr-scan',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TuiIcon, TranslatePipe],
   template: `
     <div class="fixed inset-0 bg-black flex flex-col">
       <!-- Header -->
-      <div class="absolute top-0 left-0 right-0 z-10 p-4 pt-12">
-        <button (click)="router.navigate(['/escrow', id()])" class="text-white text-sm flex items-center gap-2">
-          {{ 'escrow.detail.scan.back' | translate }}
+      <div class="absolute top-0 left-0 right-0 z-10 p-4 pt-12 flex items-center gap-3">
+        <button (click)="router.navigate(['/escrow', id()])"
+                class="w-9 h-9 rounded-[10px] bg-white/10 border-none cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors hover:bg-white/20">
+          <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]" />
         </button>
-        <h1 class="text-white font-bold text-lg mt-2">{{ 'escrow.detail.scan.title' | translate }}</h1>
+        <h1 class="text-white font-bold text-lg">{{ 'escrow.detail.scan.title' | translate }}</h1>
       </div>
 
       @if (permissionDenied()) {
         <div class="flex-1 flex flex-col items-center justify-center px-6 text-center">
-          <div class="text-5xl mb-4">📷</div>
+          <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-4 mx-auto">
+            <tui-icon icon="@tui.camera-off" class="w-8 h-8 text-white/60" />
+          </div>
           <h2 class="text-white text-xl font-bold mb-2">{{ 'escrow.detail.scan.permissionTitle' | translate }}</h2>
           <p class="text-gray-400 text-sm mb-4">{{ 'escrow.detail.scan.permissionMessage' | translate }}</p>
           <button (click)="ngOnInit()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium">

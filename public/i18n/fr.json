@@ -181,7 +181,7 @@
     "loadMore": "Charger plus",
     "loading": "Chargement…",
     "qr": {
-      "back": "← Retour",
+      "back": "Retour",
       "title": "Mon QR code de livraison",
       "subtitle": "Montrez ce QR code à l'acheteur pour confirmer la livraison",
       "expiry": "Expire dans",
@@ -231,11 +231,12 @@
         "title": "Libérer le paiement",
         "subtitle": "Tout est conforme ? Scannez le QR code du vendeur ou saisissez le code pour lui transférer les fonds.",
         "codePh": "Code de confirmation du vendeur",
+        "codeHint": "Demandez au vendeur d'ouvrir son écran QR dans l'application et de vous communiquer son code de confirmation à voix haute.",
         "or": "ou"
       },
       "scan": {
         "title": "Scanner le QR code",
-        "back": "← Retour",
+        "back": "Retour",
         "permissionTitle": "Accès caméra refusé",
         "permissionMessage": "Autorisez l'accès à la caméra dans les paramètres de votre navigateur pour scanner le QR code.",
         "retry": "Réessayer",
