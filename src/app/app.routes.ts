@@ -64,6 +64,11 @@ export const routes: Routes = [
       import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
   },
   {
+    path: 'admin-desktop-only',
+    loadComponent: () =>
+      import('./shared/components/desktop-only/desktop-only.component').then(m => m.DesktopOnlyComponent),
+  },
+  {
     path: '403',
     loadComponent: () =>
       import('./shared/components/forbidden/forbidden.component').then(m => m.ForbiddenComponent),

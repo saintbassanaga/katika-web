@@ -650,6 +650,11 @@
     "support": "Support",
     "backToDashboard": "Dashboard",
     "dashboard": {
+      "desktopOnly": {
+        "title": "Desktop Access Only",
+        "message": "The admin dashboard is optimized for large screens and is not available on mobile devices. Please switch to a desktop or laptop.",
+        "back": "Back to Home"
+      },
       "title": "Overview",
       "disputes": "Disputes",
       "open": "Open",
