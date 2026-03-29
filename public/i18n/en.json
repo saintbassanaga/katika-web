@@ -649,6 +649,14 @@
     "title": "Administration",
     "support": "Support",
     "backToDashboard": "Dashboard",
+    "nav": {
+      "sectionMain": "Dashboard",
+      "overview": "Overview",
+      "disputes": "Disputes",
+      "transactions": "Transactions",
+      "users": "Users",
+      "sectionSettings": "Settings"
+    },
     "dashboard": {
       "desktopOnly": {
         "title": "Desktop Access Only",
@@ -706,7 +714,20 @@
         "disputed": "Disputed",
         "cancelled": "Cancelled",
         "total": "Total",
-        "releaseRateLabel": "Released"
+        "releaseRateLabel": "Released",
+        "volumeTrend": "Transaction Volume",
+        "disputeTrend": "Dispute Activity",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly",
+        "current": "Current",
+        "previous": "Previous",
+        "breakdownTitle": "Dispute Breakdown",
+        "vsLastMonth": "vs last month",
+        "lastSynced": "Last synced: just now",
+        "volumeSeriesLabel": "Volume (FCFA)",
+        "disputeOpenedLabel": "Opened",
+        "disputeResolvedLabel": "Resolved"
       }
     },
     "users": {

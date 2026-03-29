@@ -11,12 +11,14 @@ import type { AdminDashboardStats } from '../admin.service';
   imports: [ChartComponent, TranslatePipe],
   template: `
     @if (isBrowser) {
-      <section>
-        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 m-0">
-          {{ 'admin.dashboard.charts.title' | translate }}
-        </p>
+      <section class="h-full flex flex-col">
+        @if (!compact()) {
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 m-0">
+            {{ 'admin.dashboard.charts.title' | translate }}
+          </p>
+        }
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div [class]="compact() ? 'flex flex-col gap-4 flex-1' : 'grid grid-cols-1 md:grid-cols-3 gap-4'">
 
           <!-- Dispute Status Donut -->
           <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
@@ -36,27 +38,6 @@ import type { AdminDashboardStats } from '../admin.service';
               [legend]="disputeChart().legend"
               [stroke]="disputeChart().stroke"
               [tooltip]="disputeChart().tooltip"
-            />
-          </div>
-
-          <!-- Transaction Pipeline Donut -->
-          <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-            <div class="px-4 pt-4 pb-0">
-              <p class="text-xs font-bold text-slate-700 m-0">{{ 'admin.dashboard.charts.txPipeline' | translate }}</p>
-              <p class="text-[10px] text-slate-400 m-0 mt-0.5">
-                {{ 'admin.dashboard.charts.disputesTotal' | translate:{ total: stats().totalTransactions } }}
-              </p>
-            </div>
-            <apx-chart
-              [series]="txChart().series"
-              [chart]="txChart().chart"
-              [labels]="txChart().labels"
-              [colors]="txChart().colors"
-              [plotOptions]="txChart().plotOptions"
-              [dataLabels]="txChart().dataLabels"
-              [legend]="txChart().legend"
-              [stroke]="txChart().stroke"
-              [tooltip]="txChart().tooltip"
             />
           </div>
 
@@ -80,6 +61,29 @@ import type { AdminDashboardStats } from '../admin.service';
             />
           </div>
 
+          <!-- Transaction Pipeline Donut (hidden in compact mode) -->
+          @if (!compact()) {
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div class="px-4 pt-4 pb-0">
+                <p class="text-xs font-bold text-slate-700 m-0">{{ 'admin.dashboard.charts.txPipeline' | translate }}</p>
+                <p class="text-[10px] text-slate-400 m-0 mt-0.5">
+                  {{ 'admin.dashboard.charts.disputesTotal' | translate:{ total: stats().totalTransactions } }}
+                </p>
+              </div>
+              <apx-chart
+                [series]="txChart().series"
+                [chart]="txChart().chart"
+                [labels]="txChart().labels"
+                [colors]="txChart().colors"
+                [plotOptions]="txChart().plotOptions"
+                [dataLabels]="txChart().dataLabels"
+                [legend]="txChart().legend"
+                [stroke]="txChart().stroke"
+                [tooltip]="txChart().tooltip"
+              />
+            </div>
+          }
+
         </div>
       </section>
     }
@@ -87,11 +91,14 @@ import type { AdminDashboardStats } from '../admin.service';
 })
 export class AdminChartsComponent {
   readonly stats = input.required<AdminDashboardStats>();
+  readonly compact = input(false);
 
   protected readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly t = inject(TranslateService);
 
   private i(key: string) { return this.t.instant(`admin.dashboard.charts.${key}`); }
+
+  private get chartHeight() { return this.compact() ? 200 : 260; }
 
   private readonly DONUT_BASE = {
     chart: {
@@ -122,6 +129,7 @@ export class AdminChartsComponent {
     const s = this.stats();
     return {
       ...this.DONUT_BASE,
+      chart: { ...this.DONUT_BASE.chart, height: this.chartHeight },
       series: [s.openDisputes, s.underReviewDisputes, s.referredToArbitrationDisputes, s.resolvedDisputes],
       labels: [this.i('open'), this.i('underReview'), this.i('arbitration'), this.i('resolved')],
       colors: ['#DC2626', '#4F46E5', '#7C3AED', '#10B981'],
@@ -186,7 +194,7 @@ export class AdminChartsComponent {
       series: [rate],
       chart: {
         type: 'radialBar' as const,
-        height: 260,
+        height: this.chartHeight,
         fontFamily: 'inherit',
         background: 'transparent',
         toolbar: { show: false },

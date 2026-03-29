@@ -152,13 +152,13 @@ import { TuiIcon } from '@taiga-ui/core';
     /* ── GOLDEN SPLIT DIVIDER ─────────────────────── */
     .split-divider {
       display: none;
-      width: 2px;
+      width: 1px;
       flex-shrink: 0;
       background: linear-gradient(to bottom,
         transparent 0%,
-        #C9920D 22%,
-        #F5D48A 50%,
-        #C9920D 78%,
+        rgba(201,146,13,.18) 25%,
+        rgba(245,212,138,.28) 50%,
+        rgba(201,146,13,.18) 75%,
         transparent 100%);
       position: relative;
       align-self: stretch;
@@ -169,12 +169,9 @@ import { TuiIcon } from '@taiga-ui/core';
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%) rotate(45deg);
-      width: 9px; height: 9px;
-      background: #F5D48A;
-      box-shadow:
-        0 0 0 3px rgba(201,146,13,.3),
-        0 0 0 7px rgba(201,146,13,.15),
-        0 0 24px rgba(201,146,13,.5);
+      width: 5px; height: 5px;
+      background: rgba(245,212,138,.5);
+      box-shadow: 0 0 8px rgba(201,146,13,.2);
     }
 
     /* ── FORM PANEL ───────────────────────────────── */
