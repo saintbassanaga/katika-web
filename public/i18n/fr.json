@@ -649,14 +649,6 @@
     "title": "Administration",
     "support": "Support",
     "backToDashboard": "Tableau de bord",
-    "nav": {
-      "sectionMain": "Tableau de bord",
-      "overview": "Vue d'ensemble",
-      "disputes": "Litiges",
-      "transactions": "Transactions",
-      "users": "Utilisateurs",
-      "sectionSettings": "Paramètres"
-    },
     "dashboard": {
       "desktopOnly": {
         "title": "Accès Bureau Uniquement",
@@ -714,20 +706,7 @@
         "disputed": "Litigieuses",
         "cancelled": "Annulées",
         "total": "Total",
-        "releaseRateLabel": "Libérées",
-        "volumeTrend": "Volume des transactions",
-        "disputeTrend": "Activité des litiges",
-        "monthly": "Mensuel",
-        "quarterly": "Trimestriel",
-        "yearly": "Annuel",
-        "current": "Actuel",
-        "previous": "Précédent",
-        "breakdownTitle": "Répartition des litiges",
-        "vsLastMonth": "vs mois précédent",
-        "lastSynced": "Synchro : à l'instant",
-        "volumeSeriesLabel": "Volume (FCFA)",
-        "disputeOpenedLabel": "Ouverts",
-        "disputeResolvedLabel": "Résolus"
+        "releaseRateLabel": "Libérées"
       }
     },
     "users": {

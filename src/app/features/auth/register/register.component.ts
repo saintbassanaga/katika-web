@@ -167,14 +167,10 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
     /* ── GOLDEN SPLIT DIVIDER ─────────────────────── */
     .split-divider {
       display: none;
-      width: 1px;
+      width: 2px;
       flex-shrink: 0;
       background: linear-gradient(to bottom,
-        transparent 0%,
-        rgba(201,146,13,.18) 25%,
-        rgba(245,212,138,.28) 50%,
-        rgba(201,146,13,.18) 75%,
-        transparent 100%);
+        transparent 0%, #C9920D 22%, #F5D48A 50%, #C9920D 78%, transparent 100%);
       position: relative;
       align-self: stretch;
     }
@@ -184,9 +180,12 @@ function passwordsMatch(c: AbstractControl): ValidationErrors | null {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%) rotate(45deg);
-      width: 5px; height: 5px;
-      background: rgba(245,212,138,.5);
-      box-shadow: 0 0 8px rgba(201,146,13,.2);
+      width: 9px; height: 9px;
+      background: #F5D48A;
+      box-shadow:
+        0 0 0 3px rgba(201,146,13,.3),
+        0 0 0 7px rgba(201,146,13,.15),
+        0 0 24px rgba(201,146,13,.5);
     }
 
     /* ── FORM PANEL ───────────────────────────────── */
