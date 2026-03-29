@@ -3,18 +3,21 @@ import { AuthStore } from '@core/auth/auth.store';
 import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TuiIcon } from '@taiga-ui/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-mfa-verify',
   standalone: true,
-  imports: [OtpInputComponent, RouterLink, FormsModule, TranslatePipe],
+  imports: [OtpInputComponent, RouterLink, FormsModule, TuiIcon, TranslatePipe],
   template: `
     <div class="min-h-screen bg-gray-50 flex flex-col justify-center px-4 py-12">
       <div class="max-w-sm w-full mx-auto">
 
         <div class="text-center mb-8">
-          <div class="text-5xl mb-4">🔐</div>
+          <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+            <tui-icon icon="@tui.shield-check" class="w-8 h-8 text-primary" />
+          </div>
           <h1 class="text-2xl font-bold text-gray-900">{{ 'auth.mfa.title' | translate }}</h1>
           <p class="text-sm text-gray-500 mt-2">
             {{ 'auth.mfa.subtitle' | translate }}

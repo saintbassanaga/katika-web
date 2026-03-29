@@ -31,9 +31,7 @@ const RESOLVED_STATUSES = new Set([
       <div class="sticky top-0 z-20 bg-dark shadow-[0_2px_12px_rgba(15,23,42,.25)] px-4 md:px-8 py-3 flex items-center gap-3">
         <a routerLink="/dashboard"
            class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
+          <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]" />
         </a>
         <div class="flex-1 min-w-0">
           <h1 class="text-sm font-bold text-white m-0">{{ 'disputes.title' | translate }}</h1>
@@ -110,9 +108,7 @@ const RESOLVED_STATUSES = new Set([
                 <!-- Status + chevron -->
                 <div class="flex items-center gap-2 shrink-0">
                   <app-status-badge [status]="dispute.status" />
-                  <svg class="text-slate-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 18l6-6-6-6"/>
-                  </svg>
+                  <tui-icon icon="@tui.chevron-right" class="text-slate-300 w-3.5 h-3.5" />
                 </div>
               </a>
             }

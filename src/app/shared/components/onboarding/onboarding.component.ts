@@ -1,8 +1,10 @@
 import { Component, output, signal } from '@angular/core';
+import { TuiIcon } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
+  imports: [TuiIcon],
   template: `
     <!-- Backdrop -->
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -19,7 +21,7 @@ import { Component, output, signal } from '@angular/core';
                   ? 'bg-white/15 border-white/20 text-white hover:bg-white/25'
                   : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200'">
           Passer
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <tui-icon icon="@tui.arrow-right" class="w-3 h-3" />
         </button>
 
         <!-- Slider viewport -->
@@ -102,8 +104,10 @@ import { Component, output, signal } from '@angular/core';
                 @for (item of timeline; track item.n) {
                   <div class="flex gap-4">
                     <div class="flex flex-col items-center">
-                      <div class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-base z-10"
-                           [style.background]="item.bg">{{ item.emoji }}</div>
+                      <div class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center z-10"
+                           [style.background]="item.bg">
+                        <tui-icon [icon]="item.icon" class="w-5 h-5" />
+                      </div>
                       @if (!$last) {
                         <div class="w-px my-1" style="flex:1;min-height:20px;background:linear-gradient(to bottom,#CBD5E1,transparent)"></div>
                       }
@@ -367,10 +371,10 @@ export class OnboardingComponent {
   protected readonly accepted = signal(false);
 
   protected readonly timeline = [
-    { n: 1, emoji: '🛒', title: 'Vendeur crée la transaction',         desc: 'Il renseigne le montant, l\'acheteur et une description.',            bg: 'rgba(27,79,138,.1)'   },
-    { n: 2, emoji: '💳', title: 'Acheteur paie via Mobile Money',      desc: 'Paiement sécurisé via CamPay ou MonetBil.',                            bg: 'rgba(201,146,13,.12)' },
-    { n: 3, emoji: '🔒', title: 'Fonds séquestrés sur Katica',         desc: 'L\'argent est bloqué jusqu\'à confirmation de livraison.',             bg: 'rgba(139,92,246,.1)'  },
-    { n: 4, emoji: '✅', title: 'Livraison confirmée → fonds libérés', desc: 'Le vendeur reçoit le montant sur son wallet (frais 3 % déduits).',     bg: 'rgba(16,185,129,.1)'  },
+    { n: 1, icon: '@tui.shopping-cart', title: 'Vendeur crée la transaction',         desc: 'Il renseigne le montant, l\'acheteur et une description.',            bg: 'rgba(27,79,138,.1)'   },
+    { n: 2, icon: '@tui.credit-card',   title: 'Acheteur paie via Mobile Money',      desc: 'Paiement sécurisé via CamPay ou MonetBil.',                            bg: 'rgba(201,146,13,.12)' },
+    { n: 3, icon: '@tui.lock',          title: 'Fonds séquestrés sur Katica',         desc: 'L\'argent est bloqué jusqu\'à confirmation de livraison.',             bg: 'rgba(139,92,246,.1)'  },
+    { n: 4, icon: '@tui.check-circle',  title: 'Livraison confirmée → fonds libérés', desc: 'Le vendeur reçoit le montant sur son wallet (frais 3 % déduits).',     bg: 'rgba(16,185,129,.1)'  },
   ];
 
   protected readonly retention = [

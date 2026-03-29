@@ -268,9 +268,7 @@ import { TimelineStep } from '@shared/models/model';
         <div class="bg-dark px-4 py-3 flex items-center gap-3 shrink-0 shadow-[0_2px_12px_rgba(15,23,42,.25)]">
           <a routerLink="/disputes"
              class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5M12 5l-7 7 7 7"/>
-            </svg>
+            <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]" />
           </a>
           <div class="flex-1 min-w-0">
             @if (dispute()) {
@@ -597,10 +595,7 @@ import { TimelineStep } from '@shared/models/model';
                     } @else {
                       <button type="button" (click)="fileInput.click()"
                               class="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-[.8125rem] font-semibold text-slate-500 hover:border-primary hover:text-primary transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
+                        <tui-icon icon="@tui.upload" class="w-3.5 h-3.5" />
                         {{ 'disputes.evidence.filePh' | translate }}
                       </button>
                     }
@@ -639,9 +634,7 @@ import { TimelineStep } from '@shared/models/model';
               class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 transition-all active:scale-95 disabled:opacity-40"
               style="background: var(--clr-primary)"
             >
-              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-              </svg>
+              <tui-icon icon="@tui.send" class="w-5 h-5" />
             </button>
           </div>
         }
@@ -746,7 +739,7 @@ import { TimelineStep } from '@shared/models/model';
                    [class.bg-green-500]="step.state === 'completed'"
                    [class.bg-slate-100]="step.state === 'pending'"
                    [class.text-slate-400]="step.state === 'pending'">
-                @if (step.state === 'completed') { ✓ }
+                @if (step.state === 'completed') { <tui-icon icon="@tui.check" class="w-3 h-3" /> }
                 @else if (step.state === 'current') {
                   <span class="w-2 h-2 bg-white rounded-full block"></span>
                 }
@@ -777,10 +770,10 @@ import { TimelineStep } from '@shared/models/model';
 export class DisputeChatComponent implements OnInit, OnDestroy {
 
   protected readonly evidenceTypeOptions = [
-    { value: 'IMAGE'      as const, icon: '🖼️', labelKey: 'disputes.evidence.types.IMAGE'      },
-    { value: 'VIDEO'      as const, icon: '🎬', labelKey: 'disputes.evidence.types.VIDEO'      },
-    { value: 'DOCUMENT'   as const, icon: '📄', labelKey: 'disputes.evidence.types.DOCUMENT'   },
-    { value: 'SCREENSHOT' as const, icon: '📸', labelKey: 'disputes.evidence.types.SCREENSHOT' },
+    { value: 'IMAGE'      as const, icon: '@tui.image',         labelKey: 'disputes.evidence.types.IMAGE'      },
+    { value: 'VIDEO'      as const, icon: '@tui.video',         labelKey: 'disputes.evidence.types.VIDEO'      },
+    { value: 'DOCUMENT'   as const, icon: '@tui.file-text',     labelKey: 'disputes.evidence.types.DOCUMENT'   },
+    { value: 'SCREENSHOT' as const, icon: '@tui.monitor',       labelKey: 'disputes.evidence.types.SCREENSHOT' },
   ];
 
   private readonly route          = inject(ActivatedRoute);
@@ -880,12 +873,12 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
 
   protected terminalIcon(): string {
     const d = this.dispute();
-    if (!d) return '';
-    if (d.status === 'CLOSED_NO_ACTION') return '📁';
-    if (d.status === 'RESOLVED_SPLIT') return '⚖️';
+    if (!d) return '@tui.scale';
+    if (d.status === 'CLOSED_NO_ACTION') return '@tui.folder';
+    if (d.status === 'RESOLVED_SPLIT') return '@tui.scale';
     const iWon = (['FULL_REFUND_BUYER', 'PARTIAL_REFUND_BUYER'].includes(d.resolutionType ?? '') && this.isBuyer())
               || (d.resolutionType === 'RELEASE_TO_SELLER' && !this.isBuyer());
-    return iWon ? '🎉' : '😔';
+    return iWon ? '@tui.check-circle' : '@tui.circle-x';
   }
 
   protected terminalTitle(): string {
@@ -1133,10 +1126,10 @@ export class DisputeChatComponent implements OnInit, OnDestroy {
   }
 
   protected fileIcon(mimeType: string): string {
-    if (mimeType.startsWith('image/')) return '🖼️';
-    if (mimeType.startsWith('video/')) return '🎬';
-    if (mimeType === 'application/pdf') return '📄';
-    return '📎';
+    if (mimeType.startsWith('image/')) return '@tui.image';
+    if (mimeType.startsWith('video/')) return '@tui.video';
+    if (mimeType === 'application/pdf') return '@tui.file-text';
+    return '@tui.paperclip';
   }
 
   protected formatFileSize(bytes: number): string {

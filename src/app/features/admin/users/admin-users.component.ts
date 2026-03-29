@@ -94,7 +94,7 @@ const ROLE_FILTERS = [
                   <div class="flex items-center gap-2 flex-wrap">
                     <p class="text-sm font-bold text-slate-900 m-0 truncate">{{ u.fullName }}</p>
                     @if (u.verified) {
-                      <span class="text-[10px] font-bold text-success bg-success-lt px-1.5 py-0.5 rounded-full">✓ {{ 'admin.users.verified' | translate }}</span>
+                      <span class="inline-flex items-center gap-0.5 text-[10px] font-bold text-success bg-success-lt px-1.5 py-0.5 rounded-full"><tui-icon icon="@tui.check" class="w-2.5 h-2.5" /> {{ 'admin.users.verified' | translate }}</span>
                     }
                   </div>
                   <div class="flex items-center gap-2 mt-0.5">
