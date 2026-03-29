@@ -104,28 +104,28 @@ const STATUS_ORDER: Record<string, number> = {
             <h2 class="text-sm font-semibold mb-3" style="color: var(--clr-muted)">
               {{ 'escrow.detail.progress' | translate }}
             </h2>
-            <div class="flex items-center">
+            <div class="flex items-end">
               @for (step of statusSteps; track step; let i = $index; let last = $last) {
-                <div class="flex flex-col items-center">
+                <div class="flex-1 min-w-0 flex flex-col items-center">
                   <div
-                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2"
+                    class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 shrink-0"
                     [style.background]="isStepDone(step, tx) ? 'var(--clr-primary)' : 'transparent'"
                     [style.border-color]="isStepDone(step, tx) ? 'var(--clr-primary)' : 'var(--clr-border)'"
                     [style.color]="isStepDone(step, tx) ? '#fff' : 'var(--clr-muted)'"
                   >
                     @if (isStepDone(step, tx)) { <tui-icon icon="@tui.check" class="w-3 h-3" /> } @else { {{ i + 1 }} }
                   </div>
-                  <p class="text-xs mt-1 text-center w-16" style="color: var(--clr-muted)">
+                  <p class="text-[10px] mt-1 text-center w-full px-0.5 leading-tight" style="color: var(--clr-muted)">
                     {{ 'escrow.detail.steps.' + step | translate }}
                   </p>
                   @if (stepTimestamp(step, tx)) {
-                    <p class="text-[10px] text-center w-16 leading-tight" style="color: #94A3B8">
+                    <p class="text-[9px] text-center w-full px-0.5 leading-tight" style="color: #94A3B8">
                       {{ stepTimestamp(step, tx) | date:'dd/MM HH:mm' }}
                     </p>
                   }
                 </div>
                 @if (!last) {
-                  <div class="flex-1 h-0.5 mx-1 mb-4"
+                  <div class="w-3 shrink-0 h-0.5 mb-8"
                        [style.background]="isStepDone(step, tx) ? 'var(--clr-primary)' : 'var(--clr-border)'">
                   </div>
                 }
