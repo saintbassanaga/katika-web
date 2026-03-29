@@ -23,11 +23,12 @@ export const adminKeys = {
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export function injectAdminDashboardQuery() {
+export function injectAdminDashboardQuery(enabled: () => boolean = () => true) {
   const service = inject(AdminService);
   return injectQuery(() => ({
     queryKey: adminKeys.dashboard(),
     queryFn: () => firstValueFrom(service.getDashboard()),
+    enabled: enabled(),
   }));
 }
 
