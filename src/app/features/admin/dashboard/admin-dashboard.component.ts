@@ -45,38 +45,6 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
 
         <div class="relative px-4 md:px-8 pt-10 pb-6 max-w-5xl mx-auto">
 
-          <!-- Top bar -->
-          <div class="flex items-center gap-3 mb-8">
-            <a routerLink="/dashboard"
-               class="w-9 h-9 rounded-xl glass-pill flex items-center justify-center text-white/60 no-underline shrink-0 hover:text-white transition-colors">
-              <tui-icon icon="@tui.arrow-left" class="w-4 h-4" />
-            </a>
-            <div class="flex-1 min-w-0">
-              <p class="text-white/40 text-[10px] uppercase tracking-widest m-0">{{ 'admin.dashboard.console' | translate }}</p>
-              <h1 class="text-white font-black text-base m-0 leading-tight">{{ 'admin.dashboard.heroTitle' | translate }}</h1>
-            </div>
-            @if (isAdmin()) {
-              <div class="hidden md:flex items-center gap-2">
-                <a routerLink="/admin/users"
-                   class="glass-pill flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white/70 text-xs font-medium no-underline hover:text-white transition-colors">
-                  <tui-icon icon="@tui.users" class="w-3.5 h-3.5" />
-                  {{ 'admin.dashboard.users' | translate }}
-                </a>
-                <a routerLink="/admin/transactions"
-                   class="glass-pill flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white/70 text-xs font-medium no-underline hover:text-white transition-colors">
-                  <tui-icon icon="@tui.credit-card" class="w-3.5 h-3.5" />
-                  {{ 'admin.dashboard.transactions' | translate }}
-                </a>
-              </div>
-            }
-            <a routerLink="/admin/disputes"
-               class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold no-underline transition-all hover:brightness-110"
-               style="background: linear-gradient(135deg, #4F46E5, #7C3AED); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,.4)">
-              <tui-icon icon="@tui.message-circle" class="w-3.5 h-3.5" />
-              {{ 'admin.dashboard.disputes' | translate }}
-            </a>
-          </div>
-
           <!-- Hero body -->
           @if (isAdmin()) {
             @if (statsQuery.isPending()) {

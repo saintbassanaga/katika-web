@@ -5,6 +5,144 @@ import { Page, TransactionSummary } from '@app/models';
 import { DisputeResponse, ResolutionType } from '@features/disputes/dispute.service';
 import { UserAdminResponse, CreateStaffRequest } from '@shared/models/model';
 
+// ── Stats response types ──────────────────────────────────────────────────────
+
+export interface VolumeTrendResponse {
+  labels: string[];
+  volume: number[];
+  count: number[];
+}
+
+export interface DisputeTrendResponse {
+  labels: string[];
+  opened: number[];
+  resolved: number[];
+}
+
+export interface MonthlyTransactionTrendResponse {
+  labels: string[];
+  totalCreated: number[];
+  released: number[];
+  failed: number[];
+  disputed: number[];
+  completionRatePct: number[];
+}
+
+export interface MonthlyRevenueResponse {
+  labels: string[];
+  feesCollected: number[];
+  avgFeePct: number[];
+  transactionsCompleted: number[];
+  grossVolume: number[];
+}
+
+export interface MonthlyNewUsersResponse {
+  labels: string[];
+  totalRegistered: number[];
+  buyers: number[];
+  sellers: number[];
+  staff: number[];
+  verified: number[];
+}
+
+export interface MonthlyActiveUsersResponse {
+  labels: string[];
+  activeUsers: number[];
+  activeBuyers: number[];
+  activeSellers: number[];
+}
+
+export interface MonthlyPayoutResponse {
+  labels: string[];
+  mtnCount: number[];
+  mtnAmount: number[];
+  orangeCount: number[];
+  orangeAmount: number[];
+  totalCount: number[];
+  totalAmount: number[];
+}
+
+export interface MonthlyDisputeRateResponse {
+  labels: string[];
+  disputesOpened: number[];
+  transactionsCreated: number[];
+  disputeRatePct: number[];
+}
+
+export interface TransactionStatusEntry {
+  status: string;
+  txCount: number;
+  totalGross: number;
+  totalFees: number;
+  avgAmount: number;
+}
+
+export interface EscrowLifecycleResponse {
+  avgMinInitiatedToLocked: number | null;
+  avgMinLockedToShipped: number | null;
+  avgMinLockedToReleased: number | null;
+  avgMinTotalLifecycle: number | null;
+  avgMinLockedToDisputed: number | null;
+  sampleReleased: number;
+  sampleDisputed: number;
+}
+
+export interface DisputeReasonEntry {
+  reason: string;
+  total: number;
+  resolved: number;
+  wentToArbitration: number;
+  closedNoAction: number;
+  resolutionRatePct: number;
+}
+
+export interface DisputeOutcomeEntry {
+  status: string;
+  resolutionType: string;
+  total: number;
+  avgHoursToResolve: number | null;
+  avgRefundedToBuyer: number | null;
+  avgReleasedToSeller: number | null;
+}
+
+export interface DisputeStatusEntry {
+  status: string;
+  disputeCount: number;
+  avgPriority: number;
+  assignedCount: number;
+  unassignedCount: number;
+  escalatedCount: number;
+}
+
+export interface UserRoleEntry {
+  role: string;
+  total: number;
+  activeCount: number;
+  inactiveCount: number;
+  verifiedCount: number;
+  deletedCount: number;
+}
+
+export interface PayoutOperatorEntry {
+  operator: string;
+  total: number;
+  completed: number;
+  failed: number;
+  successRatePct: number;
+  volumeCompleted: number;
+  feesCompleted: number;
+  avgCompletedAmount: number;
+}
+
+export interface PayoutStatusEntry {
+  status: string;
+  payoutCount: number;
+  totalAmount: number;
+  avgAmount: number;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export interface AdminDashboardStats {
   totalUsers: number;
   activeUsers: number;
@@ -134,6 +272,74 @@ export class AdminService extends ApiService {
 
   deactivateUser(userId: string): Observable<UserAdminResponse> {
     return this.http.patch<UserAdminResponse>(this.url(`/api/admin/users/${userId}/deactivate`), {}, this.defaultOptions);
+  }
+
+  // ── Stats — trend endpoints ───────────────────────────────────
+
+  getVolumeTrend(months = 12): Observable<VolumeTrendResponse> {
+    return this.http.get<VolumeTrendResponse>(this.url(`/api/admin/stats/volume?months=${months}`), this.defaultOptions);
+  }
+
+  getDisputeTrend(months = 12): Observable<DisputeTrendResponse> {
+    return this.http.get<DisputeTrendResponse>(this.url(`/api/admin/stats/disputes?months=${months}`), this.defaultOptions);
+  }
+
+  getTransactionTrend(months = 12): Observable<MonthlyTransactionTrendResponse> {
+    return this.http.get<MonthlyTransactionTrendResponse>(this.url(`/api/admin/stats/transactions?months=${months}`), this.defaultOptions);
+  }
+
+  getRevenueTrend(months = 12): Observable<MonthlyRevenueResponse> {
+    return this.http.get<MonthlyRevenueResponse>(this.url(`/api/admin/stats/revenue?months=${months}`), this.defaultOptions);
+  }
+
+  getNewUsersTrend(months = 12): Observable<MonthlyNewUsersResponse> {
+    return this.http.get<MonthlyNewUsersResponse>(this.url(`/api/admin/stats/users/registrations?months=${months}`), this.defaultOptions);
+  }
+
+  getActiveUsersTrend(months = 12): Observable<MonthlyActiveUsersResponse> {
+    return this.http.get<MonthlyActiveUsersResponse>(this.url(`/api/admin/stats/users/active?months=${months}`), this.defaultOptions);
+  }
+
+  getPayoutTrend(months = 12): Observable<MonthlyPayoutResponse> {
+    return this.http.get<MonthlyPayoutResponse>(this.url(`/api/admin/stats/payouts?months=${months}`), this.defaultOptions);
+  }
+
+  getDisputeRateTrend(months = 12): Observable<MonthlyDisputeRateResponse> {
+    return this.http.get<MonthlyDisputeRateResponse>(this.url(`/api/admin/stats/dispute-rate?months=${months}`), this.defaultOptions);
+  }
+
+  // ── Stats — snapshot endpoints ────────────────────────────────
+
+  getTransactionStatusSummary(): Observable<TransactionStatusEntry[]> {
+    return this.http.get<TransactionStatusEntry[]>(this.url('/api/admin/stats/transaction-summary'), this.defaultOptions);
+  }
+
+  getEscrowLifecycle(): Observable<EscrowLifecycleResponse> {
+    return this.http.get<EscrowLifecycleResponse>(this.url('/api/admin/stats/escrow-lifecycle'), this.defaultOptions);
+  }
+
+  getDisputeReasonBreakdown(): Observable<DisputeReasonEntry[]> {
+    return this.http.get<DisputeReasonEntry[]>(this.url('/api/admin/stats/dispute-reasons'), this.defaultOptions);
+  }
+
+  getDisputeOutcomeBreakdown(): Observable<DisputeOutcomeEntry[]> {
+    return this.http.get<DisputeOutcomeEntry[]>(this.url('/api/admin/stats/dispute-outcomes'), this.defaultOptions);
+  }
+
+  getDisputeStatusSummary(): Observable<DisputeStatusEntry[]> {
+    return this.http.get<DisputeStatusEntry[]>(this.url('/api/admin/stats/dispute-summary'), this.defaultOptions);
+  }
+
+  getUserRoleSummary(): Observable<UserRoleEntry[]> {
+    return this.http.get<UserRoleEntry[]>(this.url('/api/admin/stats/user-roles'), this.defaultOptions);
+  }
+
+  getPayoutOperatorStats(): Observable<PayoutOperatorEntry[]> {
+    return this.http.get<PayoutOperatorEntry[]>(this.url('/api/admin/stats/payout-operators'), this.defaultOptions);
+  }
+
+  getPayoutStatusSummary(): Observable<PayoutStatusEntry[]> {
+    return this.http.get<PayoutStatusEntry[]>(this.url('/api/admin/stats/payout-summary'), this.defaultOptions);
   }
 
   // ── Transaction oversight (admin only) ────────────────────────

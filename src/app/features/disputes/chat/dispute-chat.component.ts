@@ -39,7 +39,7 @@ import { TimelineStep } from '@shared/models/model';
     /* ── DETAILS SIDEBAR ──────────────────────────── */
     .ds-panel {
       display: none;
-      flex-direction: column;
+  flex-direction: column;
       width: 300px;
       flex-shrink: 0;
       overflow-y: auto;
@@ -268,7 +268,7 @@ import { TimelineStep } from '@shared/models/model';
         <div class="bg-dark px-4 py-3 flex items-center gap-3 shrink-0 shadow-[0_2px_12px_rgba(15,23,42,.25)]">
           <a routerLink="/disputes"
              class="w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center text-white/80 no-underline shrink-0 transition-colors hover:bg-white/20">
-            <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]" />
+            <tui-icon icon="@tui.arrow-left" class="w-[18px] h-[18px]"></tui-icon>
           </a>
           <div class="flex-1 min-w-0">
             @if (dispute()) {
@@ -276,11 +276,14 @@ import { TimelineStep } from '@shared/models/model';
                 {{ dispute()!.reference }}
               </h1>
               @if (typingUsers().length > 0) {
-                <p class="text-xs text-blue-300 truncate">{{ typingUsers()[0] }} {{ 'disputes.chat.typingOne' | translate:{ name: '' } }}</p>
+                <p
+                  class="text-xs text-blue-300 truncate">{{ typingUsers()[0] }} {{ 'disputes.chat.typingOne' | translate:{name: ''} }}</p>
               } @else {
                 <p class="text-xs text-white/60 truncate">
                   {{ dispute()!.buyerName }} &amp; {{ dispute()!.sellerName }}
-                  @if (dispute()!.grossAmount) { · {{ dispute()!.grossAmount | amount }} }
+                  @if (dispute()!.grossAmount) {
+                    · {{ dispute()!.grossAmount | amount }}
+                  }
                 </p>
               }
             } @else {
@@ -288,16 +291,17 @@ import { TimelineStep } from '@shared/models/model';
               <p class="text-xs text-white/50">{{ 'common.loading' | translate }}</p>
             }
           </div>
-          <app-status-badge [status]="dispute()?.status ?? 'OPENED'" />
+          <app-status-badge [status]="dispute()?.status ?? 'OPENED'"/>
         </div>
 
         <!-- AWAITING_ARBITRATION_PAYMENT -->
         @if (dispute()?.status === 'AWAITING_ARBITRATION_PAYMENT') {
-          <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-orange-400 overflow-hidden animate-fade">
+          <div
+            class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-orange-400 overflow-hidden animate-fade">
             <div class="px-4 py-3.5">
               <div class="flex items-start gap-3 mb-3">
                 <div class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center bg-orange-50">
-                  <tui-icon icon="@tui.scale" class="w-5 h-5 text-orange-400" />
+                  <tui-icon icon="@tui.scale" class="w-5 h-5 text-orange-400"/>
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-slate-900 m-0">{{ 'disputes.arbitration.title' | translate }}</p>
@@ -306,13 +310,16 @@ import { TimelineStep } from '@shared/models/model';
               </div>
               <div class="grid grid-cols-2 gap-2 mb-3">
                 <div class="bg-orange-50 rounded-xl px-3 py-2.5">
-                  <p class="text-[10px] font-semibold text-orange-600 uppercase tracking-wide m-0">{{ 'disputes.arbitration.fee' | translate }}</p>
+                  <p
+                    class="text-[10px] font-semibold text-orange-600 uppercase tracking-wide m-0">{{ 'disputes.arbitration.fee' | translate }}</p>
                   <p class="text-base font-extrabold text-slate-900 m-0">{{ dispute()!.arbitrationFee | amount }}</p>
                 </div>
                 <div class="bg-slate-50 rounded-xl px-3 py-2.5">
-                  <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide m-0">{{ 'disputes.arbitration.deadline' | translate }}</p>
+                  <p
+                    class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide m-0">{{ 'disputes.arbitration.deadline' | translate }}</p>
                   @if (deadlinePassed()) {
-                    <p class="text-xs font-bold text-red-600 m-0">{{ 'disputes.arbitration.deadlinePassed' | translate }}</p>
+                    <p
+                      class="text-xs font-bold text-red-600 m-0">{{ 'disputes.arbitration.deadlinePassed' | translate }}</p>
                   } @else {
                     <p class="text-sm font-bold text-slate-900 m-0 font-mono">{{ countdown() }}</p>
                   }
@@ -322,26 +329,34 @@ import { TimelineStep } from '@shared/models/model';
                 <div class="flex items-center gap-1.5 text-xs"
                      [class.text-success]="dispute()!.buyerArbitrationFeePaid"
                      [class.text-slate-400]="!dispute()!.buyerArbitrationFeePaid">
-                  <tui-icon [icon]="dispute()!.buyerArbitrationFeePaid ? '@tui.check' : '@tui.x'" class="w-3.5 h-3.5" />
+                  <tui-icon [icon]="dispute()!.buyerArbitrationFeePaid ? '@tui.check' : '@tui.x'" class="w-3.5 h-3.5"/>
                   {{ 'disputes.arbitration.buyerPaid' | translate }}
                 </div>
                 <div class="flex items-center gap-1.5 text-xs"
                      [class.text-success]="dispute()!.sellerArbitrationFeePaid"
                      [class.text-slate-400]="!dispute()!.sellerArbitrationFeePaid">
-                  <tui-icon [icon]="dispute()!.sellerArbitrationFeePaid ? '@tui.check' : '@tui.x'" class="w-3.5 h-3.5" />
+                  <tui-icon [icon]="dispute()!.sellerArbitrationFeePaid ? '@tui.check' : '@tui.x'" class="w-3.5 h-3.5"/>
                   {{ 'disputes.arbitration.sellerPaid' | translate }}
                 </div>
               </div>
               @if (!alreadyPaid() && !deadlinePassed()) {
                 <div class="bg-amber-50 rounded-xl px-3 py-2 mb-3 border border-amber-200">
-                  <p class="text-xs font-semibold text-amber-700 m-0 mb-1 flex items-center gap-1"><tui-icon icon="@tui.triangle-alert" class="w-3.5 h-3.5 shrink-0" /> {{ 'disputes.arbitration.warning' | translate }}</p>
-                  <p class="text-xs text-amber-600 m-0">• {{ 'disputes.arbitration.warningDefaultLose' | translate }}</p>
-                  <p class="text-xs text-amber-600 m-0">• {{ 'disputes.arbitration.warningFundsReleased' | translate }}</p>
+                  <p class="text-xs font-semibold text-amber-700 m-0 mb-1 flex items-center gap-1">
+                    <tui-icon icon="@tui.triangle-alert" class="w-3.5 h-3.5 shrink-0"/>
+                    {{ 'disputes.arbitration.warning' | translate }}
+                  </p>
+                  <p class="text-xs text-amber-600 m-0">
+                    • {{ 'disputes.arbitration.warningDefaultLose' | translate }}</p>
+                  <p class="text-xs text-amber-600 m-0">
+                    • {{ 'disputes.arbitration.warningFundsReleased' | translate }}</p>
                 </div>
               }
               @if (alreadyPaid() && dispute()!.status === 'AWAITING_ARBITRATION_PAYMENT') {
                 <div class="bg-success-lt rounded-xl px-3 py-2 mb-3 border border-green-200">
-                  <p class="text-xs font-semibold text-success m-0 flex items-center gap-1"><tui-icon icon="@tui.check" class="w-3.5 h-3.5 shrink-0" /> {{ 'disputes.arbitration.paid' | translate }}</p>
+                  <p class="text-xs font-semibold text-success m-0 flex items-center gap-1">
+                    <tui-icon icon="@tui.check" class="w-3.5 h-3.5 shrink-0"/>
+                    {{ 'disputes.arbitration.paid' | translate }}
+                  </p>
                 </div>
               }
               @if (!alreadyPaid() && !deadlinePassed()) {
@@ -355,7 +370,8 @@ import { TimelineStep } from '@shared/models/model';
                     <span class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                     {{ 'disputes.arbitration.payingBtn' | translate }}
                   } @else {
-                    <tui-icon icon="@tui.scale" class="w-4 h-4" /> {{ 'disputes.arbitration.payBtn' | translate }} — {{ dispute()!.arbitrationFee | amount }}
+                    <tui-icon icon="@tui.scale"
+                              class="w-4 h-4"/> {{ 'disputes.arbitration.payBtn' | translate }} — {{ dispute()!.arbitrationFee | amount }}
                   }
                 </button>
               }
@@ -365,23 +381,27 @@ import { TimelineStep } from '@shared/models/model';
 
         <!-- REFERRED_TO_ARBITRATION -->
         @if (dispute()?.status === 'REFERRED_TO_ARBITRATION') {
-          <div class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-violet-500 overflow-hidden animate-fade">
+          <div
+            class="shrink-0 mx-3 mt-3 bg-white rounded-2xl shadow-sm border-l-4 border-l-violet-500 overflow-hidden animate-fade">
             <div class="px-4 py-3.5">
               <div class="flex items-start gap-3 mb-2">
                 <div class="w-9 h-9 rounded-[10px] shrink-0 flex items-center justify-center bg-violet-50">
-                  <tui-icon icon="@tui.scale" class="w-5 h-5 text-violet-400" />
+                  <tui-icon icon="@tui.scale" class="w-5 h-5 text-violet-400"/>
                 </div>
                 <div class="flex-1">
-                  <p class="text-sm font-bold text-slate-900 m-0">{{ 'disputes.arbitration.referredTitle' | translate }}</p>
+                  <p
+                    class="text-sm font-bold text-slate-900 m-0">{{ 'disputes.arbitration.referredTitle' | translate }}</p>
                   <p class="text-xs text-slate-500 m-0 mt-0.5">{{ 'disputes.arbitration.referredBody' | translate }}</p>
                 </div>
               </div>
               <div class="flex gap-4 mt-2">
                 <div class="flex items-center gap-1.5 text-xs text-success">
-                  <tui-icon icon="@tui.check" class="w-3.5 h-3.5" />{{ 'disputes.arbitration.buyerPaid' | translate }}
+                  <tui-icon icon="@tui.check" class="w-3.5 h-3.5"/>
+                  {{ 'disputes.arbitration.buyerPaid' | translate }}
                 </div>
                 <div class="flex items-center gap-1.5 text-xs text-success">
-                  <tui-icon icon="@tui.check" class="w-3.5 h-3.5" />{{ 'disputes.arbitration.sellerPaid' | translate }}
+                  <tui-icon icon="@tui.check" class="w-3.5 h-3.5"/>
+                  {{ 'disputes.arbitration.sellerPaid' | translate }}
                 </div>
               </div>
               <p class="text-xs text-slate-400 mt-2 m-0">{{ 'disputes.arbitration.referredEmail' | translate }}</p>
@@ -395,14 +415,16 @@ import { TimelineStep } from '@shared/models/model';
                [class]="terminalBannerClass()">
             <div class="px-4 py-3">
               <div class="flex items-center gap-2.5">
-                <tui-icon [icon]="terminalIcon()" class="w-5 h-5" />
+                <tui-icon [icon]="terminalIcon()" class="w-5 h-5"/>
                 <div>
                   <p class="text-sm font-bold m-0">{{ terminalTitle() | translate }}</p>
                   @if (dispute()!.refundedToBuyer) {
-                    <p class="text-xs m-0 mt-0.5 opacity-80">{{ 'disputes.arbitration.refundedLabel' | translate }}: {{ dispute()!.refundedToBuyer | amount }}</p>
+                    <p class="text-xs m-0 mt-0.5 opacity-80">{{ 'disputes.arbitration.refundedLabel' | translate }}
+                      : {{ dispute()!.refundedToBuyer | amount }}</p>
                   }
                   @if (dispute()!.releasedToSeller) {
-                    <p class="text-xs m-0 mt-0.5 opacity-80">{{ 'disputes.arbitration.releasedLabel' | translate }}: {{ dispute()!.releasedToSeller | amount }}</p>
+                    <p class="text-xs m-0 mt-0.5 opacity-80">{{ 'disputes.arbitration.releasedLabel' | translate }}
+                      : {{ dispute()!.releasedToSeller | amount }}</p>
                   }
                 </div>
               </div>
@@ -418,33 +440,34 @@ import { TimelineStep } from '@shared/models/model';
               @if (isStaffMessage(msg)) {
                 <div class="flex justify-center px-2">
                   <div class="max-w-[80%] flex flex-col items-center gap-1">
-                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
+                    <span
+                      class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
                       [class.bg-amber-100]="msg.messageType === 'SYSTEM'"
                       [class.text-amber-700]="msg.messageType === 'SYSTEM'"
                       [class.bg-indigo-100]="msg.messageType !== 'SYSTEM'"
                       [class.text-indigo-700]="msg.messageType !== 'SYSTEM'"
                     >
                       @if (msg.messageType === 'SYSTEM') {
-                        <tui-icon icon="@tui.info" class="w-3 h-3" />
+                        <tui-icon icon="@tui.info" class="w-3 h-3"/>
                         {{ 'disputes.chat.system' | translate }}
                       } @else {
-                        <tui-icon icon="@tui.user" class="w-3 h-3" />
+                        <tui-icon icon="@tui.user" class="w-3 h-3"/>
                         {{ msg.senderRole | titlecase }} · {{ msg.senderName }}
                       }
                     </span>
                     <div class="rounded-2xl px-4 py-2.5 text-center border"
-                      [class.bg-amber-50]="msg.messageType === 'SYSTEM'"
-                      [class.border-amber-200]="msg.messageType === 'SYSTEM'"
-                      [class.bg-indigo-50]="msg.messageType !== 'SYSTEM'"
-                      [class.border-indigo-200]="msg.messageType !== 'SYSTEM'"
+                         [class.bg-amber-50]="msg.messageType === 'SYSTEM'"
+                         [class.border-amber-200]="msg.messageType === 'SYSTEM'"
+                         [class.bg-indigo-50]="msg.messageType !== 'SYSTEM'"
+                         [class.border-indigo-200]="msg.messageType !== 'SYSTEM'"
                     >
                       <p class="text-sm italic wrap-break-word whitespace-pre-wrap m-0"
-                        [class.text-amber-800]="msg.messageType === 'SYSTEM'"
-                        [class.text-indigo-800]="msg.messageType !== 'SYSTEM'"
+                         [class.text-amber-800]="msg.messageType === 'SYSTEM'"
+                         [class.text-indigo-800]="msg.messageType !== 'SYSTEM'"
                       >{{ msg.content }}</p>
                       <p class="text-[10px] mt-1 opacity-60 m-0"
-                        [class.text-amber-600]="msg.messageType === 'SYSTEM'"
-                        [class.text-indigo-600]="msg.messageType !== 'SYSTEM'"
+                         [class.text-amber-600]="msg.messageType === 'SYSTEM'"
+                         [class.text-indigo-600]="msg.messageType !== 'SYSTEM'"
                       >{{ msg.createdAt | timeAgo }}</p>
                     </div>
                   </div>
@@ -472,7 +495,7 @@ import { TimelineStep } from '@shared/models/model';
                               [class.border-slate-200]="!isOwnMessage(msg)"
                               [class.rounded-bl-md]="!isOwnMessage(msg)"
                               [class.shadow-\[0_1px_4px_rgba(15\,23\,42\,\.08\)\]]="!isOwnMessage(msg)">
-                        <tui-icon [icon]="fileIcon(meta?.mimeType ?? '')" class="w-5 h-5 shrink-0" />
+                        <tui-icon [icon]="fileIcon(meta?.mimeType ?? '')" class="w-5 h-5 shrink-0"/>
                         <div class="flex-1 min-w-0">
                           <p class="text-[.8125rem] font-semibold truncate m-0"
                              [class.text-white]="isOwnMessage(msg)"
@@ -482,7 +505,7 @@ import { TimelineStep } from '@shared/models/model';
                              [style.opacity]="isOwnMessage(msg) ? '0.7' : null"
                              [class.text-slate-400]="!isOwnMessage(msg)">{{ formatFileSize(meta?.size ?? 0) }}</p>
                         </div>
-                        <tui-icon icon="@tui.download" class="w-3.5 h-3.5 shrink-0 opacity-60" />
+                        <tui-icon icon="@tui.download" class="w-3.5 h-3.5 shrink-0 opacity-60"/>
                       </button>
                       <p class="text-[10px] opacity-50 m-0 px-1">{{ msg.createdAt | timeAgo }}</p>
                     </div>
@@ -490,11 +513,11 @@ import { TimelineStep } from '@shared/models/model';
                   } @else {
                     <!-- Text bubble -->
                     <div class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,.08)]"
-                      [class.bg-primary]="isOwnMessage(msg)"
-                      [class.text-white]="isOwnMessage(msg)"
-                      [class.rounded-br-md]="isOwnMessage(msg)"
-                      [class.bg-white]="!isOwnMessage(msg)"
-                      [class.rounded-bl-md]="!isOwnMessage(msg)"
+                         [class.bg-primary]="isOwnMessage(msg)"
+                         [class.text-white]="isOwnMessage(msg)"
+                         [class.rounded-br-md]="isOwnMessage(msg)"
+                         [class.bg-white]="!isOwnMessage(msg)"
+                         [class.rounded-bl-md]="!isOwnMessage(msg)"
                     >
                       @if (!isOwnMessage(msg)) {
                         <p class="text-xs font-bold text-primary mb-1 m-0">{{ msg.senderName }}</p>
@@ -514,7 +537,8 @@ import { TimelineStep } from '@shared/models/model';
 
         <!-- INPUT -->
         @if (!isTerminal() && dispute()?.status !== 'REFERRED_TO_ARBITRATION') {
-          <div class="bg-white border-t border-slate-100 px-3 py-2.5 flex gap-2 items-end shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
+          <div
+            class="bg-white border-t border-slate-100 px-3 py-2.5 flex gap-2 items-end shrink-0 shadow-[0_-2px_8px_rgba(15,23,42,.06)]">
 
             <!-- Attach button + popover anchor -->
             <div class="relative shrink-0">
@@ -522,7 +546,7 @@ import { TimelineStep } from '@shared/models/model';
               <!-- Hidden file input -->
               <input #fileInput type="file" class="sr-only"
                      accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm,application/pdf"
-                     (change)="onFileSelected($event)" />
+                     (change)="onFileSelected($event)"/>
 
               <!-- Trigger -->
               <button type="button"
@@ -532,20 +556,22 @@ import { TimelineStep } from '@shared/models/model';
                 @if (uploadingFile()) {
                   <span class="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span>
                 } @else {
-                  <tui-icon icon="@tui.paperclip" class="w-5 h-5" />
+                  <tui-icon icon="@tui.paperclip" class="w-5 h-5"/>
                 }
               </button>
 
               <!-- Popover -->
               @if (evidenceDialogOpen()) {
-                <div class="absolute bottom-[calc(100%+8px)] left-0 z-50 w-72 bg-white rounded-2xl shadow-[0_8px_32px_rgba(15,23,42,.18)] border border-slate-200 overflow-hidden">
+                <div
+                  class="absolute bottom-[calc(100%+8px)] left-0 z-50 w-72 bg-white rounded-2xl shadow-[0_8px_32px_rgba(15,23,42,.18)] border border-slate-200 overflow-hidden">
 
                   <!-- Header -->
                   <div class="flex items-center justify-between px-3.5 pt-3 pb-2.5 border-b border-slate-100">
-                    <p class="text-[.8125rem] font-bold text-slate-800 m-0">{{ 'disputes.evidence.panelTitle' | translate }}</p>
+                    <p
+                      class="text-[.8125rem] font-bold text-slate-800 m-0">{{ 'disputes.evidence.panelTitle' | translate }}</p>
                     <button type="button" (click)="cancelEvidence()"
                             class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 shrink-0">
-                      <tui-icon icon="@tui.x" class="w-2.5 h-2.5" />
+                      <tui-icon icon="@tui.x" class="w-2.5 h-2.5"/>
                     </button>
                   </div>
 
@@ -553,7 +579,8 @@ import { TimelineStep } from '@shared/models/model';
 
                     <!-- Type chips -->
                     <div>
-                      <p class="text-[.6875rem] font-bold uppercase tracking-wide text-slate-400 mb-1.5 m-0">{{ 'disputes.evidence.typeLabel' | translate }}</p>
+                      <p
+                        class="text-[.6875rem] font-bold uppercase tracking-wide text-slate-400 mb-1.5 m-0">{{ 'disputes.evidence.typeLabel' | translate }}</p>
                       <div class="flex flex-wrap gap-1.5">
                         @for (opt of evidenceTypeOptions; track opt.value) {
                           <button type="button"
@@ -565,7 +592,8 @@ import { TimelineStep } from '@shared/models/model';
                                   [class.bg-white]="evidenceType() !== opt.value"
                                   [class.border-slate-200]="evidenceType() !== opt.value"
                                   [class.text-slate-600]="evidenceType() !== opt.value">
-                            <tui-icon [icon]="opt.icon" class="w-3.5 h-3.5" />{{ opt.labelKey | translate }}
+                            <tui-icon [icon]="opt.icon" class="w-3.5 h-3.5"/>
+                            {{ opt.labelKey | translate }}
                           </button>
                         }
                       </div>
@@ -577,12 +605,12 @@ import { TimelineStep } from '@shared/models/model';
                            (input)="evidenceDesc.set($any($event.target).value)"
                            [placeholder]="'disputes.evidence.descPh' | translate"
                            maxlength="200"
-                           class="w-full px-3 py-2 border border-slate-200 rounded-xl text-[.8125rem] outline-none focus:border-primary transition-colors bg-slate-50 focus:bg-white font-[inherit]" />
+                           class="w-full px-3 py-2 border border-slate-200 rounded-xl text-[.8125rem] outline-none focus:border-primary transition-colors bg-slate-50 focus:bg-white font-[inherit]"/>
 
                     <!-- File pick / preview -->
                     @if (pendingFile(); as f) {
                       <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-                        <tui-icon [icon]="fileIcon(f.type)" class="w-5 h-5 shrink-0" />
+                        <tui-icon [icon]="fileIcon(f.type)" class="w-5 h-5 shrink-0"/>
                         <div class="flex-1 min-w-0">
                           <p class="text-[.75rem] font-semibold text-slate-700 truncate m-0">{{ f.name }}</p>
                           <p class="text-[.6875rem] text-slate-400 m-0">{{ formatFileSize(f.size) }}</p>
@@ -595,7 +623,7 @@ import { TimelineStep } from '@shared/models/model';
                     } @else {
                       <button type="button" (click)="fileInput.click()"
                               class="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-[.8125rem] font-semibold text-slate-500 hover:border-primary hover:text-primary transition-colors">
-                        <tui-icon icon="@tui.upload" class="w-3.5 h-3.5" />
+                        <tui-icon icon="@tui.upload" class="w-3.5 h-3.5"/>
                         {{ 'disputes.evidence.filePh' | translate }}
                       </button>
                     }
@@ -607,7 +635,8 @@ import { TimelineStep } from '@shared/models/model';
                             class="w-full py-2.5 rounded-xl text-[.8125rem] font-bold text-white flex items-center justify-center gap-1.5 transition-all disabled:opacity-40"
                             style="background: var(--clr-primary)">
                       @if (uploadingFile()) {
-                        <span class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+                        <span
+                          class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                         {{ 'disputes.evidence.sending' | translate }}
                       } @else {
                         {{ 'disputes.evidence.upload' | translate }}
@@ -634,7 +663,7 @@ import { TimelineStep } from '@shared/models/model';
               class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 transition-all active:scale-95 disabled:opacity-40"
               style="background: var(--clr-primary)"
             >
-              <tui-icon icon="@tui.send" class="w-5 h-5" />
+              <tui-icon icon="@tui.send" class="w-5 h-5"/>
             </button>
           </div>
         }
@@ -645,22 +674,26 @@ import { TimelineStep } from '@shared/models/model';
       <div class="hidden md:flex flex-col w-85 border-l border-slate-100 bg-white shrink-0 overflow-y-auto">
 
         <div class="sticky top-0 bg-white z-10 px-4 py-3 border-b border-slate-100">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 m-0">{{ 'disputes.details.title' | translate }}</p>
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-slate-400 m-0">{{ 'disputes.details.title' | translate }}</p>
         </div>
 
         @if (dispute()) {
           <div class="px-4 py-4 space-y-3">
             <div>
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.reference' | translate }}</p>
+              <p
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.reference' | translate }}</p>
               <p class="text-sm font-bold text-slate-900 font-mono m-0">{{ dispute()!.reference }}</p>
             </div>
             <div class="flex items-center gap-2">
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0">{{ 'disputes.details.status' | translate }}</p>
-              <app-status-badge [status]="dispute()!.status" />
+              <p
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0">{{ 'disputes.details.status' | translate }}</p>
+              <app-status-badge [status]="dispute()!.status"/>
             </div>
             <div class="bg-slate-50 rounded-xl p-3 space-y-2.5">
               <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600 shrink-0">
+                <div
+                  class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600 shrink-0">
                   {{ dispute()!.buyerName?.[0]?.toUpperCase() ?? 'A' }}
                 </div>
                 <div class="flex-1 min-w-0">
@@ -668,11 +701,13 @@ import { TimelineStep } from '@shared/models/model';
                   <p class="text-[10px] text-slate-400 m-0">{{ 'disputes.details.buyer' | translate }}</p>
                 </div>
                 @if (isBuyer()) {
-                  <span class="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-semibold shrink-0">{{ 'disputes.details.you' | translate }}</span>
+                  <span
+                    class="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-semibold shrink-0">{{ 'disputes.details.you' | translate }}</span>
                 }
               </div>
               <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-600 shrink-0">
+                <div
+                  class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-600 shrink-0">
                   {{ dispute()!.sellerName?.[0]?.toUpperCase() ?? 'V' }}
                 </div>
                 <div class="flex-1 min-w-0">
@@ -680,40 +715,46 @@ import { TimelineStep } from '@shared/models/model';
                   <p class="text-[10px] text-slate-400 m-0">{{ 'disputes.details.seller' | translate }}</p>
                 </div>
                 @if (!isBuyer()) {
-                  <span class="text-[10px] bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full font-semibold shrink-0">{{ 'disputes.details.you' | translate }}</span>
+                  <span
+                    class="text-[10px] bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full font-semibold shrink-0">{{ 'disputes.details.you' | translate }}</span>
                 }
               </div>
             </div>
             <div class="flex gap-2">
               @if (dispute()!.grossAmount) {
                 <div class="flex-1 bg-slate-50 rounded-xl px-3 py-2">
-                  <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.escrow' | translate }}</p>
+                  <p
+                    class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.escrow' | translate }}</p>
                   <p class="text-sm font-bold text-slate-900 m-0">{{ dispute()!.grossAmount | amount }}</p>
                 </div>
               }
               @if (dispute()!.claimedAmount) {
                 <div class="flex-1 bg-red-50 rounded-xl px-3 py-2">
-                  <p class="text-[10px] font-semibold uppercase tracking-wide text-red-400 m-0 mb-0.5">{{ 'disputes.details.claimed' | translate }}</p>
+                  <p
+                    class="text-[10px] font-semibold uppercase tracking-wide text-red-400 m-0 mb-0.5">{{ 'disputes.details.claimed' | translate }}</p>
                   <p class="text-sm font-bold text-red-700 m-0">{{ dispute()!.claimedAmount | amount }}</p>
                 </div>
               }
             </div>
             <div>
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.transaction' | translate }}</p>
+              <p
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.transaction' | translate }}</p>
               <p class="text-xs font-mono text-slate-600 m-0 break-all">{{ dispute()!.transactionRef }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.openedAt' | translate }}</p>
+              <p
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.openedAt' | translate }}</p>
               <p class="text-xs text-slate-600 m-0">{{ dispute()!.createdAt | timeAgo }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.reason' | translate }}</p>
+              <p
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 m-0 mb-0.5">{{ 'disputes.details.reason' | translate }}</p>
               <p class="text-xs text-slate-700 m-0">{{ ('disputes.reasons.' + dispute()!.reason) | translate }}</p>
             </div>
           </div>
         } @else {
           <div class="px-4 py-4 space-y-3">
-            @for (i of [1,2,3,4]; track i) {
+            @for (i of [1, 2, 3, 4]; track i) {
               <div class="skeleton-shimmer h-10 rounded-xl"></div>
             }
           </div>
@@ -721,7 +762,8 @@ import { TimelineStep } from '@shared/models/model';
 
         <div class="border-t border-slate-100 mx-4 my-1"></div>
         <div class="px-4 py-3">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 m-0">{{ 'disputes.timeline.title' | translate }}</p>
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-slate-400 m-0">{{ 'disputes.timeline.title' | translate }}</p>
         </div>
         <div class="px-4 pb-8">
           @for (step of statusTimeline(); track step.key; let isLast = $last) {
@@ -731,16 +773,18 @@ import { TimelineStep } from '@shared/models/model';
                      [class.bg-primary]="step.state === 'completed'"
                      [class.bg-slate-200]="step.state !== 'completed'"></div>
               }
-              <div class="w-6 h-6 rounded-full shrink-0 z-10 flex items-center justify-center text-[10px] font-bold transition-all"
-                   [class.bg-primary]="step.state === 'current'"
-                   [class.text-white]="step.state === 'current' || step.state === 'completed'"
-                   [class.ring-4]="step.state === 'current'"
-                   [class.ring-blue-100]="step.state === 'current'"
-                   [class.bg-green-500]="step.state === 'completed'"
-                   [class.bg-slate-100]="step.state === 'pending'"
-                   [class.text-slate-400]="step.state === 'pending'">
-                @if (step.state === 'completed') { <tui-icon icon="@tui.check" class="w-3 h-3" /> }
-                @else if (step.state === 'current') {
+              <div
+                class="w-6 h-6 rounded-full shrink-0 z-10 flex items-center justify-center text-[10px] font-bold transition-all"
+                [class.bg-primary]="step.state === 'current'"
+                [class.text-white]="step.state === 'current' || step.state === 'completed'"
+                [class.ring-4]="step.state === 'current'"
+                [class.ring-blue-100]="step.state === 'current'"
+                [class.bg-green-500]="step.state === 'completed'"
+                [class.bg-slate-100]="step.state === 'pending'"
+                [class.text-slate-400]="step.state === 'pending'">
+                @if (step.state === 'completed') {
+                  <tui-icon icon="@tui.check" class="w-3 h-3"/>
+                } @else if (step.state === 'current') {
                   <span class="w-2 h-2 bg-white rounded-full block"></span>
                 }
               </div>
