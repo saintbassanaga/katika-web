@@ -150,7 +150,7 @@ import {
             </div>
             @if (disputeQ.data(); as d) {
               <div class="hero-stat">
-                <p class="hero-stat-val" style="color:#EF4444">{{ d.opened.reduce((a,b) => a+b, 0) }}</p>
+                <p class="hero-stat-val" style="color:#EF4444">{{ totalDisputesOpened() }}</p>
                 <p class="hero-stat-sub">opened total</p>
               </div>
             }
@@ -175,7 +175,7 @@ import {
             </div>
             @if (txQ.data(); as d) {
               <div class="hero-stat">
-                <p class="hero-stat-val" style="color:#6366F1">{{ d.totalCreated.reduce((a,b) => a+b, 0) }}</p>
+                <p class="hero-stat-val" style="color:#6366F1">{{ totalTxCreated() }}</p>
                 <p class="hero-stat-sub">created total</p>
               </div>
             }
@@ -229,7 +229,7 @@ import {
             </div>
             @if (newUsersQ.data(); as d) {
               <div class="hero-stat">
-                <p class="hero-stat-val" style="color:#3B82F6">{{ d.totalRegistered.reduce((a,b) => a+b, 0) }}</p>
+                <p class="hero-stat-val" style="color:#3B82F6">{{ totalNewUsers() }}</p>
                 <p class="hero-stat-sub">total registered</p>
               </div>
             }
@@ -388,6 +388,24 @@ export class AdminChartsComponent {
     return d.count.reduce((a, b) => a + Number(b), 0);
   });
 
+  protected readonly totalDisputesOpened = computed(() => {
+    const d = this.disputeQ.data();
+    if (!d) return 0;
+    return d.opened.reduce((a, b) => a + b, 0);
+  });
+
+  protected readonly totalTxCreated = computed(() => {
+    const d = this.txQ.data();
+    if (!d) return 0;
+    return d.totalCreated.reduce((a, b) => a + b, 0);
+  });
+
+  protected readonly totalNewUsers = computed(() => {
+    const d = this.newUsersQ.data();
+    if (!d) return 0;
+    return d.totalRegistered.reduce((a, b) => a + b, 0);
+  });
+
   protected readonly totalFees = computed(() => {
     const d = this.revenueQ.data();
     if (!d) return '—';
@@ -411,7 +429,7 @@ export class AdminChartsComponent {
 
   // ── Chart config helpers ──────────────────────────────────────────────────
 
-  private base(type: string, height: number) {
+  private base(type: 'area' | 'line' | 'bar' | 'donut' | 'radialBar', height: number) {
     return {
       type,
       height,
@@ -551,7 +569,7 @@ export class AdminChartsComponent {
         { name: 'Released', data: d.released },
         { name: 'Disputed', data: d.disputed },
       ],
-      chart: { ...this.base('bar', 220), stacked: false },
+      chart: { ...this.base('bar', 220), stacked: false } as const,
       colors: ['#6366F1', '#10B981', '#EF4444'],
       plotOptions: { bar: { borderRadius: 3, columnWidth: '62%' } },
       xaxis: this.xaxis(d.labels),
@@ -605,7 +623,7 @@ export class AdminChartsComponent {
         { name: 'Buyers',  data: d.buyers },
         { name: 'Sellers', data: d.sellers },
       ],
-      chart: { ...this.base('bar', 220), stacked: true },
+      chart: { ...this.base('bar', 220), stacked: true } as const,
       colors: ['#3B82F6', '#F59E0B'],
       plotOptions: { bar: { borderRadius: 3, columnWidth: '55%' } },
       xaxis: this.xaxis(d.labels),
@@ -646,7 +664,7 @@ export class AdminChartsComponent {
         { name: 'MTN',    data: d.mtnAmount.map(Number) },
         { name: 'Orange', data: d.orangeAmount.map(Number) },
       ],
-      chart: { ...this.base('bar', 220), stacked: false },
+      chart: { ...this.base('bar', 220), stacked: false } as const,
       colors: ['#EAB308', '#F97316'],
       plotOptions: { bar: { borderRadius: 3, columnWidth: '60%' } },
       xaxis: this.xaxis(d.labels),
