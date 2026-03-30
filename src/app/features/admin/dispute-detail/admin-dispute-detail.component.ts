@@ -1,12 +1,15 @@
-import { Component, inject, signal, OnInit, input } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { StompSubscription } from '@stomp/stompjs';
 import { AdminService } from '../admin.service';
 import { DisputeResponse, ResolutionType } from '@features/disputes/dispute.service';
+import { DisputeMessage } from '@shared/models/model';
 import { AuthStore } from '@core/auth/auth.store';
 import { ToastService } from '@core/notification/toast.service';
+import { StompService } from '@core/websocket/stomp.service';
 import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { AmountPipe } from '@shared/pipes/amount.pipe';
@@ -320,12 +323,19 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
             </button>
           </div>
 
-          <!-- ── Message thread ── -->
-          @if (dispute()!.messages.length) {
-            <div class="bg-white rounded-2xl p-4 shadow-sm">
-              <p class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3 m-0">{{ 'admin.dispute.messages' | translate }}</p>
-              <div class="space-y-2.5 max-h-96 overflow-y-auto pr-1">
-                @for (msg of dispute()!.messages; track msg.id) {
+          <!-- ── Message thread (SUPPORT only) ── -->
+          @if (isSupport()) {
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div class="px-4 pt-4 pb-2">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide m-0">{{ 'admin.dispute.messages' | translate }}</p>
+              </div>
+
+              <!-- messages -->
+              <div class="space-y-2.5 max-h-96 overflow-y-auto px-4 py-2">
+                @if (messages().length === 0) {
+                  <p class="text-xs text-slate-400 text-center py-6 m-0">{{ 'admin.dispute.noMessages' | translate }}</p>
+                }
+                @for (msg of messages(); track msg.id) {
                   @if (isStaffMsg(msg)) {
                     <div class="flex justify-center">
                       <div class="max-w-[80%] text-center">
@@ -353,23 +363,52 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
                       </div>
                     </div>
                   } @else {
-                    <div class="flex gap-2 items-start">
+                    <div class="flex gap-2 items-start"
+                         [class.flex-row-reverse]="msg.senderId === auth.userId()">
                       <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
                            style="background: var(--clr-primary-lt); color: var(--clr-primary)">
-                        {{ msg.senderName[0]}}
+                        {{ msg.senderName[0] }}
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 mb-0.5">
+                      <div class="flex-1 min-w-0" [class.items-end]="msg.senderId === auth.userId()">
+                        <div class="flex items-center gap-1.5 mb-0.5"
+                             [class.flex-row-reverse]="msg.senderId === auth.userId()">
                           <span class="text-xs font-bold text-slate-700">{{ msg.senderName }}</span>
                           <span class="text-[10px] text-slate-400">{{ msg.createdAt | timeAgo }}</span>
                         </div>
-                        <div class="bg-slate-50 rounded-xl rounded-tl-sm px-3 py-2 border border-slate-200">
+                        <div class="rounded-xl px-3 py-2 border"
+                             [class.rounded-tl-sm]="msg.senderId !== auth.userId()"
+                             [class.rounded-tr-sm]="msg.senderId === auth.userId()"
+                             [class.bg-slate-50]="msg.senderId !== auth.userId()"
+                             [class.border-slate-200]="msg.senderId !== auth.userId()"
+                             [class.border-primary]="msg.senderId === auth.userId()"
+                             [style.background]="msg.senderId === auth.userId() ? 'var(--clr-primary-lt)' : ''">
                           <p class="text-sm text-slate-800 m-0 break-words whitespace-pre-wrap">{{ msg.content }}</p>
                         </div>
                       </div>
                     </div>
                   }
                 }
+              </div>
+
+              <!-- compose bar -->
+              <div class="border-t border-slate-100 px-3 py-2.5 flex items-end gap-2">
+                <textarea
+                  [value]="msgText()"
+                  (input)="msgText.set($any($event.target).value)"
+                  (keydown.enter)="$event.shiftKey ? null : (sendMessage(); $event.preventDefault())"
+                  [placeholder]="'admin.dispute.msgPh' | translate"
+                  rows="1"
+                  class="flex-1 px-3 py-2 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors"
+                  style="min-height:38px;max-height:120px"
+                ></textarea>
+                <button
+                  (click)="sendMessage()"
+                  [disabled]="!msgText().trim() || sendingMsg()"
+                  class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 disabled:opacity-40 transition-all"
+                  style="background: var(--clr-primary)"
+                >
+                  <tui-icon icon="@tui.send" class="w-4 h-4 text-white" />
+                </button>
               </div>
             </div>
           }
@@ -379,12 +418,15 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
     </div>
   `,
 })
-export class AdminDisputeDetailComponent implements OnInit {
+export class AdminDisputeDetailComponent implements OnInit, OnDestroy {
   readonly id = input.required<string>();
 
-  private readonly adminService = inject(AdminService);
-  private readonly auth         = inject(AuthStore);
-  private readonly toast        = inject(ToastService);
+  private readonly adminService  = inject(AdminService);
+  protected readonly auth        = inject(AuthStore);
+  private readonly toast         = inject(ToastService);
+  private readonly stomp         = inject(StompService);
+
+  private msgSub: StompSubscription | null = null;
 
   protected readonly dispute          = signal<DisputeResponse | null>(null);
   protected readonly loading          = signal(true);
@@ -393,6 +435,9 @@ export class AdminDisputeDetailComponent implements OnInit {
   protected readonly savingNotes      = signal(false);
   protected readonly selectedResolution = signal<ResolutionType | ''>('');
   protected readonly selectedActorType  = signal<'BUYER' | 'SELLER' | ''>('');
+  protected readonly messages         = signal<DisputeMessage[]>([]);
+  protected readonly msgText          = signal('');
+  protected readonly sendingMsg       = signal(false);
 
   protected readonly resolutionTypes = RESOLUTION_TYPES;
 
@@ -401,13 +446,44 @@ export class AdminDisputeDetailComponent implements OnInit {
   protected statusNote = '';
 
   protected isAdmin()    { return this.auth.isAdmin() || this.auth.role() === 'SUPERVISOR'; }
+  protected isSupport()  { return this.auth.role() === 'SUPPORT'; }
   protected isTerminal() { return TERMINAL.has(this.dispute()?.status ?? ''); }
 
   ngOnInit(): void {
     this.adminService.getDispute(this.id(), this.isAdmin()).subscribe({
-      next: (d) => { this.dispute.set(d); this.loading.set(false); },
+      next: (d) => {
+        this.dispute.set(d);
+        this.messages.set(d.messages ?? []);
+        this.loading.set(false);
+        if (this.isSupport()) this.connectWs(d.id);
+      },
       error: () => this.loading.set(false),
     });
+  }
+
+  private async connectWs(disputeId: string): Promise<void> {
+    try {
+      await this.stomp.connect();
+      this.msgSub = this.stomp.subscribe(`/topic/dispute.${disputeId}`);
+      this.stomp.on<DisputeMessage>(`/topic/dispute.${disputeId}`)
+        .subscribe(msg => this.messages.update(m => [...m, msg]));
+    } catch { /* WS unavailable — read-only degraded */ }
+  }
+
+  ngOnDestroy(): void {
+    this.msgSub?.unsubscribe();
+  }
+
+  protected sendMessage(): void {
+    const content = this.msgText().trim();
+    if (!content || this.sendingMsg()) return;
+    this.sendingMsg.set(true);
+    try {
+      this.stomp.publish(`/app/dispute/${this.id()}/message`, { content, internalOnly: false });
+      this.msgText.set('');
+    } finally {
+      this.sendingMsg.set(false);
+    }
   }
 
   protected applyResolution(): void {

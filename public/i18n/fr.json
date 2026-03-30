@@ -818,7 +818,9 @@
       "submissionDeadline": "Échéance de paiement",
       "buyerFeePaid": "Acheteur a payé",
       "sellerFeePaid": "Vendeur a payé",
-      "actorType": "Partie concernée (optionnel)"
+      "actorType": "Partie concernée (optionnel)",
+      "msgPh": "Écrire un message…",
+      "noMessages": "Aucun message pour l'instant"
     }
   },
   "notifications": {

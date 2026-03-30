@@ -818,7 +818,9 @@
       "submissionDeadline": "Payment deadline",
       "buyerFeePaid": "Buyer paid",
       "sellerFeePaid": "Seller paid",
-      "actorType": "Concerned party (optional)"
+      "actorType": "Concerned party (optional)",
+      "msgPh": "Write a message…",
+      "noMessages": "No messages yet"
     }
   },
   "notifications": {

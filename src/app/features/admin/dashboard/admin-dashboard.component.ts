@@ -15,11 +15,12 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
   standalone: true,
   imports: [RouterLink, DecimalPipe, TranslatePipe, StatusBadgeComponent, TimeAgoPipe, AmountPipe, TuiIcon, AdminChartsComponent],
   styles: [`
-    .kpi-card { background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(15,34,64,.08); padding: 20px; }
+    .kpi-card { background: #fff; border-radius: 16px; box-shadow: 0 2px 8px rgba(15,34,64,.07); border: 1px solid #E8EDF5; padding: 20px; }
+    .section-label { font-size:10px;font-weight:700;color:#94A3B8;letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px; }
     .queue-item:hover .queue-arrow { transform: translateX(3px); }
   `],
   template: `
-    <div class="p-6 space-y-5" style="background: #F8FAFC; min-height: 100vh">
+    <div style="background:#EEF2F8;min-height:100vh;padding:24px;display:flex;flex-direction:column;gap:24px">
 
       @if (isAdmin() && statsQuery.data(); as stats) {
 
@@ -142,13 +143,15 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
         </div>
 
         <!-- ── Row 3: Charts ── -->
-        <app-admin-charts [stats]="stats" />
+        <div class="kpi-card" style="padding:20px">
+          <app-admin-charts [stats]="stats" />
+        </div>
 
       }
 
       <!-- ── Dispute Queue ── -->
-      <div class="kpi-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div class="kpi-card" style="padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
           <div>
             <h2 style="font-size:13px;font-weight:900;color:#0F172A;margin:0">
               {{ (isAdmin() ? 'admin.dashboard.allDisputes' : 'admin.dashboard.myQueue') | translate }}
@@ -160,7 +163,7 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
             }
           </div>
           <a routerLink="/admin/disputes"
-             style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-decoration:none;padding:6px 12px;border-radius:10px;color:var(--color-primary);transition:background .15s"
+             style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-decoration:none;padding:6px 12px;border-radius:10px;color:var(--color-primary);transition:background .15s;background:transparent"
              class="hover:bg-slate-100">
             {{ 'admin.dashboard.seeAll' | translate }}
             <tui-icon icon="@tui.arrow-right" style="width:14px;height:14px" />
@@ -170,7 +173,7 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
         @if (disputesQuery.isPending()) {
           <div style="display:flex;flex-direction:column;gap:8px">
             @for (i of [1,2,3,4]; track i) {
-              <div style="border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;background:#F8FAFC">
+              <div style="border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;background:#F3F6FB">
                 <div class="skeleton-shimmer" style="width:36px;height:36px;border-radius:10px;flex-shrink:0"></div>
                 <div style="flex:1">
                   <div class="skeleton-shimmer" style="height:11px;width:40%;border-radius:6px;margin-bottom:8px"></div>
@@ -182,7 +185,7 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
           </div>
 
         } @else if (disputes().length === 0) {
-          <div style="border-radius:12px;border:2px dashed #E2E8F0;padding:40px;text-align:center">
+          <div style="border-radius:12px;border:2px dashed #D8E3F0;padding:40px;text-align:center">
             <div style="width:40px;height:40px;border-radius:12px;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
               <tui-icon icon="@tui.check-circle" style="width:20px;height:20px;color:#10B981" />
             </div>
@@ -191,12 +194,11 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
           </div>
 
         } @else {
-          <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;flex-direction:column;gap:2px">
             @for (d of disputes(); track d.id) {
               <a [routerLink]="['/admin/disputes', d.id]"
                  class="queue-item"
-                 style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px;text-decoration:none;transition:background .15s;cursor:pointer"
-                 class="hover:bg-slate-50">
+                 style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px;text-decoration:none;transition:background .15s">
 
                 <div style="position:relative;flex-shrink:0">
                   <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center"
@@ -236,8 +238,7 @@ import { AdminChartsComponent } from '../charts/admin-charts.component';
       </div>
 
     </div>
-  `,
-})
+  `,})
 export class AdminDashboardComponent {
   private readonly auth = inject(AuthStore);
 

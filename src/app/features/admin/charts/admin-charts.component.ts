@@ -20,7 +20,8 @@ import {
     .chart-card {
       background: #fff;
       border-radius: 16px;
-      box-shadow: 0 1px 4px rgba(15,34,64,.08);
+      box-shadow: 0 2px 8px rgba(15,34,64,.07);
+      border: 1px solid #E8EDF5;
       overflow: hidden;
     }
     .chart-card-header {
@@ -99,7 +100,7 @@ import {
     @if (isBrowser) {
 
       <!-- ══ Header ══ -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div>
           <p class="section-eyebrow" style="margin-bottom:2px">Platform Intelligence</p>
           <h2 style="font-size:14px;font-weight:900;color:#0F172A;margin:0;letter-spacing:-.02em">Analytics</h2>
