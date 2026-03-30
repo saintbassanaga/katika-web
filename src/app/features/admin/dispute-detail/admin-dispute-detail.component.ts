@@ -395,7 +395,7 @@ const TERMINAL = new Set(['RESOLVED_BUYER','RESOLVED_SELLER','RESOLVED_SPLIT','C
                 <textarea
                   [value]="msgText()"
                   (input)="msgText.set($any($event.target).value)"
-                  (keydown.enter)="$event.shiftKey ? null : (sendMessage(); $event.preventDefault())"
+                  (keydown.enter)="onMsgEnter($event)"
                   [placeholder]="'admin.dispute.msgPh' | translate"
                   rows="1"
                   class="flex-1 px-3 py-2 border-2 border-slate-200 rounded-xl text-sm resize-none outline-none focus:border-primary transition-colors"
@@ -472,6 +472,12 @@ export class AdminDisputeDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.msgSub?.unsubscribe();
+  }
+
+  protected onMsgEnter(e: Event): void {
+    if ((e as KeyboardEvent).shiftKey) return;
+    e.preventDefault();
+    this.sendMessage();
   }
 
   protected sendMessage(): void {
