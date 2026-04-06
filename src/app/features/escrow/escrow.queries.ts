@@ -58,8 +58,9 @@ export function injectAcceptEscrowMutation() {
   const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.accept(id)),
-    onSuccess:  (tx) => {
-      queryClient.setQueryData(escrowKeys.detail(tx.id), tx);
+    onSuccess:  (tx, id) => {
+      queryClient.setQueryData(escrowKeys.detail(id), tx);
+      queryClient.invalidateQueries({ queryKey: escrowKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: escrowKeys.lists() });
     },
   }));
@@ -70,8 +71,9 @@ export function injectShipEscrowMutation() {
   const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.ship(id)),
-    onSuccess:  (tx) => {
-      queryClient.setQueryData(escrowKeys.detail(tx.id), tx);
+    onSuccess:  (tx, id) => {
+      queryClient.setQueryData(escrowKeys.detail(id), tx);
+      queryClient.invalidateQueries({ queryKey: escrowKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: escrowKeys.lists() });
     },
   }));
@@ -82,8 +84,9 @@ export function injectDeliverEscrowMutation() {
   const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.deliver(id)),
-    onSuccess:  (tx) => {
-      queryClient.setQueryData(escrowKeys.detail(tx.id), tx);
+    onSuccess:  (tx, id) => {
+      queryClient.setQueryData(escrowKeys.detail(id), tx);
+      queryClient.invalidateQueries({ queryKey: escrowKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: escrowKeys.lists() });
     },
   }));
@@ -95,8 +98,9 @@ export function injectReleaseEscrowMutation() {
   return injectMutation(() => ({
     mutationFn: ({ id, verificationCode }: { id: string; verificationCode: string }) =>
       firstValueFrom(service.release(id, verificationCode)),
-    onSuccess:  (tx) => {
-      queryClient.setQueryData(escrowKeys.detail(tx.id), tx);
+    onSuccess:  (tx, { id }) => {
+      queryClient.setQueryData(escrowKeys.detail(id), tx);
+      queryClient.invalidateQueries({ queryKey: escrowKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: escrowKeys.lists() });
     },
   }));
@@ -107,8 +111,9 @@ export function injectCancelEscrowMutation() {
   const queryClient = inject(QueryClient);
   return injectMutation(() => ({
     mutationFn: (id: string) => firstValueFrom(service.cancel(id)),
-    onSuccess:  (tx) => {
-      queryClient.setQueryData(escrowKeys.detail(tx.id), tx);
+    onSuccess:  (tx, id) => {
+      queryClient.setQueryData(escrowKeys.detail(id), tx);
+      queryClient.invalidateQueries({ queryKey: escrowKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: escrowKeys.lists() });
     },
   }));

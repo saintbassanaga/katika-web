@@ -430,15 +430,21 @@ export class TransactionDetailComponent {
       this.liveConnected.set(true);
 
       this.stomp.on<EscrowStatusUpdate>(`/topic/escrow.${txId}`).subscribe(update => {
-        // Patch TanStack cache directly — no local signal needed
-        this.queryClient.setQueryData<TransactionDetail>(
-          escrowKeys.detail(txId),
-          (prev) => {
-            if (!prev) return prev;
-            const tsField = STATUS_TIMESTAMP[update.status];
-            return { ...prev, status: update.status, ...(tsField ? { [tsField]: update.occurredAt } : {}) };
-          },
-        );
+        // Optimistic patch for instant visual feedback
+        if (update.status) {
+          this.queryClient.setQueryData<TransactionDetail>(
+            escrowKeys.detail(txId),
+            (prev) => {
+              if (!prev) return prev;
+              const tsField = STATUS_TIMESTAMP[update.status];
+              return { ...prev, status: update.status, ...(tsField ? { [tsField]: update.occurredAt } : {}) };
+            },
+          );
+        }
+        // Full refetch to hydrate all fields (platformFee, netAmount, activeDisputeId, …)
+        this.queryClient.invalidateQueries({ queryKey: escrowKeys.detail(txId) });
+        // Keep the list in sync so status chips reflect the change immediately
+        this.queryClient.invalidateQueries({ queryKey: escrowKeys.lists() });
         this.toast.success(
           this.translate.instant('escrow.detail.liveUpdate', { status: update.status }),
         );
