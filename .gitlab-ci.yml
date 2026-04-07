@@ -1,6 +1,7 @@
 stages:
   - changelog
   - build
+  - mobile
   - deploy
 
 variables:
@@ -38,6 +39,103 @@ build:
     paths:
       - dist/
     expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+# ── Mobile: Android (unsigned APK) ────────────────────────────────────────────
+build:android:
+  stage: mobile
+  image: ubuntu:22.04
+  variables:
+    ANDROID_HOME: /opt/android-sdk
+    NDK_VERSION: "27.0.12077973"
+    NDK_HOME: /opt/android-sdk/ndk/27.0.12077973
+    DEBIAN_FRONTEND: noninteractive
+  cache:
+    - key:
+        files:
+          - yarn.lock
+      paths:
+        - node_modules/
+    - key: cargo-android-$CI_COMMIT_REF_SLUG
+      paths:
+        - src-tauri/.cargo-cache/
+  before_script:
+    # System dependencies (GTK/WebKit not needed for Android targets)
+    - apt-get update -qq
+    - apt-get install -y -qq curl wget unzip git openjdk-17-jdk build-essential
+        pkg-config libssl-dev
+    # Node 20
+    - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    - apt-get install -y nodejs
+    - npm install -g yarn
+    # Rust
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+    - export PATH="$HOME/.cargo/bin:$PATH"
+    - rustup target add aarch64-linux-android armv7-linux-androideabi
+        i686-linux-android x86_64-linux-android
+    # Android SDK command-line tools
+    - mkdir -p $ANDROID_HOME/cmdline-tools
+    - wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        -O /tmp/cmdline-tools.zip
+    - unzip -q /tmp/cmdline-tools.zip -d /tmp/ct
+    - mv /tmp/ct/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+    - export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+    - yes | sdkmanager --licenses > /dev/null
+    - sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools" "ndk;$NDK_VERSION"
+  script:
+    - export PATH="$HOME/.cargo/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+    - yarn install --frozen-lockfile
+    - yarn tauri icon public/icons/icon-512.png
+    - yarn tauri android init
+    # --debug avoids release signing requirement (no keystore needed)
+    - yarn tauri android build --apk --debug
+  artifacts:
+    name: android-apk-$CI_COMMIT_TAG
+    paths:
+      - src-tauri/gen/android/app/build/outputs/apk/universal/debug/*.apk
+    expire_in: 30 days
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+# ── Mobile: iOS (unsigned, no provisioning required) ──────────────────────────
+# Requires a macOS GitLab runner tagged 'macos' (self-hosted or GitLab Premium)
+build:ios:
+  stage: mobile
+  tags:
+    - macos
+  variables:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  cache:
+    - key:
+        files:
+          - yarn.lock
+      paths:
+        - node_modules/
+    - key: cargo-ios-$CI_COMMIT_REF_SLUG
+      paths:
+        - src-tauri/.cargo-cache/
+  before_script:
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+    - export PATH="$HOME/.cargo/bin:$PATH"
+    - rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
+    - command -v node || brew install node
+    - command -v yarn || npm install -g yarn
+  script:
+    - export PATH="$HOME/.cargo/bin:$PATH"
+    - yarn install --frozen-lockfile
+    - yarn tauri icon public/icons/icon-512.png
+    - yarn tauri ios init
+    # Disable code signing — xcodebuild reads these as build settings via env
+    - export CODE_SIGNING_ALLOWED=NO
+    - export CODE_SIGNING_REQUIRED=NO
+    - export CODE_SIGNING_IDENTITY=""
+    - yarn tauri ios build
+  artifacts:
+    name: ios-app-$CI_COMMIT_TAG
+    paths:
+      - src-tauri/gen/apple/build/arm64/
+    expire_in: 30 days
   rules:
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
 

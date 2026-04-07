@@ -9,7 +9,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:katica": "node dist/katica/server/server.mjs"
+    "serve:ssr:katica": "node dist/katica/server/server.mjs",
+    "tauri": "tauri",
+    "tauri:android:build": "tauri android build --apk",
+    "tauri:ios:build": "tauri ios build"
   },
   "prettier": {
     "printWidth": 100,
@@ -70,6 +73,7 @@
     "express": "^5.1.0",
     "libphonenumber-js": "^1.12.39",
     "ng-apexcharts": "^2.3.0",
+    "@tauri-apps/api": "^2.0.0",
     "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
     "sockjs-client": "^1.6.1",
@@ -94,6 +98,7 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^4.2.0",
     "typescript": "~5.9.2",
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.0.0",
+    "@tauri-apps/cli": "^2.0.0"
   }
 }
