@@ -94,8 +94,9 @@ build:android:
     - yarn install --frozen-lockfile
     - yarn tauri icon public/icons/icon-512.png
     - yarn tauri android init
-    # --debug avoids release signing requirement (no keystore needed)
-    - yarn tauri android build --apk --debug
+    - chmod +x src-tauri/gen/android/gradlew
+    # --debug avoids release signing requirement; -vvv exposes Gradle output
+    - yarn tauri -vvv android build --apk --debug
   artifacts:
     name: android-apk-$CI_COMMIT_TAG
     paths:
