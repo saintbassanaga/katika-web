@@ -108,6 +108,7 @@ build:android:
 # Requires a macOS GitLab runner tagged 'macos' (self-hosted or GitLab Premium)
 build:ios:
   stage: mobile
+  allow_failure: true   # no macOS runner yet — won't block the pipeline
   tags:
     - macos
   variables:
