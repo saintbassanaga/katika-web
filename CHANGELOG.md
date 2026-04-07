@@ -1,12 +1,12 @@
 
-## v1.0.2 — 07/04/2026
+## v1.0.3 — 07/04/2026
 
 
 ### ✨ Nouveautés
 
-- **admin-dispute-detail:** add real-time messaging for support users ([`28d1cb0`](28d1cb06521f82daf16e25f36704d28ce5e2ea49))
+- **admin-dispute-detail:** add real-time messaging for support users ([`c29dbc3`](c29dbc32c738053e8ab2f55cd2fcf59ab61d5b0c))
 
-## v1.0.1 — 07/04/2026
+## v1.0.2 — 07/04/2026
 
 
 ### init
@@ -83,6 +83,8 @@
 
 
 ### ✨ Nouveautés
+
+- **admin-dispute-detail:** add real-time messaging for support users ([`28d1cb0`](28d1cb06521f82daf16e25f36704d28ce5e2ea49))
 
 - **tauri:** add Tauri v2 mobile setup with GitLab CI for Android and iOS ([`1fca2cb`](1fca2cb14d80245ea24032ab9763610a19d3cce2))
 
