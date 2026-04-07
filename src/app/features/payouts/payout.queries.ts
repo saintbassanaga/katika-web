@@ -54,3 +54,10 @@ export function injectSubmitPayoutMutation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: payoutKeys.balance() }),
   }));
 }
+
+export function injectResendPayoutOtpMutation() {
+  const service = inject(PayoutService);
+  return injectMutation(() => ({
+    mutationFn: (payoutId: string) => firstValueFrom(service.resendOtp(payoutId)),
+  }));
+}

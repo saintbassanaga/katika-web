@@ -138,7 +138,7 @@ export class PayoutNewComponent {
       { amount: v.amount!, destinationPhone: v.phone! },
       {
         onSuccess: (res) => {
-          if (res?.id) this.router.navigate(['/payouts', res.id, 'otp']);
+          if (res?.id) this.router.navigate(['/payouts', res.id, 'otp'], { state: { status: res.status } });
         },
       },
     );

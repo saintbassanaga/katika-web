@@ -325,7 +325,7 @@ export interface TimelineStep {
 // ── Payouts ──────────────────────────────────────────────────
 
 export type PayoutStatus =
-  | 'PENDING' | 'OTP_SENT' | 'OTP_VALIDATED' | 'PROCESSING'
+  | 'PENDING' | 'OTP_SENT' | 'MFA_PENDING' | 'OTP_VALIDATED' | 'PROCESSING'
   | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 
 export interface PayoutRequest {

@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { OtpInputComponent } from '@shared/components/otp-input/otp-input.component';
 import { ToastService } from '@core/notification/toast.service';
 import { TranslatePipe } from '@ngx-translate/core';
-import { injectValidatePayoutOtpMutation, injectSubmitPayoutMutation } from '../payout.queries';
+import {
+  injectValidatePayoutOtpMutation,
+  injectSubmitPayoutMutation,
+  injectResendPayoutOtpMutation,
+} from '../payout.queries';
+import type { PayoutStatus } from '@shared/models/model';
 
 @Component({
   selector: 'app-payout-otp',
@@ -11,10 +16,12 @@ import { injectValidatePayoutOtpMutation, injectSubmitPayoutMutation } from '../
   imports: [OtpInputComponent, TranslatePipe],
   template: `
     <div class="animate-fade px-4 py-12 max-w-sm mx-auto text-center">
-      <div class="text-5xl mb-4">📱</div>
-      <h1 class="text-xl font-bold text-gray-900 mb-2">{{ 'payouts.otp.title' | translate }}</h1>
+      <div class="text-5xl mb-4">{{ isMfa() ? '🔐' : '📱' }}</div>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">
+        {{ (isMfa() ? 'payouts.otp.mfaTitle' : 'payouts.otp.title') | translate }}
+      </h1>
       <p class="text-sm text-gray-500 mb-8">
-        {{ 'payouts.otp.subtitle' | translate }}
+        {{ (isMfa() ? 'payouts.otp.mfaSubtitle' : 'payouts.otp.subtitle') | translate }}
       </p>
 
       <app-otp-input (completed)="onCode($event)" [(value)]="otpValue" />
@@ -29,21 +36,26 @@ import { injectValidatePayoutOtpMutation, injectSubmitPayoutMutation } from '../
         </div>
       }
 
-      <!-- Resend OTP -->
-      <div class="mt-8">
-        @if (resendCountdown() > 0) {
-          <p class="text-sm text-gray-400">
-            {{ 'payouts.otp.resendIn' | translate:{ count: resendCountdown() } }}
-          </p>
-        } @else {
-          <button
-            (click)="resendOtp()"
-            class="text-sm text-blue-600 hover:underline font-medium"
-          >
-            {{ 'payouts.otp.resend' | translate }}
-          </button>
-        }
-      </div>
+      <!-- Resend OTP — SMS path only; TOTP (MFA) doesn't need a resend -->
+      @if (!isMfa()) {
+        <div class="mt-8">
+          @if (resendCountdown() > 0) {
+            <p class="text-sm text-gray-400">
+              {{ 'payouts.otp.resendIn' | translate:{ count: resendCountdown() } }}
+            </p>
+          } @else {
+            <button
+              (click)="resendOtp()"
+              [disabled]="resendMutation.isPending()"
+              class="text-sm text-blue-600 hover:underline font-medium disabled:opacity-50"
+            >
+              {{ resendMutation.isPending()
+                  ? ('payouts.otp.resending' | translate)
+                  : ('payouts.otp.resend' | translate) }}
+            </button>
+          }
+        </div>
+      }
     </div>
   `,
 })
@@ -55,6 +67,7 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
 
   protected readonly validateMutation = injectValidatePayoutOtpMutation();
   protected readonly submitMutation   = injectSubmitPayoutMutation();
+  protected readonly resendMutation   = injectResendPayoutOtpMutation();
 
   protected readonly loading = computed(
     () => this.validateMutation.isPending() || this.submitMutation.isPending(),
@@ -70,8 +83,17 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
   protected otpValue = '';
   private countdownInterval?: ReturnType<typeof setInterval>;
 
+  /** True when the payout is waiting for a TOTP from an authenticator app. */
+  protected readonly isMfa = signal(false);
+
   ngOnInit(): void {
-    this.startCountdown();
+    const nav = this.router.getCurrentNavigation() ?? (this.router as any).lastSuccessfulNavigation;
+    const status = nav?.extras?.state?.['status'] as PayoutStatus | undefined;
+    this.isMfa.set(status === 'MFA_PENDING');
+
+    if (!this.isMfa()) {
+      this.startCountdown();
+    }
   }
 
   protected onCode(code: string): void {
@@ -91,9 +113,17 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
   }
 
   protected resendOtp(): void {
-    this.resendCountdown.set(60);
-    this.startCountdown();
-    this.toast.success('Veuillez patienter, un nouveau code sera envoyé automatiquement.');
+    this.resendMutation.mutate(this.id(), {
+      onSuccess: () => {
+        this.otpValue = '';
+        this.resendCountdown.set(60);
+        this.startCountdown();
+        this.toast.success('Un nouveau code a été envoyé.');
+      },
+      onError: () => {
+        this.toast.error('Impossible d\'envoyer le code. Réessayez.');
+      },
+    });
   }
 
   private startCountdown(): void {

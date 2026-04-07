@@ -486,8 +486,11 @@
     "otp": {
       "title": "Confirmation",
       "subtitle": "Enter the code received by SMS",
+      "mfaTitle": "Authenticator verification",
+      "mfaSubtitle": "Enter the 6-digit code from your authenticator app",
       "confirm": "Confirm",
       "resend": "Resend code",
+      "resending": "Sending…",
       "resendIn": "Resend in {{count}}s"
     }
   },
