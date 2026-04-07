@@ -10,9 +10,11 @@ variables:
 # ── Changelog (git-cliff) ──────────────────────────────────────────────────────
 changelog:
   stage: changelog
-  image: orhunp/git-cliff:latest
+  image:
+    name: orhunp/git-cliff:latest
+    entrypoint: [""]          # override git-cliff ENTRYPOINT so GitLab can run its shell
   variables:
-    GIT_DEPTH: 0   # fetch full history pour git-cliff
+    GIT_DEPTH: 0              # fetch full history pour git-cliff
   script:
     - git-cliff --latest -o RELEASE_NOTES.md
   artifacts:
