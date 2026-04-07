@@ -34,6 +34,8 @@ build:
         - yarn.lock
     paths:
       - node_modules/
+  before_script:
+    - corepack enable
   script:
     - yarn install --frozen-lockfile
     - yarn build
@@ -67,10 +69,11 @@ build:android:
     - apt-get update -qq
     - apt-get install -y -qq curl wget unzip git openjdk-17-jdk build-essential
         pkg-config libssl-dev
-    # Node 20
+    # Node 20 + yarn 4 via corepack
     - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
     - apt-get install -y nodejs
-    - npm install -g yarn
+    - corepack enable
+    - corepack prepare yarn@4.13.0 --activate
     # Rust
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
     - export PATH="$HOME/.cargo/bin:$PATH"
@@ -128,7 +131,8 @@ build:ios:
     - export PATH="$HOME/.cargo/bin:$PATH"
     - rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
     - command -v node || brew install node
-    - command -v yarn || npm install -g yarn
+    - corepack enable
+    - corepack prepare yarn@4.13.0 --activate
   script:
     - export PATH="$HOME/.cargo/bin:$PATH"
     - yarn install --frozen-lockfile

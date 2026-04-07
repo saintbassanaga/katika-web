@@ -1,7 +1,7 @@
 {
   "name": "katica",
   "version": "1.0.0",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.local.json",
@@ -65,6 +65,7 @@
     "@taiga-ui/layout": "^4.75.0",
     "@taiga-ui/polymorpheus": "4.9.0",
     "@tanstack/angular-query-experimental": "^5.94.5",
+    "@tauri-apps/api": "^2.0.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
     "apexcharts": "^5.10.4",
@@ -73,7 +74,6 @@
     "express": "^5.1.0",
     "libphonenumber-js": "^1.12.39",
     "ng-apexcharts": "^2.3.0",
-    "@tauri-apps/api": "^2.0.0",
     "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
     "sockjs-client": "^1.6.1",
@@ -84,6 +84,7 @@
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.6",
     "@tailwindcss/postcss": "^4.2.0",
+    "@tauri-apps/cli": "^2.0.0",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
@@ -98,7 +99,6 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^4.2.0",
     "typescript": "~5.9.2",
-    "wrangler": "^4.0.0",
-    "@tauri-apps/cli": "^2.0.0"
+    "wrangler": "^4.0.0"
   }
 }
