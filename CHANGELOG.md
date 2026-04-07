@@ -1,4 +1,11 @@
 
+## v1.0.2 — 07/04/2026
+
+
+### ✨ Nouveautés
+
+- **admin-dispute-detail:** add real-time messaging for support users ([`28d1cb0`](28d1cb06521f82daf16e25f36704d28ce5e2ea49))
+
 ## v1.0.1 — 07/04/2026
 
 
