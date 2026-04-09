@@ -1,12 +1,12 @@
 {
   "name": "katica",
   "version": "1.0.0",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.local.json",
     "start:remote": "ng serve --proxy-config proxy.conf.remote.json",
-    "build": "ng build",
+    "build": "npx ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:katica": "node dist/katica/server/server.mjs"
