@@ -87,8 +87,7 @@ export class PayoutOtpComponent implements OnInit, OnDestroy {
   protected readonly isMfa = signal(false);
 
   ngOnInit(): void {
-    const nav = this.router.getCurrentNavigation() ?? (this.router as any).lastSuccessfulNavigation;
-    const status = nav?.extras?.state?.['status'] as PayoutStatus | undefined;
+    const status = history.state?.['status'] as PayoutStatus | undefined;
     this.isMfa.set(status === 'MFA_PENDING');
 
     if (!this.isMfa()) {
